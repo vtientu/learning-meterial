@@ -91,9 +91,9 @@ public class SyllabusDetailsServletController extends HttpServlet {
             Feedback fb = new Feedback(0, 0, 0, displayName, email, title, description);
 
             rd.createFeedbackSyllabus(a.getAccountID(), sid, fb);
-
+            
             SyllabusDAO sd = new SyllabusDAO();
-            Syllabus s = sd.getSyllabus(request.getParameter("syID"));
+            Syllabus s = sd.getSyllabus(request.getParameter("syCode"));
             request.setAttribute("syllabus", s);
             request.getRequestDispatcher("view/common/syllabus/syllabus-details.jsp").forward(request, response);
         } catch (NumberFormatException e) {

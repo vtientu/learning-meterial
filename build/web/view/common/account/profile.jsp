@@ -328,6 +328,7 @@
                                                         var rpw = document.getElementById("rpswd").value;
                                                         if (pw !== apw) {
                                                             document.getElementById("message").innerHTML = "Password incorrect!";
+                                                            document.getElementById("save").disabled = true;
                                                         } else {
                                                             document.getElementById("message").innerHTML = "";
                                                             if (npw.length >= 8 && npw.length <= 15 && rpw.length >= 8 && rpw.length <= 15) {
@@ -335,6 +336,7 @@
                                                                     document.getElementById("message").innerHTML = "";
                                                                     document.getElementById("save").disabled = false;
                                                                 } else {
+                                                                    document.getElementById("save").disabled = true;
                                                                     document.getElementById("message").innerHTML = "New Password and password confirm are not the same!";
                                                                 }
                                                             }

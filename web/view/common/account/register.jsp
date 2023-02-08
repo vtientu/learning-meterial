@@ -69,7 +69,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your First Name</label>
+                                            <label>Your First Name *</label>
                                             <input name="firstName" type="text" required="" class="form-control">
                                         </div>
                                     </div>
@@ -77,7 +77,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Last Name</label>
+                                            <label>Your Last Name *</label>
                                             <input name="lastName" type="text" required="" class="form-control">
                                         </div>
                                     </div>
@@ -85,7 +85,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your User</label>
+                                            <label>Your User *</label>
                                             <input name="userName" type="text" required="" class="form-control">
                                         </div>
                                     </div>
@@ -93,7 +93,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Email Address</label>
+                                            <label>Your Email Address *</label>
                                             <input name="email" type="email" required="" class="form-control">
                                         </div>
                                     </div>
@@ -101,7 +101,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Password</label>
+                                            <label>Your Password *</label>
                                             <input onchange="checkPassword(this.value)" name="password" type="password" class="form-control" required="">
                                         </div>
                                     </div>

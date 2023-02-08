@@ -29,7 +29,15 @@ CREATE TABLE Roles(
 );
 
 
-
+CREATE TABLE Decision(
+	DecisionNo NVARCHAR(30) Primary Key,
+    DecisionName NVARCHAR(255),
+    ApprovedDate DATE,
+    Note TEXT,
+    CreateDate DATE,
+    isActive bit Default 1,
+    FileName NVARCHAR(255)
+);
 
 
 CREATE TABLE Majors(
@@ -45,6 +53,7 @@ CREATE TABLE Curriculum(
 	majorID int,
 	CurriculumNameEN NVARCHAR(255) not null,
 	CurriculumNameVN NVARCHAR(255) not null,
+    DecisionNo NVARCHAR(30),
 	Description TEXT not null,
 	primary key (CurriculumCode)
 );
@@ -59,6 +68,8 @@ CREATE TABLE Subjects(
 );
 
 
+
+
 CREATE TABLE Syllabus(
 	SyllabusID int auto_increment,
 	SubjectCode NVARCHAR(20),
@@ -66,7 +77,7 @@ CREATE TABLE Syllabus(
 	SubjectNameVN NVARCHAR(255),
 	IsActive bit,
 	IsApproved bit,
-	DecisionNo NVARCHAR(255),
+	DecisionNo NVARCHAR(30),
 	NoCredit int,
 	DegreeLevel NVARCHAR(255),
 	TimeAllocation TEXT,
@@ -79,6 +90,10 @@ CREATE TABLE Syllabus(
 	ApprovedDate date,
     Primary KEY (syllabusID)
 );
+
+
+
+
 
 
 CREATE TABLE Feedback(
@@ -200,7 +215,11 @@ ADD CONSTRAINT fk_syllabus foreign key(syllabusID) references syllabus(SyllabusI
 ALTER TABLE Account add constraint fk_accountRole foreign key (roleID) references Roles(roleID);
 
 
-ALTER TABLE Curriculum add constraint fk_majorCurriculum foreign key (majorID) references Majors(majorID);
+ALTER TABLE Curriculum add constraint fk_majorCurriculum foreign key (majorID) references Majors(majorID),
+						add constraint fk_decisionCurriculum foreign key (DecisionNo) references Decision(DecisionNo);
+                        
+
+-- ALTER TABLE Syllabus add constraint fk_decisionSyllabus foreign key(DecisionNo) references Decision(DecisionNo);
 
 
 ALTER TABLE ConstructiveQuestion add constraint fk_questionsession foreign key (SessionID) references Session(SessionID);
@@ -235,6 +254,31 @@ INSERT INTO Roles(rolename) VALUES('GUEST'),('STUDENT'),('TEACHER'),('REVIEWER')
 
 
 INSERT INTO Account(username, password, firstname, lastname, email, roleID) VALUES ('admin', '123', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 7);
+
+
+INSERT INTO `swp391`.`decision`(decisionNo, decisionName, approvedDate, note, createDate, isActive, fileName)
+VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trải nghiệm khởi nghiệp vào Chương trình đào tạo đại học hệ chính quy', '2022/11/28', N'', '2022/12/02', 1, ''), 
+		(N'1076/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT', '2022/11/24', N'', '2022/11/24', 1, ''), 
+		(N'973/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT từ kì Spring 2023', '2022/10/26', N'', '2022/10/28', 1, ''), 
+		(N'669/QĐ-ĐH-FPT', N'Quyết định điều chỉnh CTĐT từ kì Fall 2022', '2022/05/08', N'', '2022/08/15', 1, ''),
+		(N'336/QĐ-DHFPT', N'Ban hành điều chỉnh CTĐT kì Spring 2022', '2022/04/27', N'', '2022/04/27', 1, ''), 
+		(N'201/QĐ-ĐHFPT', N'Phê duyệt điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Công nghệ thông tin các khóa sinh viên từ K15A (Chuyên ngành Kỹ thuật phần mềm, Hệ thống thông tin, An toàn thông tin, Internet vạn vật) và các khóa sinh viên từ K15A ...', '2022/03/08', N'', '2022/03/17', 1, ''), 
+		(N'200/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh từ K15 (Chuyên ngành Tài chính, Marketing, Kinh doanh quốc tế, Quản trị khách sạn, Quản trị du lịch và lữ hành)', '2022/03/08', N'', '2022/03/17', 1, ''), 
+		(N'199/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh, chuyên ngành Quản trị truyền thông đa phương tiện từ Khóa 15A', '2022/03/08', N'', '2022/03/17', 1, ''), 
+		(N'1039/QĐ-ĐHFPT', N'Chương trình TACB-k15', '2019/08/09', N'Ban hành lại, thêm TRS401, level 4 trong TACB 24/10/2019 QĐ_FA19', '2021/11/13', 1, ''), 
+		(N'1042/QĐ-ĐHFPT', N'1042/QĐ-ĐHFPT', '2019/08/10', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
+		(N'1145/QĐ-ĐHFPT', N'1145/QĐ-ĐHFPT', '2016/12/30', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
+		(N'1189/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2023', '2022/12/22', N'', '2022/12/22', 1, ''),
+        (N'1009/QĐ-ĐHFPT', N'QĐ 1009/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Fall 2021', '2021/09/01', N'1 SU21', '2021/11/13', 1, ''), 
+		(N'1341/QĐ-ĐHFPT', N'1341/QĐ-ĐHFPT', '2021/11/22', N'', '2021/12/13', 1, ''), 
+		(N'1485/QĐ-ĐH-FPT', N'Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Spring 2022', '2021/12/31', N'', '2021/12/31', 1, ''), 
+		(N'889/QĐ-ĐHFPT', N'QĐ 889/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh một số đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Fall 2020 theo Quyết định số 823/QĐ-ĐHFPT', '2020/09/03', N'FA2020', '2021/11/13', 1, ''), 
+		(N'333/QĐ-ĐHFPT', N'333/QĐ-ĐHFPT', '2017/04/20', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
+		(N'05/QĐ-ĐHFPT', N'05/QĐ-ĐHFPT', '2020/01/03', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
+		(N'796/QĐ-ĐHFPT', N'QĐ 796/QĐ-ĐHFPT Ban hành đề cương thực tập (OJT) của các ngành đào tạo hệ đại học chính quy và phiếu đánh giá sinh viên kỳ OJT của Đại học FPT triển khai từ Khóa 15 học kỳ Fall 2021', '2021/07/21', N'1 SU21', '2021/11/13', 1, ''), 
+		(N'295/QĐ-ĐHFPT', N'295/QĐ-ĐHFPT', '2022/07/04', N'Add by import excel', '2022/04/06', 1, ''),
+        (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022/08/05', N'', '2022/08/05', 1, '');
+
 
 INSERT INTO `swp391`.`subjects`
 (`SubjectCode`,

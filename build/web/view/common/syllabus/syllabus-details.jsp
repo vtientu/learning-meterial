@@ -81,11 +81,11 @@
                                         <c:if test="${account != null && account.role.roleName != 'GUEST'}">
                                             <div class="course-price border-bottom">
                                                 <p>Download All Student Material</p>
-                                                <button href="#" class="btn radius-xl text-uppercase">Download</button>
+                                                <button class="btn radius-xl text-uppercase"><a href="files/materials/material" download="">Download</a></button>
                                             </div>
                                             <div class="course-price border-bottom">
                                                 <p>Download All Teacher Material</p>
-                                                <button href="#" class="btn radius-xl text-uppercase">Download</button>
+                                                <button class="btn radius-xl text-uppercase"><a href="files/materials/material" download="">Download</a></button>
                                             </div>
                                         </c:if>
                                         <div class="teacher-bx" style="border-top: none; margin: 0">
@@ -366,8 +366,9 @@
                                         <div class="mt-5 border-top pt-5" id="reviews">
                                             <h4>Reviews</h4>
                                             <c:if test="${account.role.roleName == 'REVIEWER' || account.role.roleName == 'ADMIN'}">
-                                                <form action="list-details" method="post">
+                                                <form action="syllabus-details" method="post">
                                                     <input type="text" name="syID" value="${syllabus.subjectCode}" hidden="">
+                                                    <input type="text" name="syID" value="${syllabus.syllabusID}" hidden="">
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-12 col-md-6">
