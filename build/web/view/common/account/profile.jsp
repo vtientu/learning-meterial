@@ -157,11 +157,10 @@
                                                     <label for="imageUpload"></label>
                                                 </div>
                                                 <div class="avatar-preview">
-                                                    <div id="imagePreview" style="background-image: url(${account.avatar == null?'assets/images/profile/pic1.png':account.avatar});">
+                                                    <div id="imagePreview" style="background-image: url(images/${account.avatar == null?'profile/pic1.png': account.avatar});">
                                                     </div>
                                                 </div>
                                             </div>
-                                                    <img src="${account.avatar}" alt="avatar"/>
                                             <script>
                                                 function readURL(input) {
                                                     if (input.files && input.files[0]) {

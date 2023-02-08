@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Date;
 import module.Account;
 
@@ -22,7 +24,6 @@ import module.Account;
  * @author tient
  */
 @MultipartConfig
-
 public class ProfileServletController extends HttpServlet {
 
     /**
@@ -87,10 +88,12 @@ public class ProfileServletController extends HttpServlet {
         Account a = (Account) session.getAttribute("account");
 
         Part filePart = request.getPart("avatar");
-        String fileName = "avatar/" + filePart.getSubmittedFileName();
-        for (Part part : request.getParts()) {
-            part.write("D:/WorkSpace/SWP/g5-main/web/" + fileName);
+        String fileName = filePart.getSubmittedFileName();
+        String realPart = request.getServletContext().getRealPath("/images");
+        if(!Files.exists(Paths.get(realPart))){
+            Files.createDirectories(Paths.get(realPart));
         }
+        filePart.write(realPart +"/" +fileName);
         a.setAvatar(fileName);
         
 
