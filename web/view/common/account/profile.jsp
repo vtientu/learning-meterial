@@ -161,6 +161,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                                    <img src="${account.avatar}" alt="avatar"/>
                                             <script>
                                                 function readURL(input) {
                                                     if (input.files && input.files[0]) {

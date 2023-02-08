@@ -117,7 +117,6 @@ public class AccountDAO extends DBContext {
                     + "                         ,phone = ?\n"
                     + "                         ,address = ?\n"
                     + "                         ,gender = ?\n"
-                    + "                         ,avatar = ?\n"
                     + "                    WHERE username = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, a.getAvatar());
@@ -127,8 +126,7 @@ public class AccountDAO extends DBContext {
             st.setString(5, a.getPhone());
             st.setString(6, a.getAddress());
             st.setInt(7, a.getGender());
-            st.setString(8, a.getAvatar());
-            st.setString(9, a.getUserName());
+            st.setString(8, a.getUserName());
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);

@@ -87,9 +87,9 @@ public class ProfileServletController extends HttpServlet {
         Account a = (Account) session.getAttribute("account");
 
         Part filePart = request.getPart("avatar");
-        String fileName = "assets\\images\\profile\\" + filePart.getSubmittedFileName();
+        String fileName = "avatar/" + filePart.getSubmittedFileName();
         for (Part part : request.getParts()) {
-            part.write("D:\\WorkSpace\\Project-SWP391\\web\\" + fileName);
+            part.write("D:/WorkSpace/SWP/g5-main/web/" + fileName);
         }
         a.setAvatar(fileName);
         
