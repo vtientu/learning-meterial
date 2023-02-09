@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package module;
 
 /**
@@ -22,16 +18,18 @@ public class Curriculum {
     private String curriculumNameEN;
     private String curriculumNameVN;
     private String description;
+    private String decisionNo;
 
     public Curriculum() {
     }
 
-    public Curriculum(String curriculumCode, Major major, String curriculumNameEN, String curriculumNameVN, String description) {
+    public Curriculum(String curriculumCode, Major major, String curriculumNameEN, String curriculumNameVN, String description, String decisionNo) {
         this.curriculumCode = curriculumCode;
         this.major = major;
         this.curriculumNameEN = curriculumNameEN;
         this.curriculumNameVN = curriculumNameVN;
         this.description = description;
+        this.decisionNo = decisionNo;
     }
 
     public String getCurriculumCode() {
@@ -74,8 +72,12 @@ public class Curriculum {
         this.description = description;
     }
 
-    
+    public String getDecisionNo() {
+        return decisionNo;
+    }
 
-    
-    
+    public void setDecisionNo(String decisionNo) {
+        this.decisionNo = decisionNo;
+    }
+
 }

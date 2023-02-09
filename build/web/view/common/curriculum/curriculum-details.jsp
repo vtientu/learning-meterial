@@ -1,9 +1,3 @@
-<%-- 
-    Document   : curriculum-details
-    Created on : Jan 31, 2023, 1:37:50 AM
-    Author     : tient
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,16 +72,7 @@
                             <div class="row d-flex flex-row-reverse">
                                 <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
                                     <div class="course-detail-bx">
-                                        <c:if test="${account != null && account.role.roleName != 'GUEST'}">
-                                            <div class="course-price border-bottom">
-                                                <p>Download All Student Material</p>
-                                                <button href="#" class="btn radius-xl text-uppercase">Download</button>
-                                            </div>
-                                            <div class="course-price border-bottom">
-                                                <p>Download All Teacher Material</p>
-                                                <button href="#" class="btn radius-xl text-uppercase">Download</button>
-                                            </div>
-                                        </c:if>
+                                        
                                         <div class="teacher-bx" style="border-top: none; margin: 0">
                                             <div class="teacher-name text-center">
                                                 <h5>${curriculum.curriculumNameEN}</h5>
@@ -139,17 +124,17 @@
                                         <div class="row">
                                             <div class="col-md-12 col-lg-5">
                                                 <ul class="course-features">
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View PO">
+                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View PO" class="btn btn-success">
                                                     </li>
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Combo">
+                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Combo" class="btn btn-success">
                                                     </li>
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Elective">
+                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Elective" class="btn btn-success">
                                                     </li>
                                                 </ul>
                                             </div>
                                             <div class="col-md-12 col-lg-7">
                                                 <h5 class="m-b5">Decision no</h5>
-                                                <p>${syllabus.timeAllocation}</p>
+                                                <p>${curriculum.getDecisionNo()}</p>
                                                 </ul>
                                             </div>
                                         </div>
@@ -341,7 +326,7 @@
                                         </table>
                                     </div>
                                     <div class="mt-5 border-top pt-5" id="instructor">
-                                        <h6 style="color: green">Major</h6>
+                                        <h6 style="color: green">Subject</h6>
                                         <table border="1" class="table table-striped">
                                             <thead class="thead-orange">
                                                 <tr>
@@ -353,27 +338,16 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
+                                                <c:forEach items="${requestScope.subject}" var="s">
+                                                    <tr>
+                                                        <td>${s.subjectCode}</td>
+                                                        <td><a href="syllabus-details?syID=${s.subjectCode}">${s.subjectName}</a></td>
+                                                        <td>${s.semester}</td>
+                                                        <td>${s.subjectCode}</td>
+                                                        <td>${s.subjectCode}</td>
+
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>

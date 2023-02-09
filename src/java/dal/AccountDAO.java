@@ -185,9 +185,9 @@ public class AccountDAO extends DBContext {
                         + "                                 ,firstname\n"
                         + "                                 ,lastname\n"
                         + "                                 ,email\n"
-                        + "                                 ,`typeAccount`)\n"
+                        + "                                 ,`roleID`)\n"
                         + "                           VALUES\n"
-                        + "                                 (?, ?, ?, ?, ?);";
+                        + "                                 (?, ?, ?, ?, ?, ?);";
                 PreparedStatement st1 = connection.prepareStatement(sql1);
                 st1.setString(1, user);
                 if(email.endsWith("@fpt.edu.vn")){

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.PreparedStatement;
@@ -10,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import module.Curriculum;
 import module.Major;
+import module.Subject;
 
 /**
  *
@@ -34,7 +31,7 @@ public class CurriculumDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
                 list.add(curriculum);
             }
             return list;
@@ -58,19 +55,56 @@ public class CurriculumDAO extends DBContext {
                     + "FROM swp391.curriculum join swp391.majors on\n"
                     + "curriculum.`majorID` = majors.`majorID`\n";
             if (code != null && code.length() != 0) {
-                sql += "WHERE curriculum.`CurriculumCode` like '%" + code + "%' OR curriculum.`CurriculumNameEN` like '%" + code + "%' OR curriculum.`CurriculumNameVN` like '%" + code + "%'";
+                sql += "WHERE curriculum.`CurriculumCode` like '%" + code + "%' OR curriculum.`CurriculumNameEN` like '%" + code + "%' OR curriculum.`CurriculumNameVN` like '%" + code + "%' OR majors.`majorNameEN` like '%" + code + "%'";
             }
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
                 list.add(curriculum);
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return list;
+    }
+
+    public ArrayList<Subject> getSubject(String cur) {
+        ArrayList<Subject> list = new ArrayList<>();
+        try {
+            String sql = "SELECT curriculum.`CurriculumCode`,\n"
+                    + "                    curriculum.`majorID`,\n"
+                    + "                    curriculum.`CurriculumNameEN`,\n"
+                    + "                    curriculum.`CurriculumNameVN`,\n"
+                    + "                    curriculum.`Description`,\n"
+                    + "                    majors.`keyword`,\n"
+                    + "                    majors.`majorNameEN`,\n"
+                    + "                    majors.`majorNameVN`,\n"
+                    + "                    subjects.`SubjectCode`,\n"
+                    + "                    subjects.`subjectName`,\n"
+                    + "                    subjects.`Semester`,\n"
+                    + "                    subjects.`NoCredit`,\n"
+                    + "                    subjects.`PreRequisite`\n"
+                    + "                    FROM swp391.curriculum join swp391.majors on\n"
+                    + "                    curriculum.`majorID` = majors.`majorID` join swp391.curriculumsubject on\n"
+                    + "                    curriculum.`curriculumCode` = curriculumsubject.`curriculumCode` join swp391.subjects on\n"
+                    + "                    curriculumsubject.`SubjectCode` = subjects.`SubjectCode`\n"
+                    + "                    where curriculum.`CurriculumCode` = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, cur);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
+                Subject subject = new Subject(rs.getInt(12), rs.getString(13), rs.getInt(11), rs.getString(9), rs.getString(10));
+                list.add(subject);
+            }
+            return list;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     public Curriculum getCurriculum(String cur) {
@@ -82,16 +116,17 @@ public class CurriculumDAO extends DBContext {
                     + "curriculum.`Description`,\n"
                     + "majors.`keyword`,\n"
                     + "majors.`majorNameEN`,\n"
-                    + "majors.`majorNameVN`\n"
+                    + "majors.`majorNameVN`,\n"
+                    + "curriculum.`decisionNo`\n"
                     + "FROM swp391.curriculum join swp391.majors on\n"
                     + "curriculum.`majorID` = majors.`majorID`\n"
                     + "where curriculum.`CurriculumCode` = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, cur);
             ResultSet rs = st.executeQuery();
-            while (rs.next()) {                
+            while (rs.next()) {
                 Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(9));
                 return curriculum;
             }
         } catch (SQLException e) {
@@ -109,3 +144,4 @@ public class CurriculumDAO extends DBContext {
         return arr;
     }
 }
+
