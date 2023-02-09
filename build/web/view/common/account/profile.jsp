@@ -157,7 +157,7 @@
                                                     <label for="imageUpload"></label>
                                                 </div>
                                                 <div class="avatar-preview">
-                                                    <div id="imagePreview" style="background-image: url(images/${account.avatar == null?'profile/pic1.png': account.avatar});">
+                                                    <div id="imagePreview" style="background-image: url(${account.typeAccount == -1?'images/':''}${account.avatar == null?'profile/pic1.png': account.avatar});">
                                                     </div>
                                                 </div>
                                             </div>
