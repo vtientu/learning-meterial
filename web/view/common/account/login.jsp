@@ -98,7 +98,7 @@
                         <div class="col-lg-12">
                             <h6>Sign in using @fpt.edu.vn</h6>
                             <div class="login-google">
-                                <button class="btn border bg-white"><a href="https://accounts.google.com/o/oauth2/auth?scope=profile&redirect_uri=http://localhost:9999/Project-SWP391/login-google&response_type=code&client_id=645992422441-cr049r0af04ebl00sglm0guraq5dlrn6.apps.googleusercontent.com&approval_prompt=force">Google <i class="fa fa-google"></i></a></button>
+                                <button class="btn border bg-white"><a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:9999/Project-SWP391/login-google&response_type=code&client_id=645992422441-cr049r0af04ebl00sglm0guraq5dlrn6.apps.googleusercontent.com&approval_prompt=force">Google <i class="fa fa-google"></i></a></button>
                             </div>
                         </div>
                     </div>

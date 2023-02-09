@@ -10,27 +10,21 @@ package module;
  */
 public class Feedback {
     private int fbID;
-    private int accountID;
     private int syllabusID;
-    private String displayName;
-    private String email;
     private String title;
     private String description;
+    private Account account;
 
     public Feedback() {
     }
 
-    public Feedback(int fbID, int accountID, int syllabusID, String displayName, String email, String title, String description) {
+    public Feedback(int fbID, int syllabusID, String title, String description, Account account) {
         this.fbID = fbID;
-        this.accountID = accountID;
         this.syllabusID = syllabusID;
-        this.displayName = displayName;
-        this.email = email;
         this.title = title;
         this.description = description;
+        this.account = account;
     }
-
-    
 
     
 
@@ -42,21 +36,6 @@ public class Feedback {
         this.fbID = fbID;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getTitle() {
         return title;
@@ -74,13 +53,15 @@ public class Feedback {
         this.description = description;
     }
 
-    public int getAccountID() {
-        return accountID;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountID(int accountID) {
-        this.accountID = accountID;
+    public void setAccount(Account account) {
+        this.account = account;
     }
+
+    
  
     
 

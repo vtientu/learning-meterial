@@ -16,51 +16,45 @@ import module.Feedback;
  */
 public class ReviewDAO extends DBContext {
 
-    public void createFeedbackSyllabus(int aid, int syID, Feedback fb) {
+    public void createFeedbackSyllabus(int syID, Feedback fb) {
         try {
             String sql = "INSERT INTO `swp391`.`feedback`\n"
                     + "(`accountID`,\n"
                     + "`syllabusID`,\n"
-                    + "`displayName`,\n"
-                    + "`email`,\n"
                     + "`title`,\n"
                     + "`content`)\n"
                     + "VALUES\n"
-                    + "(?, ?, ?, ?, ?, ?);";
+                    + "(?, ?, ?, ?);";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(1, aid);
+            st.setInt(1, fb.getAccount().getAccountID());
             st.setInt(2, syID);
-            st.setString(3, fb.getDisplayName());
-            st.setString(4, fb.getEmail());
-            st.setString(5, fb.getTitle());
-            st.setString(6, fb.getDescription());
+            st.setString(3, fb.getTitle());
+            st.setString(4, fb.getDescription());
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
         }
     }
 
-    public ArrayList<Feedback> getFeedbackBySyID(String syID) {
+    public ArrayList<Feedback> getFeedbackBySyID(int syID) {
         ArrayList<Feedback> list = new ArrayList<>();
         try {
             String sql = "SELECT `feedback`.`fbID`,\n"
                     + "    `feedback`.`accountID`,\n"
                     + "    `feedback`.`syllabusID`,\n"
-                    + "    `feedback`.`displayName`,\n"
-                    + "    `feedback`.`email`,\n"
                     + "    `feedback`.`title`,\n"
                     + "    `feedback`.`content`\n"
                     + "FROM `swp391`.`feedback`\n"
                     + "WHERE `feedback`.syllabusID = ?";
             PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, syID);
             ResultSet rs = st.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
+                AccountDAO ad = new AccountDAO();
                 Feedback fb = new Feedback();
+                fb.setAccount(ad.getAccount(rs.getInt("accountID")));
                 fb.setFbID(rs.getInt("fbID"));
-                fb.setAccountID(rs.getInt("accountID"));
                 fb.setSyllabusID(rs.getInt("syllabusID"));
-                fb.setDisplayName(rs.getString("displayName"));
-                fb.setEmail(rs.getString("email"));
                 fb.setTitle(rs.getString("title"));
                 fb.setDescription(rs.getString("content"));
                 list.add(fb);

@@ -7,12 +7,15 @@ package controller.common;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dal.AccountDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import module.Account;
 import module.Constants;
 import module.GooglePojo;
 import org.apache.http.client.ClientProtocolException;
@@ -37,8 +40,12 @@ public class LoginWithGoogleServletController extends HttpServlet {
         String code = request.getParameter("code");
 		String accessToken = getToken(code);
 		GooglePojo user = getUserInfo(accessToken);
-                PrintWriter out = response.getWriter();
-		out.println(user);
+                AccountDAO adao = new AccountDAO();
+                adao.registerAccountGoogle(user);
+                Account a = adao.loginAccountGoogle(user);
+                HttpSession session = request.getSession();
+                session.setAttribute("account", a);
+                response.sendRedirect("home");
     } 
     
     public static String getToken(String code) throws ClientProtocolException, IOException {

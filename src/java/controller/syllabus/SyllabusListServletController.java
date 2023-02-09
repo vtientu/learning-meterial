@@ -79,6 +79,7 @@ public class SyllabusListServletController extends HttpServlet {
         start = (page - 1) * numberPerPage;
         end = Math.min(page * numberPerPage, size);
         ArrayList<Syllabus> listByPage = ld.getListByPage(list, start, end);
+        request.setAttribute("totalPage", numberOfPage);
         request.setAttribute("page", page);
         request.setAttribute("listSyllabus", listByPage);
         request.getRequestDispatcher("view/common/syllabus/syllabus-list.jsp").forward(request, response);

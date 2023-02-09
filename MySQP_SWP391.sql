@@ -7,9 +7,9 @@ USE SWP391;
 
 CREATE TABLE Account(
 	accountID int auto_increment,
-	username VARCHAR(255) NOT NULL UNIQUE,
+	username VARCHAR(255) UNIQUE,
 	roleID int DEFAULT 1,
-	password VARCHAR(255) NOT NULL,
+	password VARCHAR(255),
 	avatar NVARCHAR(255),
 	firstname NVARCHAR(50) NOT NULL,
 	lastname NVARCHAR(50) NOT NULL,
@@ -100,8 +100,6 @@ CREATE TABLE Feedback(
 	fbID int auto_increment,
     accountID int NOT NULL,
     syllabusID INT not null,
-    displayName NVARCHAR(100),
-    email NVARCHAR(120) NOT NULL,
     title nvarchar(255),
     content text,
     Primary key(fbID)

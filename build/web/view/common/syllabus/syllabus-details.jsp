@@ -367,20 +367,7 @@
                                             <h4>Reviews</h4>
                                             <c:if test="${account.role.roleName == 'REVIEWER' || account.role.roleName == 'ADMIN'}">
                                                 <form action="syllabus-details" method="post">
-                                                    <input type="text" name="syID" value="${syllabus.subjectCode}" hidden="">
                                                     <input type="text" name="syID" value="${syllabus.syllabusID}" hidden="">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-12 col-md-6">
-                                                                <label for="nameReview">Full name *</label>
-                                                                <input name="displayName" type="text" class="form-control" id="nameReview" placeholder="Enter your name" required="">
-                                                            </div>
-                                                            <div class="col-12 col-md-6">
-                                                                <label for="emailReview">Email address *</label>
-                                                                <input name="email" type="email" class="form-control" id="emailReview" placeholder="Enter your name">
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                     <div class="form-group">
                                                         <label for="titleReview">Title *</label>
                                                         <input name="title" type="text" class="form-control" id="titleReview" placeholder="Title">
@@ -392,31 +379,20 @@
                                                     <button type="submit" class="btn btn-primary">Submit</button>
                                                 </form>
                                             </c:if>
-                                            <div class="instructor-bx mt-5">
-                                                <div class="instructor-author">
-                                                    <img src="assets/images/testimonials/pic1.jpg" alt="">
-                                                </div>
-                                                <div class="instructor-info">
-                                                    <h6>Keny White </h6>
-                                                    <span>Professor</span>
-                                                    <ul class="list-inline m-tb10">
-                                                        <li><a href="#" class="btn sharp-sm facebook"><i class="fa fa-facebook"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm twitter"><i class="fa fa-twitter"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm google-plus"><i class="fa fa-google-plus"></i></a></li>
-                                                    </ul>
-                                                    <p class="m-b0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                                </div>
-                                            </div>
-                                            <div class="instructor-bx">
-                                                <div class="instructor-author">
-                                                    <img src="assets/images/testimonials/pic2.jpg" alt="">
-                                                </div>
-                                                <div class="instructor-info">
-                                                    <h6>Keny White </h6>
-                                                    <span>Professor</span>
-                                                    <p class="m-b0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                                </div>
+                                            <div id="feedback">
+                                                <c:forEach items="${feedback}" var="f">
+                                                    <div class="instructor-bx mt-5">
+                                                        <div class="instructor-author">
+                                                            <img src="images/${f.account.avatar == null?'profile/pic1.png':f.account.avatar}" alt="avatar">
+                                                        </div>
+                                                        <div class="instructor-info">
+
+                                                            <h5>${f.account.displayName}</h5>
+                                                            <span style="font-weight: bold">${f.title}</span>
+                                                            <p class="m-b0">${f.description}</p>
+                                                        </div>
+                                                    </div>
+                                                </c:forEach>
                                             </div>
                                         </div>
                                     </c:if>
