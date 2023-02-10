@@ -19,16 +19,28 @@ public class Major {
     private String keyword;
     private String majorNameEN;
     private String majorNameVN;
+    private boolean isActive;
 
     public Major() {
     }
 
-    public Major(int majorID, String keyword, String majorNameEN, String majorNameVN) {
+    public Major(int majorID, String keyword, String majorNameEN, String majorNameVN, boolean isActive) {
         this.majorID = majorID;
         this.keyword = keyword;
         this.majorNameEN = majorNameEN;
         this.majorNameVN = majorNameVN;
+        this.isActive = isActive;
     }
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    
 
     public int getMajorID() {
         return majorID;

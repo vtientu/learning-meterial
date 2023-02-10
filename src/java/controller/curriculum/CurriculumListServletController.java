@@ -82,7 +82,10 @@ public class CurriculumListServletController extends HttpServlet {
         end = Math.min(page * numberPerPage, size);
         ArrayList<Curriculum> listByPage = dao.getListByPage(curriculum, start, end);
         request.setAttribute("listcurriculum", listByPage);
+        request.setAttribute("num", numberOfPage);
+        request.setAttribute("listcurriculum", listByPage);
         request.getRequestDispatcher("view/common/curriculum/curriculum-list.jsp").forward(request, response);
+        
     }
 
     /**

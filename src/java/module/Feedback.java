@@ -14,16 +14,28 @@ public class Feedback {
     private String title;
     private String description;
     private Account account;
+    private boolean isActive;
 
     public Feedback() {
     }
 
-    public Feedback(int fbID, int syllabusID, String title, String description, Account account) {
+    public Feedback(int fbID, int syllabusID, String title, String description, Account account, boolean isActive) {
         this.fbID = fbID;
         this.syllabusID = syllabusID;
         this.title = title;
         this.description = description;
         this.account = account;
+        this.isActive = isActive;
+    }
+
+    
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     

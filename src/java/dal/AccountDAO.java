@@ -32,6 +32,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`address`,\n"
                     + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
+                    + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
@@ -56,6 +57,7 @@ public class AccountDAO extends DBContext {
                 a.setAddress(rs.getString(11));
                 a.setGender(rs.getInt(12));
                 a.setTypeAccount(rs.getInt(13));
+                a.setIsActive(rs.getBoolean(14));
                 a.setRole(role);
                 return a;
             }
@@ -80,6 +82,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`address`,\n"
                     + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
+                    + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
@@ -103,6 +106,7 @@ public class AccountDAO extends DBContext {
                 a.setAddress(rs.getString(11));
                 a.setGender(rs.getInt(12));
                 a.setTypeAccount(rs.getInt(13));
+                a.setIsActive(rs.getBoolean(14));
                 a.setRole(role);
                 return a;
             }
@@ -127,6 +131,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`address`,\n"
                     + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
+                    + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
@@ -150,6 +155,7 @@ public class AccountDAO extends DBContext {
                 a.setAddress(rs.getString(11));
                 a.setGender(rs.getInt(12));
                 a.setTypeAccount(rs.getInt(13));
+                a.setIsActive(rs.getBoolean(14));
                 a.setRole(role);
                 return a;
             }

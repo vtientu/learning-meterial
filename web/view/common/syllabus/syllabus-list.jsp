@@ -117,11 +117,22 @@
                                 <div class="col-lg-12 m-b20">
                                     <div class="pagination-bx rounded-sm gray clearfix">
                                         <ul class="pagination">
-                                            <li class="previous"><a href="${page == 1?'#!':'syllabus?page=' + page - 1}"><i class="ti-arrow-left"></i> Prev</a></li>
+                                            <c:if test="${page == 1}">
+                                                <li class="previous"><a href="#!"><i class="ti-arrow-left"></i> Prev</a></li>
+                                                </c:if>
+                                                <c:if test="${page != 1}">
+                                                <li class="previous"><a href="syllabus?page=${page - 1}"><i class="ti-arrow-left"></i> Prev</a></li>
+                                                </c:if>
+
                                             <li class="active"><a href="syllabus?page=${page}">${page}</a></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li class="next"><a href="syllabus?page=${page + 1}">Next<i class="ti-arrow-right"></i></a></li>
+
+                                            <c:if test="${page == totalPage}">
+                                                <li class="next"><a href="#!">Next<i class="ti-arrow-right"></i></a></li>
+                                                    </c:if>
+                                                    <c:if test="${page < totalPage}">
+                                                <li class="next"><a href="syllabus?page=${page + 1}">Next<i class="ti-arrow-right"></i></a></li>
+                                                    </c:if>
+
                                         </ul>
                                     </div>
                                 </div>
@@ -139,7 +150,7 @@
                 function searchSyllabus() {
                     let key = document.getElementById("keyseach").value;
                     let page = document.getElementById("page");
-                    let url = './syllabus?page='+ page +'&keysearch=' + key;
+                    let url = './syllabus?page=' + page + '&keysearch=' + key;
 
 
                     if (window.XMLHttpRequest) {

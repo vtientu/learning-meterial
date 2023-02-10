@@ -60,7 +60,7 @@ public class HomeServletController extends HttpServlet {
     throws ServletException, IOException {
         SyllabusDAO sd = new SyllabusDAO();
         CurriculumDAO cd = new CurriculumDAO();
-        ArrayList<Syllabus> listSyllabus = sd.getAllSyllabus();
+        ArrayList<Syllabus> listSyllabus = sd.getAllSyllabus(1);
         ArrayList<Curriculum> listCurriculum = cd.getListForCurriculum();
         request.setAttribute("listSyllabus", listSyllabus);
         request.setAttribute("listCurriculum", listCurriculum);

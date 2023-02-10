@@ -101,7 +101,7 @@
                                             </div>
                                             <div class="review categories text-center">
                                                 <span>Pre-Requisite</span>
-                                                <h5>${syllabus.subject.preRequisite == null ? syllabus.subject.preRequisite:'None'}</h5>
+                                                <h5>${syllabus.preRequisite != null ? syllabus.preRequisite:'None'}</h5>
                                             </div>
                                         </div>
                                         <div class="course-info-list scroll-page">
@@ -368,6 +368,7 @@
                                             <c:if test="${account.role.roleName == 'REVIEWER' || account.role.roleName == 'ADMIN'}">
                                                 <form action="syllabus-details" method="post">
                                                     <input type="text" name="syID" value="${syllabus.syllabusID}" hidden="">
+                                                    <input type="text" name="syCode" value="${syllabus.subjectCode}" hidden="">
                                                     <div class="form-group">
                                                         <label for="titleReview">Title *</label>
                                                         <input name="title" type="text" class="form-control" id="titleReview" placeholder="Title">

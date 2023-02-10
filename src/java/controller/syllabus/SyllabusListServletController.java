@@ -59,7 +59,7 @@ public class SyllabusListServletController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         SyllabusDAO ld = new SyllabusDAO();
-        ArrayList<Syllabus> list = ld.getAllSyllabus();
+        ArrayList<Syllabus> list = ld.getAllSyllabus(1);
         int page, numberPerPage = 12;
         String xpage = request.getParameter("page");
         int size;
@@ -85,13 +85,6 @@ public class SyllabusListServletController extends HttpServlet {
         request.getRequestDispatcher("view/common/syllabus/syllabus-list.jsp").forward(request, response);
     }
 
-    public static void main(String[] args) {
-        SyllabusDAO ld = new SyllabusDAO();
-        ArrayList<Syllabus> list = ld.getAllSyllabus();
-        for (Syllabus l : list) {
-            System.out.println(l);
-        }
-    }
 
     /**
      * Handles the HTTP <code>POST</code> method.

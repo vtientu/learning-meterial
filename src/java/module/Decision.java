@@ -17,18 +17,31 @@ public class Decision {
     private String note;
     private Date createDate;
     private String fileName;
+    private boolean isActive;
 
     public Decision() {
     }
 
-    public Decision(String decisionNo, String decisionName, Date approvedDate, String note, Date createDate, String fileName) {
+    public Decision(String decisionNo, String decisionName, Date approvedDate, String note, Date createDate, String fileName, boolean isActive) {
         this.decisionNo = decisionNo;
         this.decisionName = decisionName;
         this.approvedDate = approvedDate;
         this.note = note;
         this.createDate = createDate;
         this.fileName = fileName;
+        this.isActive = isActive;
     }
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+   
+   
 
     public String getDecisionNo() {
         return decisionNo;

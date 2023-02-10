@@ -90,7 +90,7 @@ public class SyllabusDetailsServletController extends HttpServlet {
             HttpSession session = request.getSession();
             Account a = (Account) session.getAttribute("account");
             ReviewDAO rd = new ReviewDAO();
-            Feedback fb = new Feedback(0, 0, title, description, a);
+            Feedback fb = new Feedback(0, 0, title, description, a, true);
 
             rd.createFeedbackSyllabus(sid, fb);
 
@@ -100,7 +100,7 @@ public class SyllabusDetailsServletController extends HttpServlet {
             ArrayList<Feedback> listReview = rdao.getFeedbackBySyID(sid);
             request.setAttribute("feedback", listReview);
             request.setAttribute("syllabus", s);
-            response.sendRedirect("home");
+            request.getRequestDispatcher("view/common/syllabus/syllabus-details.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             System.out.println(e);
         }

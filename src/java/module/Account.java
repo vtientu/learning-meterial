@@ -25,11 +25,12 @@ public class Account {
     private int gender;
     private Role role;
     private int typeAccount;
+    private boolean isActive;
 
     public Account() {
     }
 
-    public Account(int accountID, String userName, int roleID, String password, String avatar, String firstName, String lastName, Date birthday, String email, String phone, String address, int gender, Role role, int typeAccount) {
+    public Account(int accountID, String userName, int roleID, String password, String avatar, String firstName, String lastName, Date birthday, String email, String phone, String address, int gender, Role role, int typeAccount, boolean isActive) {
         this.accountID = accountID;
         this.userName = userName;
         this.roleID = roleID;
@@ -44,7 +45,19 @@ public class Account {
         this.gender = gender;
         this.role = role;
         this.typeAccount = typeAccount;
+        this.isActive = isActive;
     }
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    
+    
 
     
 

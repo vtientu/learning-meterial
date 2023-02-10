@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import module.PreRequisite;
 import module.Subject;
 import module.Syllabus;
 
@@ -17,7 +18,7 @@ import module.Syllabus;
  */
 public class SyllabusDAO extends DBContext {
 
-    public ArrayList<Syllabus> getAllSyllabus() {
+    public ArrayList<Syllabus> getAllSyllabus(int role) {
         ArrayList<Syllabus> list = new ArrayList<>();
         try {
             String sql = "SELECT `syllabus`.`SyllabusID`,\n"
@@ -37,20 +38,30 @@ public class SyllabusDAO extends DBContext {
                     + "    `syllabus`.`Note`,\n"
                     + "    `syllabus`.`MinAvgMarkToPass`,\n"
                     + "    `syllabus`.`ApprovedDate`,\n"
+                    + "    `syllabus`.`PreRequisite`,\n"
                     + "    `subjects`.`subjectName`,\n"
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
-                    + "    `subjects`.`PreRequisite`\n"
+                    + "    `prerequisite`.`PreID`,\n"
+                    + "    `prerequisite`.`subjectPre`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
-                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode`;";
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`";
+            if(role == 1){
+                sql += "WHERE `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
+            }
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                PreRequisite pre = new PreRequisite();
+                pre.setPreID(rs.getInt("PreID"));
+                pre.setSubjectCode(rs.getString(2));
+                pre.setSubjectPre(rs.getString("subjectPre"));
                 Subject subject = new Subject();
-                subject.setSubjectCode(rs.getString(1));
+                subject.setSubjectCode(rs.getString(2));
                 subject.setSubjectName(rs.getString("subjectName"));
                 subject.setSemester(rs.getInt("Semester"));
-                subject.setPreRequisite("PreRequisite");
+                subject.setPrerequisite(pre);
                 subject.setNoCredit(rs.getInt("NoCredit"));
                 Syllabus syllabus = new Syllabus();
                 syllabus.setSyllabusID(rs.getInt("SyllabusID"));
@@ -70,6 +81,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setNote(rs.getString("Note"));
                 syllabus.setMinAvgMarkToPass(rs.getInt("MinAvgMarkToPass"));
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
+                syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
                 list.add(syllabus);
             }
@@ -98,22 +110,29 @@ public class SyllabusDAO extends DBContext {
                     + "    `syllabus`.`Note`,\n"
                     + "    `syllabus`.`MinAvgMarkToPass`,\n"
                     + "    `syllabus`.`ApprovedDate`,\n"
+                    + "    `syllabus`.`PreRequisite`,\n"
                     + "    `subjects`.`subjectName`,\n"
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
-                    + "    `subjects`.`PreRequisite`\n"
+                    + "    `prerequisite`.`PreID`,\n"
+                    + "    `prerequisite`.`subjectPre`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
-                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode`"
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`"
                     + "WHERE `syllabus`.`SubjectCode` = ?;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, code);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                PreRequisite pre = new PreRequisite();
+                pre.setPreID(rs.getInt("PreID"));
+                pre.setSubjectCode(rs.getString(2));
+                pre.setSubjectPre(rs.getString("subjectPre"));
                 Subject subject = new Subject();
-                subject.setSubjectCode(rs.getString(1));
+                subject.setSubjectCode(rs.getString(2));
                 subject.setSubjectName(rs.getString("subjectName"));
                 subject.setSemester(rs.getInt("Semester"));
-                subject.setPreRequisite(rs.getString("PreRequisite"));
+                subject.setPrerequisite(pre);
                 subject.setNoCredit(rs.getInt("NoCredit"));
                 Syllabus syllabus = new Syllabus();
                 syllabus.setSyllabusID(rs.getInt("SyllabusID"));
@@ -133,6 +152,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setNote(rs.getString("Note"));
                 syllabus.setMinAvgMarkToPass(rs.getInt("MinAvgMarkToPass"));
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
+                syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
                 return syllabus;
             }
@@ -162,12 +182,15 @@ public class SyllabusDAO extends DBContext {
                     + "    `syllabus`.`Note`,\n"
                     + "    `syllabus`.`MinAvgMarkToPass`,\n"
                     + "    `syllabus`.`ApprovedDate`,\n"
+                    + "    `syllabus`.`PreRequisite`,\n"
                     + "    `subjects`.`subjectName`,\n"
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
-                    + "    `subjects`.`PreRequisite`\n"
+                    + "    `prerequisite`.`PreID`,\n"
+                    + "    `prerequisite`.`subjectPre`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
-                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode`"
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`"
                     + "WHERE `syllabus`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`SubjectNameVN` LIKE ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
@@ -175,11 +198,15 @@ public class SyllabusDAO extends DBContext {
             st.setString(3, "%" + key + "%");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                PreRequisite pre = new PreRequisite();
+                pre.setPreID(rs.getInt("PreID"));
+                pre.setSubjectCode(rs.getString(2));
+                pre.setSubjectPre(rs.getString("subjectPre"));
                 Subject subject = new Subject();
-                subject.setSubjectCode(rs.getString(1));
+                subject.setSubjectCode(rs.getString(2));
                 subject.setSubjectName(rs.getString("subjectName"));
                 subject.setSemester(rs.getInt("Semester"));
-                subject.setPreRequisite("PreRequisite");
+                subject.setPrerequisite(pre);
                 subject.setNoCredit(rs.getInt("NoCredit"));
                 Syllabus syllabus = new Syllabus();
                 syllabus.setSyllabusID(rs.getInt("SyllabusID"));
@@ -199,6 +226,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setNote(rs.getString("Note"));
                 syllabus.setMinAvgMarkToPass(rs.getInt("MinAvgMarkToPass"));
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
+                syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
                 list.add(syllabus);
             }

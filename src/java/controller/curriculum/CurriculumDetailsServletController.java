@@ -12,7 +12,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import module.Curriculum;
+import module.Subject;
 
 /**
  *
@@ -58,7 +60,9 @@ public class CurriculumDetailsServletController extends HttpServlet {
         String curID = request.getParameter("curID");
         CurriculumDAO dao = new CurriculumDAO();
         Curriculum cur = dao.getCurriculum(curID);
+        ArrayList<Subject> subject = dao.getSubject(curID);
         request.setAttribute("curriculum", cur);
+        request.setAttribute("subject", subject);
         request.getRequestDispatcher("view/common/curriculum/curriculum-details.jsp").forward(request, response);
     } 
 

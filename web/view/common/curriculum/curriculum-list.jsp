@@ -116,11 +116,13 @@
                                 <div class="col-lg-12 m-b20">
                                     <div class="pagination-bx rounded-sm gray clearfix">
                                         <ul class="pagination">
-                                            <li class="previous"><a href="#"><i class="ti-arrow-left"></i> Prev</a></li>
-                                            <li class="active"><a href="syllabus?page=${page}">1</a></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li class="next"><a href="#">Next <i class="ti-arrow-right"></i></a></li>
+                                            <li class="previous"><a href="curriculum?page=${page > 1 ? page-1 : page}"><i class="ti-arrow-left"></i> Prev</a></li>
+                                                <c:set var="page" value="${requestScope.page}"/>
+
+                                            <c:forEach begin="${1}" end="${requestScope.num}" var="i">
+                                                <li class="${i==page?"active":""}"><a href="curriculum?page=${i}">${i}</a></li>
+                                                </c:forEach>
+                                            <li class="next"><a href="curriculum?page=${page < num ? page+1 : page  }">Next <i class="ti-arrow-right"></i></a></li>
                                         </ul>
                                     </div>
                                 </div>

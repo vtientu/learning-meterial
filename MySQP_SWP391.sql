@@ -19,6 +19,7 @@ CREATE TABLE Account(
 	address NVARCHAR(255),
 	gender int DEFAULT -1,
     typeAccount int DEFAULT -1,
+    isActive bit DEFAULT 1,
 	primary key (accountID)
 );
 
@@ -44,7 +45,8 @@ CREATE TABLE Majors(
 	majorID int AUTO_INCREMENT primary key,
 	keyword NVARCHAR(255) not null,
 	majorNameEN NVARCHAR(255) not null,
-	majorNameVN NVARCHAR(255) not null
+	majorNameVN NVARCHAR(255) not null,
+    isActive bit DEFAULT 1
 );
 
 
@@ -64,7 +66,14 @@ CREATE TABLE Subjects(
 	subjectName NVARCHAR(255),
 	Semester int,
 	NoCredit int,
-	PreRequisite NVARCHAR(255)
+    isActive bit DEFAULT 1
+);
+
+
+CREATE TABLE PreRequisite(
+	PreID INT auto_increment PRIMARY KEY,
+    subjectCode NVARCHAR(20),
+    subjectPre text
 );
 
 
@@ -75,8 +84,8 @@ CREATE TABLE Syllabus(
 	SubjectCode NVARCHAR(20),
 	SubjectNameEN NVARCHAR(255),
 	SubjectNameVN NVARCHAR(255),
-	IsActive bit,
-	IsApproved bit,
+	IsActive bit DEFAULT 1,
+	IsApproved bit DEFAULT 1,
 	DecisionNo NVARCHAR(30),
 	NoCredit int,
 	DegreeLevel NVARCHAR(255),
@@ -88,6 +97,7 @@ CREATE TABLE Syllabus(
 	Note TEXT,
 	MinAvgMarkToPass int,
 	ApprovedDate date,
+    PreRequisite text,
     Primary KEY (syllabusID)
 );
 
@@ -102,6 +112,7 @@ CREATE TABLE Feedback(
     syllabusID INT not null,
     title nvarchar(255),
     content text,
+    isActive bit DEFAULT 1,
     Primary key(fbID)
 );
 
@@ -119,6 +130,7 @@ CREATE TABLE Material(
 	IsHardCopy NVARCHAR(255),
 	IsOnline NVARCHAR(255),
 	Note TEXT,
+    isActive bit DEFAULT 1,
 	primary key(MaterialID, SyllabusID)
 );
 
@@ -172,7 +184,8 @@ CREATE TABLE PO(
 	CurciculumPOID int AUTO_INCREMENT primary key,
 	CurriculumCode NVARCHAR(20),
 	POName NVARCHAR(255),
-	PODescription TEXT
+	PODescription TEXT,
+    isActive bit DEFAULT 1
 );
 
 
@@ -180,13 +193,15 @@ CREATE TABLE PLO(
 	PLOID int AUTO_INCREMENT primary key,
 	CurriculumCode NVARCHAR(20),
 	PLOName NVARCHAR(255),
-	PLODescription TEXT
+	PLODescription TEXT,
+    isActive bit DEFAULT 1
 );
 
 
 CREATE TABLE Combo(
 	ComboID int AUTO_INCREMENT primary key,
 	ComboName NVARCHAR(255),
+    isActive bit DEFAULT 1,
 	note TEXT
 );
 
@@ -199,12 +214,14 @@ CREATE TABLE ComboSubject(
 CREATE TABLE Elective(
 	ElectiveID int AUTO_INCREMENT,
 	ElectiveName NVARCHAR(255),
+    isActive bit DEFAULT 1,
     PRIMARY KEY(ElectiveID)
 );
 
 
 
 
+ALTER TABLE PreRequisite add constraint fk_prerequisite foreign key (subjectCode) references Subjects(subjectCode);
 
 ALTER TABLE Feedback 
 ADD CONSTRAINT fk_account foreign key(accountID) references account(accountID),
@@ -222,6 +239,7 @@ ALTER TABLE Curriculum add constraint fk_majorCurriculum foreign key (majorID) r
 
 ALTER TABLE ConstructiveQuestion add constraint fk_questionsession foreign key (SessionID) references Session(SessionID);
 
+ALTER TABLE Curriculum add constraint fk_decision_curriculum foreign key (DecisionNo) references Decision(DecisionNo);
 
 ALTER TABLE Material add constraint fk_syllabusmaterial foreign key (SyllabusID) references syllabus(SyllabusID);
 
@@ -278,31 +296,33 @@ VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trả
         (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022/08/05', N'', '2022/08/05', 1, '');
 
 
+
+
+
 INSERT INTO `swp391`.`subjects`
 (`SubjectCode`,
 `subjectName`,
 `Semester`,
-`NoCredit`,
-`PreRequisite`)
+`NoCredit`)
 VALUES
-('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','0','0','None'),
-('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3','None'),
-('VDP201','Video Production_Sản xuất Video','4','3','None'),
-('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3','None'),
-('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3','None'),
-('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3','None'),
-('MGT103','Introduction to Management_Nhập môn quản lý','1','3','None'),
-('MKT101','Marketing Principles_Nguyên lý Marketing','1','3','None'),
-('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3',''),
-('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3','None'),
-('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3','None'),
-('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3','None'),
-('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3','DTG111'),
-('MMP201','Media Psychology_Tâm lý học truyền thông','2','3','None'),
-('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3','None'),
-('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3',''),
-('MKT208c','Social media marketing_Marketing mạng xã hội','3','3','MKT101'),
-('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3','MKT101');
+('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','6','0'),
+('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3'),
+('VDP201','Video Production_Sản xuất Video','4','3'),
+('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3'),
+('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3'),
+('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3'),
+('MGT103','Introduction to Management_Nhập môn quản lý','1','3'),
+('MKT101','Marketing Principles_Nguyên lý Marketing','1','3'),
+('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3'),
+('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3'),
+('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3'),
+('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3'),
+('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3'),
+('MMP201','Media Psychology_Tâm lý học truyền thông','2','3'),
+('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3'),
+('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3'),
+('MKT208c','Social media marketing_Marketing mạng xã hội','3','3'),
+('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3');
 INSERT INTO `swp391`.`syllabus`
 (`SubjectCode`,
 `SubjectNameEN`,
@@ -321,135 +341,135 @@ INSERT INTO `swp391`.`syllabus`
 `MinAvgMarkToPass`,
 `ApprovedDate`)
 VALUES
-('OTP101','Orientaiton and General Training Program','Định hướng và Rèn luyện tập trung',1,1,'',0,'	Bachelor',':5 weeks (fulltime) = 280h
-* Module 1: Orientation-Định hướng
-(1 week: 8h/day * 5 days = 40h)
-* Module 2: Military Training-Giáo dục quốc phòng
-(110 slots * 1.5h/slot = 165h)
-* Module 3: Experience Program
-22 slots * 1.5h = 33 h
-* Module 4: Vovinam
-28 slots * 1,5h/slot = 42h','Orientation and general training program includes 4 modules :
-* Module 1: Orientation
-Main activities of this module are:
-- Organizing the opening ceremony for students.
-- Organizing health check amd making students''cards.
-- Arranging classes for students and organizing class meeting.
-- Introducing to students about FPT corporation, FPT university, functional departments, training regulations and how to use information systems to support students'' learning.
-- Sharing study skills for university students.
-- Sharing about topics related to community activities. ( For example: activities towards sustainable development, volunteering activities...)
-* Module 2: Military training the program prescribed by the Ministry of Education and Training.
-Implementing the program prescribed by the Ministry of Education and Training.
-* Module 3: Experience program
-Main activities of this module are:
-- Organizing research and review memoirs.
-- Organizing seminars
-- Organizing experiential activities for students (Towards sustainable development and volunteering for the community)
-* Module 4: Vovinam
-Follow the outline VOV114.
-Objectives of orientation and training program are:
-1) Instruct students to complete procedures before a new semester.
-2) Provide students with knowledge about FPT corporation, FPT university and functional departments which support students during the period of study at the university.
-3) Introduce to students about Curriculum, FU training model and regulations as well as how to use information systems to enable students to adapt new learning environment.
-4) Educate students the fundamentals of military and national security, build and enrich patriotism, national pride through history lessons, seminars, documentaries, field trips to military bases and memoirs about two prolonged resistance wars of Viet Nam.
-5) Train the willpower and improve physical strengths, fitness and sense of responsibilities through physical education lessons and combat practice in the field.
-6) Train team spirit, disciplines, shape good attitude and behaviors towards friends, teachers and educational environment.
+('OTP101','Orientaiton and General Training Program','Định hướng và Rèn luyện tập trung',1,1,'',0,'	Bachelor',':5 weeks (fulltime) = 280h<br/>
+* Module 1: Orientation-Định hướng<br/>
+(1 week: 8h/day * 5 days = 40h)<br/>
+* Module 2: Military Training-Giáo dục quốc phòng<br/>
+(110 slots * 1.5h/slot = 165h)<br/>
+* Module 3: Experience Program<br/>
+22 slots * 1.5h = 33 h<br/>
+* Module 4: Vovinam<br/>
+28 slots * 1,5h/slot = 42h','Orientation and general training program includes 4 modules :<br/>
+* Module 1: Orientation<br/>
+Main activities of this module are:<br/>
+- Organizing the opening ceremony for students.<br/>
+- Organizing health check amd making students''cards.<br/>
+- Arranging classes for students and organizing class meeting.<br/>
+- Introducing to students about FPT corporation, FPT university, functional departments, training regulations and how to use information systems to support students'' learning.<br/>
+- Sharing study skills for university students.<br/>
+- Sharing about topics related to community activities. ( For example: activities towards sustainable development, volunteering activities...)<br/>
+* Module 2: Military training the program prescribed by the Ministry of Education and Training.<br/>
+Implementing the program prescribed by the Ministry of Education and Training.<br/>
+* Module 3: Experience program<br/>
+Main activities of this module are:<br/>
+- Organizing research and review memoirs.<br/>
+- Organizing seminars<br/>
+- Organizing experiential activities for students (Towards sustainable development and volunteering for the community)<br/>
+* Module 4: Vovinam<br/>
+Follow the outline VOV114.<br/>
+Objectives of orientation and training program are:<br/>
+1) Instruct students to complete procedures before a new semester.<br/>
+2) Provide students with knowledge about FPT corporation, FPT university and functional departments which support students during the period of study at the university.<br/>
+3) Introduce to students about Curriculum, FU training model and regulations as well as how to use information systems to enable students to adapt new learning environment.<br/>
+4) Educate students the fundamentals of military and national security, build and enrich patriotism, national pride through history lessons, seminars, documentaries, field trips to military bases and memoirs about two prolonged resistance wars of Viet Nam.<br/>
+5) Train the willpower and improve physical strengths, fitness and sense of responsibilities through physical education lessons and combat practice in the field.<br/>
+6) Train team spirit, disciplines, shape good attitude and behaviors towards friends, teachers and educational environment.<br/>
 7) Enhance student experiences with extra-curricular activities. Strengthen the sense of community through community and volunteering activities and the ones towards the sustainable development.',
 'Attend enough activities of the university.','',10,'Min to pass: Students must pass the examination and achieve the Military training certificate',0,'2022-12-22'),
 ('SSG103','Communication and In-group working skills','',1,1,'378/QĐ-ĐHFPT',3,'','30 sessions, 1 session = 90 minutes','This course will cover both working in groups and communication skills.
-Assessment structure:
-* On-going Assessment:
-- Activity: 10%
-- Quiz: 15%
-- Group Assignment : 15%
-- Group Project : 30%
-* Final Exam: 30%
-* Completion Criteria: Every on-going assessment component > 0, Final Exam >=4, Final Result >=5','- Attend more than 80% of contact hours in order to be accepted to the final examination
-- Actively participate in class activities
-- Fulfill tasks given by instructor after class
-- Use their own laptop in class only for learning purpose
-- Read the textbook in advance
+Assessment structure:<br/>
+* On-going Assessment:<br/>
+- Activity: 10%<br/>
+- Quiz: 15%<br/>
+- Group Assignment : 15%<br/>
+- Group Project : 30%<br/>
+* Final Exam: 30%<br/>
+* Completion Criteria: Every on-going assessment component > 0, Final Exam >=4, Final Result >=5','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
+- Actively participate in class activities<br/>
+- Fulfill tasks given by instructor after class<br/>
+- Use their own laptop in class only for learning purpose<br/>
+- Read the textbook in advance<br/>
 - Access the course website (www.cms.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','- Internet
 - PDF reader',10,'',5,'2021-2-4'),
-('EAW211','English Academic Writing 1','Viết học thuật tiếng Anh 1',1,1,'295/QĐ-ĐHFPT',3,'Advanced','Study hour (150h) = 45 contact hours (60 sessions) + 1 hour final exam + 104 hours self-study','Advance in Academic Writing helps students write assignments in academic English. Advance integrates active and critical reading, critical thinking, academic vocabulary building, academic writing style, and effective sentence structure and grammar around authentic academic texts. As students respond to these texts, they are taken through the research and writing processes they will need to master to succeed in their respective fields of study.','- Attend more than 80% of contact hours in order to be accepted to the final examination
-- Actively participate in class activities
-- Fulfil tasks given by instructor after class
-- Use their own laptop in class only for learning purpose
+('EAW211','English Academic Writing 1','Viết học thuật tiếng Anh 1',1,1,'295/QĐ-ĐHFPT',3,'Advanced','Study hour (150h) = 45 contact hours (60 sessions) + 1 hour final exam + 104 hours self-study','Advance in Academic Writing helps students write assignments in academic English. Advance integrates active and critical reading, critical thinking, academic vocabulary building, academic writing style, and effective sentence structure and grammar around authentic academic texts. As students respond to these texts, they are taken through the research and writing processes they will need to master to succeed in their respective fields of study.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
+- Actively participate in class activities<br/>
+- Fulfil tasks given by instructor after class<br/>
+- Use their own laptop in class only for learning purpose<br/>
 - Access the course website (http://cms.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','Tools: Foxit pdf editor
-Internet access',10,'1) On-going assessment
-- Assignments 04*15% 60%
-2) Final Examination (FE) 40%
-3) Final Result 100%
-4) Completion Criteria:
+Internet access',10,'1) On-going assessment<br/>
+- Assignments 04*15% 60%<br/>
+2) Final Examination (FE) 40%<br/>
+3) Final Result 100%<br/>
+4) Completion Criteria:<br/>
 On-going assessment >0, Final Exam Score >=4/10 & Final Result >=5/10',5,'2022-12-22'),
 ('VDP201','Video Production','Sản xuất video',1,1,'295/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h)
 = 45h contact hours + 105h self-study','This practicum course is designed to give students the opportunity to apply theoretical knowledge learned before to actual multimedia production situations. This course incorporates in its approach a combination of applied media aesthetics theory and hands-on production experience in Video production. Students will gain a foundation for understanding media production theory, facilitating video production processes as well as creating and evaluating media products relating to a particular issue set by the course lecturer. A component of the course will permit the introduction of current topics such as media issues, professional video production techniques, changing media technology, and job market information.','-Attend more than 80% of contact hours in order to be accepted to the final examination','',10,'',5,'2022-12-22'),
 ('DTG111','Visual Design Tools 2D','Công cụ thiết kế trực quan 1',1,1,'870/QĐ-ĐHFPT',3,'Bachelor','Study hour (150h)
 = 45h contact hours + 105h self-study','The course empowerC14ommon Adobe 2D tools for Multimedia designers, which are Illustrator, Photoshop, InDesign and Xd, so that they can finalize their 2D designs better and able to deliver completed professional product to customers
-Through practical assignments, students have chances to apply knowledge on colors, typography etc. in other courses along with computers and other tools to creaate graphic applications.','- Read textbook and install software before coming to class
-- Complete assignments in class, submit online thoughout LMS or Classroom platform.
-- Frequently visit fap, LMS or Google classroom for update instrucions and requirements.
-- Actively participate into class, review and comments to classmate works, ask instructor questions, bring into class everyday samples for references.
-- Complete homework and other requirements by instructors
-- Using laptop in class only for taking note, research and doing assignment purposes
-- No talking, surfing, chatting, gaming, facebooking, using phone etc. while the teacher giving instruction.
-- Present at least 80% class attendance in order to pass the course.','1. The school prepare: (Installed)
-- Classroom with chairs, desks, large monitor with HDMI connection for demo/presentation
+Through practical assignments, students have chances to apply knowledge on colors, typography etc. in other courses along with computers and other tools to creaate graphic applications.','- Read textbook and install software before coming to class<br/>
+- Complete assignments in class, submit online thoughout LMS or Classroom platform.<br/>
+- Frequently visit fap, LMS or Google classroom for update instrucions and requirements.<br/>
+- Actively participate into class, review and comments to classmate works, ask instructor questions, bring into class everyday samples for references.<br/>
+- Complete homework and other requirements by instructors<br/>
+- Using laptop in class only for taking note, research and doing assignment purposes<br/>
+- No talking, surfing, chatting, gaming, facebooking, using phone etc. while the teacher giving instruction.<br/>
+- Present at least 80% class attendance in order to pass the course.','1. The school prepare: (Installed)<br/>
+- Classroom with chairs, desks, large monitor with HDMI connection for demo/presentation<br/>
 
-2. Student prepare:
-- Note/Sketchbooks, pens and pencils
+2. Student prepare:<br/>
+- Note/Sketchbooks, pens and pencils<br/>
 - Laptop for graphic design with Adobe Photoshop, Illustrator, Indesign and Xd installed',10,'',5,'2022-8-17'),
 ('MED201','New Media Technology','Các loại hình Truyền thông đương đại',1,1,'1485/QĐ-ĐH-FPT',3,'Bachelor','	Study hour (150h)
-= 45h contact hours + 1h final exam + 104h self-study','Description: This course will give you a thorough explanation of how media technologies develop, operate, converge, and affect society in order to think critically about the media and its effects on culture. It provides a comprehensive introduction to today''s global media environment and the ongoing developments in technology, culture, and critical theory that continue to transform this rapidly evolving industry and affect your everyday life. Our emphasis is on the social relations of power and connectivity that are shaped by new media as practices of communication. Specific topics that will be explored include: the latest developments and trends in social media, e-publishing, policy changes for Internet governance, online privacy protection, online ad exchanges, the changing video game industry, and much more. By studying this course, students will develop knowledge and skills in creative thinking, communication, collaboration, planning, critical analysis, and digital and ethical citizenship.
-Teaching methods: Direct Instruction, Inquiry-based Learning, Cooperative Learning, Case Study Analysis','- Students must attend more than 80% of contact slots in order to be accepted to the final examination.
-- Student is responsible to do all exercises, assignments and labs given by instructor in class or at home and submit on time
-- Use laptop in class only for learning purpose','- Textbook
+= 45h contact hours + 1h final exam + 104h self-study','Description: This course will give you a thorough explanation of how media technologies develop, operate, converge, and affect society in order to think critically about the media and its effects on culture. It provides a comprehensive introduction to today''s global media environment and the ongoing developments in technology, culture, and critical theory that continue to transform this rapidly evolving industry and affect your everyday life. Our emphasis is on the social relations of power and connectivity that are shaped by new media as practices of communication. Specific topics that will be explored include: the latest developments and trends in social media, e-publishing, policy changes for Internet governance, online privacy protection, online ad exchanges, the changing video game industry, and much more. By studying this course, students will develop knowledge and skills in creative thinking, communication, collaboration, planning, critical analysis, and digital and ethical citizenship.<br/>
+Teaching methods: Direct Instruction, Inquiry-based Learning, Cooperative Learning, Case Study Analysis','- Students must attend more than 80% of contact slots in order to be accepted to the final examination.<br/>
+- Student is responsible to do all exercises, assignments and labs given by instructor in class or at home and submit on time<br/>
+- Use laptop in class only for learning purpose','- Textbook<br/>
 - Computer',10,'',5,'2022-12-22'),
-('MGT103','Introduction to Management','Nhập môn quản lý',1,1,'1485/QĐ-ĐH-FPT',3,'Bachelor','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','The course explores and focuses around the managerial functions of management, including planning, organizing, leading and controlling. The course is designed to provide basic knowledge and skills required in management and give students a comprehensive insight into human relations componnents that characterise any managerial roles, regardless of industry or functions. Various aspects of management theories will be examined and linked to current management practice in the world and Vietnam. Learning in the class will be facilitated through the use of interactive tools such as group exercise, case study discussion, role-play/activities, and projects.','- Attend more than 80% of contact hours in order to be accepted to the final examination
-- Actively participate in class activities- Fulfill tasks given by instructor after class
-- Use their own laptop in class only for learning purpose
+('MGT103','Introduction to Management','Nhập môn quản lý',1,1,'1485/QĐ-ĐH-FPT',3,'Bachelor','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','The course explores and focuses around the managerial functions of management, including planning, organizing, leading and controlling. The course is designed to provide basic knowledge and skills required in management and give students a comprehensive insight into human relations componnents that characterise any managerial roles, regardless of industry or functions. Various aspects of management theories will be examined and linked to current management practice in the world and Vietnam. Learning in the class will be facilitated through the use of interactive tools such as group exercise, case study discussion, role-play/activities, and projects.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
+- Actively participate in class activities- Fulfill tasks given by instructor after class<br/>
+- Use their own laptop in class only for learning purpose<br/>
 - Read the textbook in advance','',10,'',5,'2022-12-22'),
-('MKT101','Marketing Principles','Nguyên lý Marketing',1,1,'1009/QĐ-ĐHFPT dated 01/09/2021',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','	The course is designed to provide students with a strong foundation in marketing based on five key activities: (1) identifying customer needs, (2) providing customers with the right products or service to meet their needs, (3) assuring availability to customers through the right distribution channels, (4) using promotional activities in ways that motivate purchase as effectively as possible, (5) setting an appropriate price that maximizes firm profitability while maintaining customer satisfaction.','- Attend more than 80% of contact hours in order to be accepted to the final examination
-- Actively participate in class activities
-- Fulfill tasks given by instructor after class
-- Use their own laptop in class only for learning purpose
-- Read the textbook in advance
+('MKT101','Marketing Principles','Nguyên lý Marketing',1,1,'1009/QĐ-ĐHFPT dated 01/09/2021',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','	The course is designed to provide students with a strong foundation in marketing based on five key activities: (1) identifying customer needs, (2) providing customers with the right products or service to meet their needs, (3) assuring availability to customers through the right distribution channels, (4) using promotional activities in ways that motivate purchase as effectively as possible, (5) setting an appropriate price that maximizes firm profitability while maintaining customer satisfaction.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
+- Actively participate in class activities<br/>
+- Fulfill tasks given by instructor after class<br/>
+- Use their own laptop in class only for learning purpose<br/>
+- Read the textbook in advance<br/>
 - Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-12-22'),
-('WDU203c','UI/UX Design','Thiết kế trải nghiệm người dùng',1,1,'1341/QĐ-ĐHFPT dated 22/11/2021',3,'Bachelor','Online: 84 hours+6 slot offline','	Integrate UX Research and UX Design to create great products through understanding user needs, rapidly generating prototypes, and evaluating design concepts. Students will gain hands-on experience with taking a product from initial concept, through user research, ideation and refinement, formal analysis, prototyping, and user testing, applying perspectives and methods to ensure a great user experience at every step. This course concludes with a capstone project, in which learners will incorporate UX Research and Design principles to design a complete product, taking it from an initial concept to an interactive prototype.','1. Complete the online courses and get all specialization certifications to be allowed to take Final Exam
-2. Final Exam included Final Theory Exam (TE): 100%
-3. Student gets 0.165 bonus points for each course completed on time.
+('WDU203c','UI/UX Design','Thiết kế trải nghiệm người dùng',1,1,'1341/QĐ-ĐHFPT dated 22/11/2021',3,'Bachelor','Online: 84 hours+6 slot offline','	Integrate UX Research and UX Design to create great products through understanding user needs, rapidly generating prototypes, and evaluating design concepts. Students will gain hands-on experience with taking a product from initial concept, through user research, ideation and refinement, formal analysis, prototyping, and user testing, applying perspectives and methods to ensure a great user experience at every step. This course concludes with a capstone project, in which learners will incorporate UX Research and Design principles to design a complete product, taking it from an initial concept to an interactive prototype.','1. Complete the online courses and get all specialization certifications to be allowed to take Final Exam<br/>
+2. Final Exam included Final Theory Exam (TE): 100%<br/>
+3. Student gets 0.165 bonus points for each course completed on time.<br/>
 4. Completion Criteria: Final TE Score >=4 & (Final TE Score + bonus) >= 5','- Internet',10,'',5,'2021-11-22'),
-('SSL101c','Academic Skills for University Success','Kỹ năng học tập ở Đại học',1,1,'1009/QĐ-ĐHFPT',3,'Bachelor','42 hours online + 9hrs offline (6 slots) + 1hr exam','Upon finishing the course, students can:
-1) Knowledge: Understand
-- Method to develop your Information & Digital Literacy Skills
-- Method to develop your Problem Solving and Creativity Skills
-- How to develop your Critical Thinking Skills
-- How to develop your Communication Skills
-2) Able to (ABET)
-- Access, search, filter, manage and organize Information by using a variety of digital tools, from wide variety of source for use in academic study.
-- Critically evaluate the reliability of sources and use digital tools for referencing in order to avoid plagiarism.
-- Demonstrate awareness of ethical issues related to academic integrity surrounding the access and use of information
-- Develop a toolkit to be able to identify real problems and goals within ill-defined problem & Recognize and apply analytical & creative problem solving technique
-- Use a variety of thinking tools to improve critical thinking
-- Identify types of argument, and bias within arguments
-- Demonstrate, negotiate, and further understanding through spoken, written, visual, and conversational modes
-- Effectively formulate arguments and communicate research findings through the process of researching, composing, and editing
-3) Others: (ABET)
-- Improve study skills (academic reading, information searching, ...)','1. Join the online course (spec.) when being invited by the admin.
-2. Enroll in each MOOC of spec., regularly study MOOCs at least 5hrs/week by watching videos, reading materials, taking quizzes, doing assignments... as required
-3. Respect the Coursera Code of Conduct, at https://learner.coursera.help/hc/en-us/articles/208280036-Coursera-Code-of-Conduct
-3. Keep online learning progress promptly (bonus will be awarded)
-4. Communicate and discuss in forum
-5. Attend off-line sessions in the Campus (Optional)
-6. Must complete all MOOCs of spec. with certification in order to take the Final Exam at Campus','Online Spec. https://www.coursera.org/specializations/academic-skills; University of Sydney, including:
-- MOOC1: Introduction to Information & Digital Literacy for University Success , https://www.coursera.org/learn/digital-literacy/home/welcome
-- MOOC2: Introduction to Problem-Solving Skill for University Success, https://www.coursera.org/learn/problem-solving-skills/home/welcome
-- MOOC3: Critical Thinking Skills for University Success, https://www.coursera.org/learn/critical-thinking-skills/home/welcome
-- MOOC4: Communication Skills for University Success, https://www.coursera.org/learn/communication-skills/home/welcome
-- MOOC5: Academic Skills for University Success: Capstone, https://www.coursera.org/learn/academic-skills-project/home/welcome',10,'1) Ongoing assessment:
-Student gets 0.2 bonus points for each course completed on time. The total bonus point is not greater than 1.
-2) Theoretical Exam (TE)
-3) Final Result (FR) =min (10, TE + Bonus)
+('SSL101c','Academic Skills for University Success','Kỹ năng học tập ở Đại học',1,1,'1009/QĐ-ĐHFPT',3,'Bachelor','42 hours online + 9hrs offline (6 slots) + 1hr exam','Upon finishing the course, students can:<br/>
+1) Knowledge: Understand<br/>
+- Method to develop your Information & Digital Literacy Skills<br/>
+- Method to develop your Problem Solving and Creativity Skills<br/>
+- How to develop your Critical Thinking Skills<br/>
+- How to develop your Communication Skills<br/>
+2) Able to (ABET)<br/>
+- Access, search, filter, manage and organize Information by using a variety of digital tools, from wide variety of source for use in academic study.<br/>
+- Critically evaluate the reliability of sources and use digital tools for referencing in order to avoid plagiarism.<br/>
+- Demonstrate awareness of ethical issues related to academic integrity surrounding the access and use of information<br/>
+- Develop a toolkit to be able to identify real problems and goals within ill-defined problem & Recognize and apply analytical & creative problem solving technique<br/>
+- Use a variety of thinking tools to improve critical thinking<br/>
+- Identify types of argument, and bias within arguments<br/>
+- Demonstrate, negotiate, and further understanding through spoken, written, visual, and conversational modes<br/>
+- Effectively formulate arguments and communicate research findings through the process of researching, composing, and editing<br/>
+3) Others: (ABET)<br/>
+- Improve study skills (academic reading, information searching, ...)','1. Join the online course (spec.) when being invited by the admin.<br/>
+2. Enroll in each MOOC of spec., regularly study MOOCs at least 5hrs/week by watching videos, reading materials, taking quizzes, doing assignments... as required<br/>
+3. Respect the Coursera Code of Conduct, at https://learner.coursera.help/hc/en-us/articles/208280036-Coursera-Code-of-Conduct<br/>
+3. Keep online learning progress promptly (bonus will be awarded)<br/>
+4. Communicate and discuss in forum<br/>
+5. Attend off-line sessions in the Campus (Optional)<br/>
+6. Must complete all MOOCs of spec. with certification in order to take the Final Exam at Campus','Online Spec. https://www.coursera.org/specializations/academic-skills; University of Sydney, including:<br/>
+- MOOC1: Introduction to Information & Digital Literacy for University Success , https://www.coursera.org/learn/digital-literacy/home/welcome<br/>
+- MOOC2: Introduction to Problem-Solving Skill for University Success, https://www.coursera.org/learn/problem-solving-skills/home/welcome<br/>
+- MOOC3: Critical Thinking Skills for University Success, https://www.coursera.org/learn/critical-thinking-skills/home/welcome<br/>
+- MOOC4: Communication Skills for University Success, https://www.coursera.org/learn/communication-skills/home/welcome<br/>
+- MOOC5: Academic Skills for University Success: Capstone, https://www.coursera.org/learn/academic-skills-project/home/welcome',10,'1) Ongoing assessment:<br/>
+Student gets 0.2 bonus points for each course completed on time. The total bonus point is not greater than 1.<br/>
+2) Theoretical Exam (TE)<br/>
+3) Final Result (FR) =min (10, TE + Bonus)<br/>
 4) Completion Criteria: TE>=4 and FR>=5',5,'2022-11-24'),
 ('ACC101','Principles of Accounting','Nguyên lý kế toán',1,1,'870/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','Main objectives:
 <br>Upon completion of this course, students should:
@@ -560,6 +580,30 @@ Note: Student gets 0.165 bonus points for each course completed on time.','Acces
 - Use their own laptop in class only for learning purpose
 - Read the textbook in advance
 - Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17');
+
+
+INSERT INTO `swp391`.`prerequisite`
+(`subjectCode`,
+`subjectPre`)
+VALUES
+('OTP101', ''),
+('EAW211', ''),
+('VDP201', ''),
+('SSG103', ''),
+('DTG111', ''),
+('MED201', ''),
+('MGT103', ''),
+('MKT101', ''),
+('WDU203c', ''),
+('SSL101c', ''),
+('CMC201c', ''),
+('DTG121', ''),
+('MMP201', ''),
+('SSG104', ''),
+('CCO201', ''),
+('MKT208c', ''),
+('MKT304', '');
+
 
 INSERT INTO `swp391`.`majors`
 (
@@ -1755,6 +1799,137 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
 
 Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.');
+
+INSERT INTO `swp391`.`curriculumsubject`
+(`CurriculumCode`,
+`SubjectCode`)
+VALUES
+('BBA_MC_K16C','OTP101'),
+('BBA_MC_K16C','ACC101'),
+('BBA_MC_K16C','SSG104'),
+('BBA_MC_K16C','CCO201'),
+('BBA_MC_K16C','MED201'),
+('BBA_MC_K16C','MKT304'),
+('BBA_MC_K16C','MKT208c'),
+('BBA_MC_K16C','MKT101'),
+('BBA_MC_K16C','VDP201'),
+('BBA_MC_K16C','DTG111'),
+('BBA_MC_K16C','WDU203c'),
+('BBA_MC_K16C','DTG121'),
+('BIT_SE_K16B','OTP101'),
+('BIT_SE_K16B','ACC101'),
+('BIT_SE_K16B','SSG104'),
+('BIT_SE_K16B','CCO201'),
+('BIT_SE_K16B','MED201'),
+('BIT_SE_K16B','MKT304'),
+('BIT_SE_K16B','MKT208c'),
+('BIT_SE_K16B','MKT101'),
+('BIT_SE_K16B','VDP201'),
+('BIT_SE_K16B','DTG111'),
+('BIT_SE_K16B','WDU203c'),
+('BIT_SE_K16B','DTG121'),
+('BIT_SE_K16C','OTP101'),
+('BIT_SE_K16C','ACC101'),
+('BIT_SE_K16C','SSG104'),
+('BIT_SE_K16C','CCO201'),
+('BIT_SE_K16C','MED201'),
+('BIT_SE_K16C','MKT304'),
+('BIT_SE_K16C','MKT208c'),
+('BIT_SE_K16C','MKT101'),
+('BIT_SE_K16C','VDP201'),
+('BIT_SE_K16C','DTG111'),
+('BIT_SE_K16C','WDU203c'),
+('BIT_SE_K16C','DTG121'),
+('BBA_MKT_K16C','OTP101'),
+('BBA_MKT_K16C','ACC101'),
+('BBA_MKT_K16C','SSG104'),
+('BBA_MKT_K16C','CCO201'),
+('BBA_MKT_K16C','MED201'),
+('BBA_MKT_K16C','MKT304'),
+('BBA_MKT_K16C','MKT208c'),
+('BBA_MKT_K16C','MKT101'),
+('BBA_MKT_K16C','VDP201'),
+('BBA_MKT_K16C','DTG111'),
+('BBA_MKT_K16C','WDU203c'),
+('BBA_MKT_K16C','DTG121'),
+('BBA_MC_K16B','OTP101'),
+('BBA_MC_K16B','ACC101'),
+('BBA_MC_K16B','SSG104'),
+('BBA_MC_K16B','CCO201'),
+('BBA_MC_K16B','MED201'),
+('BBA_MC_K16B','MKT304'),
+('BBA_MC_K16B','MKT208c'),
+('BBA_MC_K16B','MKT101'),
+('BBA_MC_K16B','VDP201'),
+('BBA_MC_K16B','DTG111'),
+('BBA_MC_K16B','WDU203c'),
+('BBA_TM_K16B','OTP101'),
+('BBA_TM_K16B','ACC101'),
+('BBA_TM_K16B','SSG104'),
+('BBA_TM_K16B','CCO201'),
+('BBA_TM_K16B','MED201'),
+('BBA_TM_K16B','MKT304'),
+('BBA_TM_K16B','MKT208c'),
+('BBA_TM_K16B','MKT101'),
+('BBA_TM_K16B','VDP201'),
+('BBA_TM_K16B','DTG111'),
+('BBA_TM_K16B','WDU203c'),
+('BBA_TM_K16C','OTP101'),
+('BBA_TM_K16C','ACC101'),
+('BBA_TM_K16C','SSG104'),
+('BBA_TM_K16C','CCO201'),
+('BBA_TM_K16C','MED201'),
+('BBA_TM_K16C','MKT304'),
+('BBA_TM_K16C','MKT208c'),
+('BBA_TM_K16C','MKT101'),
+('BBA_TM_K16C','VDP201'),
+('BBA_TM_K16C','DTG111'),
+('BBA_TM_K16C','WDU203c'),
+('BIT_GD_K16B','OTP101'),
+('BIT_GD_K16B','ACC101'),
+('BIT_GD_K16B','SSG104'),
+('BIT_GD_K16B','CCO201'),
+('BIT_GD_K16B','MED201'),
+('BIT_GD_K16B','MKT304'),
+('BIT_GD_K16B','MKT208c'),
+('BIT_GD_K16B','MKT101'),
+('BIT_GD_K16B','VDP201'),
+('BIT_GD_K16B','DTG111'),
+('BIT_GD_K16B','WDU203c'),
+('BIT_GD_K16C','OTP101'),
+('BIT_GD_K16C','ACC101'),
+('BIT_GD_K16C','SSG104'),
+('BIT_GD_K16C','CCO201'),
+('BIT_GD_K16C','MED201'),
+('BIT_GD_K16C','MKT304'),
+('BIT_GD_K16C','MKT208c'),
+('BIT_GD_K16C','MKT101'),
+('BIT_GD_K16C','VDP201'),
+('BIT_GD_K16C','DTG111'),
+('BIT_GD_K16C','WDU203c'),
+('BBA_FIN_K16B','OTP101'),
+('BBA_FIN_K16B','ACC101'),
+('BBA_FIN_K16B','SSG104'),
+('BBA_FIN_K16B','CCO201'),
+('BBA_FIN_K16B','MED201'),
+('BBA_FIN_K16B','MKT304'),
+('BBA_FIN_K16B','MKT208c'),
+('BBA_FIN_K16B','MKT101'),
+('BBA_FIN_K16B','VDP201'),
+('BBA_FIN_K16B','DTG111'),
+('BBA_FIN_K16B','WDU203c'),
+('BBA_FIN_K16C','OTP101'),
+('BBA_FIN_K16C','ACC101'),
+('BBA_FIN_K16C','SSG104'),
+('BBA_FIN_K16C','CCO201'),
+('BBA_FIN_K16C','MED201'),
+('BBA_FIN_K16C','MKT304'),
+('BBA_FIN_K16C','MKT208c'),
+('BBA_FIN_K16C','MKT101'),
+('BBA_FIN_K16C','VDP201'),
+('BBA_FIN_K16C','DTG111'),
+('BBA_FIN_K16C','WDU203c');
+
 
 
 
