@@ -1,9 +1,3 @@
-<%-- 
-    Document   : syllabus-list
-    Created on : Jan 31, 2023, 1:31:19 AM
-    Author     : tient
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>

@@ -69,12 +69,12 @@
                         <div class="topbar-right">
                             <ul>
                                 <c:if test="${account == null}">
-                                <li><a href="login">Login</a></li>
-                                <li><a href="register">Register</a></li>
+                                <li><a href="home?action=login">Login</a></li>
+                                <li><a href="home?action=register">Register</a></li>
                                 </c:if>
                                 <c:if test="${account != null}">
                                 <li><a href="profile">${account.displayName}</a></li>
-                                <li><a href="logout">Logout</a></li>
+                                <li><a href="home?action=logout">Logout</a></li>
                                 </c:if>
                             </ul>
                         </div>

@@ -78,54 +78,65 @@ public class ProfileServletController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        int gender = Integer.parseInt(request.getParameter("gender"));
-        String birthday_raw = request.getParameter("birthday");
-        String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
-        HttpSession session = request.getSession();
-        Account a = (Account) session.getAttribute("account");
+        String action = request.getParameter("action");
+        if (action.equalsIgnoreCase("profile")) {
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            int gender = Integer.parseInt(request.getParameter("gender"));
+            String birthday_raw = request.getParameter("birthday");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            HttpSession session = request.getSession();
+            Account a = (Account) session.getAttribute("account");
 
-        Part filePart = request.getPart("avatar");
-        String fileName = filePart.getSubmittedFileName();
-        String realPart = request.getServletContext().getRealPath("/images");
-        if(!Files.exists(Paths.get(realPart))){
-            Files.createDirectories(Paths.get(realPart));
+            Part filePart = request.getPart("avatar");
+            String fileName = filePart.getSubmittedFileName();
+            String realPart = request.getServletContext().getRealPath("/images");
+            if (!Files.exists(Paths.get(realPart))) {
+                Files.createDirectories(Paths.get(realPart));
+            }
+            filePart.write(realPart + "/" + fileName);
+            a.setAvatar(fileName);
+
+            if (!a.getFirstName().equals(firstName) && firstName != null) {
+                a.setFirstName(firstName);
+            }
+
+            if (!a.getLastName().equals(lastName) && lastName != null) {
+                a.setLastName(lastName);
+            }
+
+            if (birthday_raw != null) {
+                a.setBirthday(Date.valueOf(birthday_raw));
+            }
+
+            if (a.getGender() != gender) {
+                a.setGender(gender);
+            }
+
+            if (phone != null) {
+                a.setPhone(phone);
+            }
+
+            if (address != null) {
+                a.setAddress(address);
+            }
+
+            AccountDAO adao = new AccountDAO();
+            adao.editProfile(a);
+            session.removeAttribute("account");
+            session.setAttribute("account", a);
+            request.getRequestDispatcher("view/common/account/profile.jsp").forward(request, response);
+        } else if (action.equalsIgnoreCase("pw")) {
+            String npswd = request.getParameter("nPassword");
+            HttpSession session = request.getSession();
+            Account a = (Account) session.getAttribute("account");
+            a.setPassword(npswd);
+            AccountDAO adao = new AccountDAO();
+            adao.changePassword(a);
+            session.removeAttribute("account");
+            response.sendRedirect("home");
         }
-        filePart.write(realPart +"/" +fileName);
-        a.setAvatar(fileName);
-        
-
-        if (!a.getFirstName().equals(firstName) && firstName != null) {
-            a.setFirstName(firstName);
-        }
-
-        if (!a.getLastName().equals(lastName) && lastName != null) {
-            a.setLastName(lastName);
-        }
-
-        if (birthday_raw != null) {
-            a.setBirthday(Date.valueOf(birthday_raw));
-        }
-
-        if (a.getGender() != gender) {
-            a.setGender(gender);
-        }
-
-        if (phone != null) {
-            a.setPhone(phone);
-        }
-
-        if (address != null) {
-            a.setAddress(address);
-        }
-
-        AccountDAO adao = new AccountDAO();
-        adao.editProfile(a);
-        session.removeAttribute("account");
-        session.setAttribute("account", a);
-        request.getRequestDispatcher("view/common/account/profile.jsp").forward(request, response);
     }
 
     /**

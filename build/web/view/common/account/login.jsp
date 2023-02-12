@@ -64,9 +64,10 @@
                     <div class="account-container">
                         <div class="heading-bx left">
                             <h2 class="title-head">Login to your <span>Account</span></h2>
-                            <p>Don't have an account? <a href="register">Create one here</a></p>
+                            <p>Don't have an account? <a href="home?action=register">Create one here</a></p>
                         </div>	
-                        <form class="contact-bx" action="login" method="post">
+                        <form class="contact-bx" action="home" method="post">
+                            <input name="action" value="login" hidden=""/>
                             <div class="row placeani">
                                 <div class="col-lg-12">
                                     <div class="form-group">
@@ -85,8 +86,8 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
-                                    <div class="form-group form-forget">
-                                        <a href="forget-password.html" class="ml-auto">Forgot Password?</a>
+                                    <div class="form-group form-forget ">
+                                        <a data-target="#pwdModal" data-toggle="modal" class="ml-auto">Forgot Password?</a>
                                     </div>
                                 </div>
                                 <smail style="color: red">${messageLogin}</smail>
@@ -98,10 +99,47 @@
                         <div class="col-lg-12">
                             <h6>Sign in using @fpt.edu.vn</h6>
                             <div class="login-google">
-                                <button class="btn border bg-white"><a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:9999/Project-SWP391/login-google&response_type=code&client_id=645992422441-cr049r0af04ebl00sglm0guraq5dlrn6.apps.googleusercontent.com&approval_prompt=force">Google <i class="fa fa-google"></i></a></button>
+                                <button class="btn border bg-white"><a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:9999/Project-SWP391/home?action=login-google&response_type=code&client_id=645992422441-cr049r0af04ebl00sglm0guraq5dlrn6.apps.googleusercontent.com&approval_prompt=force">Google <i class="fa fa-google"></i></a></button>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div id="pwdModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <form method="POST" action="home">
+                                    <input name="action" value="forget-password" hidden=""/>
+                                    <div class="text-center">
+                                        <p>Please enter your Account name or Email you use to login</p>
+                                        <div class="panel-body">
+                                            <fieldset>
+                                                <div class="form-group">
+                                                    <input class="form-control input-lg" placeholder="E-mail Address" name="email" type="email">
+                                                </div>
+                                                <input class="btn btn-lg btn-primary btn-block" value="Send My Password" type="submit">
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12 float-right">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>	
                 </div>
             </div>
         </div>

@@ -71,10 +71,10 @@
                             </div>
                             <div class="pt-btn-join">
                                 <c:if test="${account == null}">
-                                    <a href="login" class="btn ">Login Now</a>
+                                    <a href="home?action=login" class="btn ">Login Now</a>
                                 </c:if>
                                 <c:if test="${account != null}">
-                                    <a href="logout" class="btn ">Login Now</a>
+                                    <a href="home?action=logout" class="btn ">Login Now</a>
                                 </c:if>
                             </div>
                         </div>

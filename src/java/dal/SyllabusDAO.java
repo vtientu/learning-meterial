@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import module.Decision;
 import module.PreRequisite;
 import module.Subject;
 import module.Syllabus;
@@ -43,16 +44,31 @@ public class SyllabusDAO extends DBContext {
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
                     + "    `prerequisite`.`PreID`,\n"
-                    + "    `prerequisite`.`subjectPre`\n"
+                    + "    `prerequisite`.`subjectPre`,\n"
+                    + "    `decision`.`DecisionName`,\n"
+                    + "    `decision`.`ApprovedDate`,\n"
+                    + "    `decision`.`Note`,\n"
+                    + "    `decision`.`CreateDate`,\n"
+                    + "    `decision`.`isActive`,\n"
+                    + "    `decision`.`FileName`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
                     + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
-                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`";
-            if(role == 1){
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`";
+            if (role == 1) {
                 sql += "WHERE `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
             }
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                Decision decision = new Decision();
+                decision.setDecisionNo(rs.getString("DecisionNo"));
+                decision.setDecisionName(rs.getString("DecisionName"));
+                decision.setApprovedDate(rs.getDate("ApprovedDate"));
+                decision.setNote(rs.getString("Note"));
+                decision.setCreateDate(rs.getDate("CreateDate"));
+                decision.setIsActive(rs.getBoolean("isActive"));
+                decision.setFileName(rs.getString("FileName"));
                 PreRequisite pre = new PreRequisite();
                 pre.setPreID(rs.getInt("PreID"));
                 pre.setSubjectCode(rs.getString(2));
@@ -83,6 +99,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
                 syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
+                syllabus.setDecision(decision);
                 list.add(syllabus);
             }
         } catch (SQLException e) {
@@ -115,15 +132,30 @@ public class SyllabusDAO extends DBContext {
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
                     + "    `prerequisite`.`PreID`,\n"
-                    + "    `prerequisite`.`subjectPre`\n"
+                    + "    `prerequisite`.`subjectPre`,\n"
+                    + "    `decision`.`DecisionName`,\n"
+                    + "    `decision`.`ApprovedDate`,\n"
+                    + "    `decision`.`Note`,\n"
+                    + "    `decision`.`CreateDate`,\n"
+                    + "    `decision`.`isActive`,\n"
+                    + "    `decision`.`FileName`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
                     + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
-                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
                     + "WHERE `syllabus`.`SubjectCode` = ?;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, code);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                Decision decision = new Decision();
+                decision.setDecisionNo(rs.getString("DecisionNo"));
+                decision.setDecisionName(rs.getString("DecisionName"));
+                decision.setApprovedDate(rs.getDate("ApprovedDate"));
+                decision.setNote(rs.getString("Note"));
+                decision.setCreateDate(rs.getDate("CreateDate"));
+                decision.setIsActive(rs.getBoolean("isActive"));
+                decision.setFileName(rs.getString("FileName"));
                 PreRequisite pre = new PreRequisite();
                 pre.setPreID(rs.getInt("PreID"));
                 pre.setSubjectCode(rs.getString(2));
@@ -154,6 +186,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
                 syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
+                syllabus.setDecision(decision);
                 return syllabus;
             }
         } catch (SQLException e) {
@@ -187,10 +220,17 @@ public class SyllabusDAO extends DBContext {
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
                     + "    `prerequisite`.`PreID`,\n"
-                    + "    `prerequisite`.`subjectPre`\n"
+                    + "    `prerequisite`.`subjectPre`,\n"
+                    + "    `decision`.`DecisionName`,\n"
+                    + "    `decision`.`ApprovedDate`,\n"
+                    + "    `decision`.`Note`,\n"
+                    + "    `decision`.`CreateDate`,\n"
+                    + "    `decision`.`isActive`,\n"
+                    + "    `decision`.`FileName`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
                     + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
-                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode`"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
                     + "WHERE `syllabus`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`SubjectNameVN` LIKE ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
@@ -198,6 +238,14 @@ public class SyllabusDAO extends DBContext {
             st.setString(3, "%" + key + "%");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
+                Decision decision = new Decision();
+                decision.setDecisionNo(rs.getString("DecisionNo"));
+                decision.setDecisionName(rs.getString("DecisionName"));
+                decision.setApprovedDate(rs.getDate("ApprovedDate"));
+                decision.setNote(rs.getString("Note"));
+                decision.setCreateDate(rs.getDate("CreateDate"));
+                decision.setIsActive(rs.getBoolean("isActive"));
+                decision.setFileName(rs.getString("FileName"));
                 PreRequisite pre = new PreRequisite();
                 pre.setPreID(rs.getInt("PreID"));
                 pre.setSubjectCode(rs.getString(2));
@@ -228,6 +276,7 @@ public class SyllabusDAO extends DBContext {
                 syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
                 syllabus.setPreRequisite(rs.getString("PreRequisite"));
                 syllabus.setSubject(subject);
+                syllabus.setDecision(decision);
                 list.add(syllabus);
             }
         } catch (SQLException e) {

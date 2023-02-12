@@ -31,11 +31,12 @@ public class Syllabus {
     private Date approvedDate;
     private String preRequisite;
     private Subject subject;
+    private Decision decision;
 
     public Syllabus() {
     }
 
-    public Syllabus(int syllabusID, String subjectCode, String subjectNameEN, String subjectNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject) {
+    public Syllabus(int syllabusID, String subjectCode, String subjectNameEN, String subjectNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject, Decision decision) {
         this.syllabusID = syllabusID;
         this.subjectCode = subjectCode;
         this.subjectNameEN = subjectNameEN;
@@ -55,7 +56,18 @@ public class Syllabus {
         this.approvedDate = approvedDate;
         this.preRequisite = preRequisite;
         this.subject = subject;
+        this.decision = decision;
     }
+
+    public Decision getDecision() {
+        return decision;
+    }
+
+    public void setDecision(Decision decision) {
+        this.decision = decision;
+    }
+
+    
 
     public String getPreRequisite() {
         return preRequisite;

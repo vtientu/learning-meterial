@@ -21,16 +21,8 @@
         <servlet-class>controller.account.ProfileServletController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChangePasswordServletController</servlet-name>
-        <servlet-class>controller.account.ChangePasswordServletController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>SyllabusListServletController</servlet-name>
         <servlet-class>controller.syllabus.SyllabusListServletController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>LoginWithGoogleServletController</servlet-name>
-        <servlet-class>controller.common.LoginWithGoogleServletController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SyllabusDetailsServletController</servlet-name>
@@ -77,16 +69,8 @@
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ChangePasswordServletController</servlet-name>
-        <url-pattern>/changepassword</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>SyllabusListServletController</servlet-name>
         <url-pattern>/syllabus</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LoginWithGoogleServletController</servlet-name>
-        <url-pattern>/login-google</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SyllabusDetailsServletController</servlet-name>

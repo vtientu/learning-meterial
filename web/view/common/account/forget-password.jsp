@@ -1,6 +1,6 @@
 <%-- 
-    Document   : register
-    Created on : Jan 28, 2023, 6:28:49 PM
+    Document   : forgot-password
+    Created on : Feb 11, 2023, 9:41:56 PM
     Author     : tient
 --%>
 
@@ -51,81 +51,34 @@
         <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
 
     </head>
-
     <body id="bg">
         <div class="page-wraper">
             <div class="account-form">
                 <div class="account-head" style="background-image:url(assets/images/banner.png); background-size: cover;">
+                    <a href="index.html"><img src="assets/images/logo.png" alt=""></a>
                 </div>
                 <div class="account-form-inner">
-                    <a href="home"><button class="btn m-l10">Back</button></a>
+                    <button class="btn m-l10">Back</button>
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Register <span>Now</span></h2>
-                            <p>Login Your Account <a href="home?action=login">Click here</a></p>
-                        </div>
-                        <form class="contact-bx" action="home" method="post">
-                            <input name="action" value="register" hidden=""/>
+                            <h2 class="title-head">Forget <span>Password</span></h2>
+                            <p>Login Your Account <a href="login">Click here</a></p>
+                        </div>	
+                        <form class="contact-bx" method="POST" action="forget-password">
                             <div class="row placeani">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your First Name *</label>
-                                            <input name="firstName" type="text" required="" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Last Name *</label>
-                                            <input name="lastName" type="text" required="" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your User *</label>
-                                            <input name="userName" type="text" required="" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Email Address *</label>
+                                            <label>Your Email Address</label>
                                             <input name="email" type="email" required="" class="form-control">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Password *</label>
-                                            <input onchange="checkPassword(this.value)" name="password" type="password" class="form-control" required="">
-                                        </div>
-                                    </div>
-                                </div>
-                                <label id="message" style="color: red">${messageRegister}</label>
                                 <div class="col-lg-12 m-b30">
-                                    <button id="register" name="submit" type="submit" value="Submit"
-                                            class="btn button-md">Register</button>
+                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Submit</button>
                                 </div>
                             </div>
                         </form>
-                        <script>
-                            function checkPassword(pw) {
-                                if (pw.length < 8 || pw.length > 15) {
-                                    document.getElementById("message").innerHTML = "";
-                                    document.getElementById("message").innerHTML = "Password must be between 8 and 15 characters!";
-                                    document.getElementById("register").disabled = true;
-                                } else {
-                                    document.getElementById("message").innerHTML = "";
-                                    document.getElementById("register").disabled = false;
-                                }
-                            }
-                        </script>
                     </div>
                 </div>
             </div>

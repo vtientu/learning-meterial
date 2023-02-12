@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import module.Curriculum;
 import module.Major;
+import module.PreRequisite;
 import module.Subject;
 
 /**
@@ -24,14 +25,15 @@ public class CurriculumDAO extends DBContext {
                     + "curriculum.`Description`,\n"
                     + "majors.`keyword`,\n"
                     + "majors.`majorNameEN`,\n"
-                    + "majors.`majorNameVN`\n"
+                    + "majors.`majorNameVN`,\n"
+                    + "majors.`isActive`\n"
                     + "FROM swp391.curriculum join swp391.majors on\n"
-                    + "curriculum.`majorID` = majors.`majorID`;";
+                    + "curriculum.`majorID` = majors.`majorID`";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
+                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(9));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), "");
                 list.add(curriculum);
             }
             return list;
@@ -51,7 +53,8 @@ public class CurriculumDAO extends DBContext {
                     + "curriculum.`Description`,\n"
                     + "majors.`keyword`,\n"
                     + "majors.`majorNameEN`,\n"
-                    + "majors.`majorNameVN`\n"
+                    + "majors.`majorNameVN,`\n"
+                    + "majors.`isActive`\n"
                     + "FROM swp391.curriculum join swp391.majors on\n"
                     + "curriculum.`majorID` = majors.`majorID`\n";
             if (code != null && code.length() != 0) {
@@ -60,8 +63,8 @@ public class CurriculumDAO extends DBContext {
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
+                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(9));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), "");
                 list.add(curriculum);
             }
         } catch (SQLException e) {
@@ -74,30 +77,36 @@ public class CurriculumDAO extends DBContext {
         ArrayList<Subject> list = new ArrayList<>();
         try {
             String sql = "SELECT curriculum.`CurriculumCode`,\n"
-                    + "                    curriculum.`majorID`,\n"
-                    + "                    curriculum.`CurriculumNameEN`,\n"
-                    + "                    curriculum.`CurriculumNameVN`,\n"
-                    + "                    curriculum.`Description`,\n"
-                    + "                    majors.`keyword`,\n"
-                    + "                    majors.`majorNameEN`,\n"
-                    + "                    majors.`majorNameVN`,\n"
-                    + "                    subjects.`SubjectCode`,\n"
-                    + "                    subjects.`subjectName`,\n"
-                    + "                    subjects.`Semester`,\n"
-                    + "                    subjects.`NoCredit`,\n"
-                    + "                    subjects.`PreRequisite`\n"
-                    + "                    FROM swp391.curriculum join swp391.majors on\n"
-                    + "                    curriculum.`majorID` = majors.`majorID` join swp391.curriculumsubject on\n"
-                    + "                    curriculum.`curriculumCode` = curriculumsubject.`curriculumCode` join swp391.subjects on\n"
-                    + "                    curriculumsubject.`SubjectCode` = subjects.`SubjectCode`\n"
-                    + "                    where curriculum.`CurriculumCode` = ?";
+                    + "curriculum.`majorID`,\n"
+                    + "curriculum.`CurriculumNameEN`,\n"
+                    + "curriculum.`CurriculumNameVN`,\n"
+                    + "curriculum.`Description`,\n"
+                    + "majors.`keyword`,\n"
+                    + "majors.`majorNameEN`,\n"
+                    + "majors.`majorNameVN`,\n"
+                    + "subjects.`SubjectCode`,\n"
+                    + "subjects.`subjectName`,\n"
+                    + "subjects.`Semester`,\n"
+                    + "subjects.`NoCredit`,\n"
+                    + "subjects.`isActive`,\n"
+                    + "prerequisite.`PreID`,\n"
+                    + "prerequisite.`subjectCode`,\n"
+                    + "prerequisite.`subjectPre`\n"
+                    + "FROM swp391.curriculum join swp391.majors on\n"
+                    + "curriculum.`majorID` = majors.`majorID` join swp391.curriculumsubject on\n"
+                    + "curriculum.`curriculumCode` = curriculumsubject.`curriculumCode` join swp391.subjects on\n"
+                    + "curriculumsubject.`SubjectCode` = subjects.`SubjectCode` join swp391.prerequisite on\n"
+                    + "prerequisite.subjectCode = subjects.SubjectCode\n"
+                    + "where curriculum.`CurriculumCode` = ?\n"
+                    + "order by subjects.Semester asc";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, cur);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
-                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5),"");
-                Subject subject = new Subject(rs.getInt(12), rs.getString(13), rs.getInt(11), rs.getString(9), rs.getString(10));
+                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(14));
+                Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), "");
+                PreRequisite p = new PreRequisite(rs.getInt(14), rs.getString(15), rs.getString(16));
+                Subject subject = new Subject(rs.getInt(12), rs.getInt(11), rs.getString(9), rs.getString(10), p, rs.getBoolean(13));
                 list.add(subject);
             }
             return list;
@@ -125,7 +134,7 @@ public class CurriculumDAO extends DBContext {
             st.setString(1, cur);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8));
+                Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(9));
                 Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(9));
                 return curriculum;
             }
@@ -144,4 +153,3 @@ public class CurriculumDAO extends DBContext {
         return arr;
     }
 }
-

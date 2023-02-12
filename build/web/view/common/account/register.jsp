@@ -62,9 +62,10 @@
                     <div class="account-container">
                         <div class="heading-bx left">
                             <h2 class="title-head">Register <span>Now</span></h2>
-                            <p>Login Your Account <a href="login">Click here</a></p>
+                            <p>Login Your Account <a href="home?action=login">Click here</a></p>
                         </div>
-                        <form class="contact-bx" action="register" method="post">
+                        <form class="contact-bx" action="home" method="post">
+                            <input name="action" value="register" hidden=""/>
                             <div class="row placeani">
                                 <div class="col-lg-6">
                                     <div class="form-group">

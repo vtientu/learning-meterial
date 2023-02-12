@@ -151,6 +151,7 @@
                                 <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
                                     <div class="profile-bx text-center">
                                         <form class="edit-profile" action="profile" method="post" enctype="multipart/form-data">
+                                            <input type="text" name="action" value="profile" hidden="">
                                             <div class="avatar-upload">
                                                 <div class="avatar-edit">
                                                     <input name="avatar" type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
@@ -190,7 +191,7 @@
                                                         <a class="nav-link" data-toggle="tab" href="#change-password"><i class="ti-lock"></i>Change Password</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="logout" class="nav-link"><i class="ti-close"></i>Logout</a>
+                                                        <a href="home?action=logout" class="nav-link"><i class="ti-close"></i>Logout</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -282,7 +283,8 @@
                                                 <div class="profile-head">
                                                     <h3>Change Password</h3>
                                                 </div>
-                                                <form class="edit-profile" action="changepassword" method="post">
+                                                <form class="edit-profile" action="profile" method="post">
+                                                    <input type="text" name="action" value="pw" hidden="">
                                                     <div class="">
                                                         <div class="form-group row">
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-9 ml-auto">

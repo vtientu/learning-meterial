@@ -146,8 +146,8 @@
                                                     <li><i class="ti-info-alt"></i> <span class="label">NoCredit</span>
                                                         <span class="value">${syllabus.noCredit != null?syllabus.noCredit:'None'}</span>
                                                     </li>
-                                                    <li><i class="ti-receipt"></i> <span class="label">DecisionNo </span> <span
-                                                            class="value">${syllabus.decisionNo ? syllabus.decisionNo:'None'}</span></li>
+                                                    <li><i class="ti-receipt"></i> <span class="label">DecisionNo </span> <a data-target="#decision" data-toggle="modal"><span
+                                                                class="value">${syllabus.decisionNo != null ? syllabus.decisionNo:'None'}</span></a></li>
 
                                                     <li><i class="ti-bar-chart-alt"></i> <span class="label">MarkToPass</span>
                                                         <span class="value">${syllabus.minAvgMarkToPass}</span></li>
@@ -404,6 +404,54 @@
                 </div>
             </div>
             <!-- contact area END -->
+        </div>
+
+        <div id="decision" class=" mt-5 modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <table border="1">
+                            <tbody><tr>
+                                    <td style="width:12%;text-align:right;"> DecisionNo</td>
+                                    <td>${syllabus.decisionNo}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:12%;text-align:right;">DecisionName</td>
+                                    <td>
+                                        ${syllabus.decision.decisionName}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:12%;text-align:right;"> ApprovedDate (MM/dd/yyyy)</td>
+                                    <td>${syllabus.decision.approvedDate}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:12%;text-align:right;">Note</td>
+                                    <td>${syllabus.decision.note}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:12%;text-align:right;">CreateDate (MM/dd/yyyy)</td>
+                                    <td>${syllabus.decision.createDate}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:12%;text-align:right;"> FileName</td>
+                                    <td>
+                                        ${syllabus.decision.fileName}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-md-12">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        </div>	
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- Content END-->
         <!-- Footer ==== -->
