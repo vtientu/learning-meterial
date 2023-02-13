@@ -273,30 +273,30 @@ INSERT INTO Account(username, password, firstname, lastname, email, roleID) VALU
 
 
 INSERT INTO `swp391`.`decision`(decisionNo, decisionName, approvedDate, note, createDate, isActive, fileName)
-VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trải nghiệm khởi nghiệp vào Chương trình đào tạo đại học hệ chính quy', '2022/11/28', N'', '2022/12/02', 1, ''), 
-		(N'1076/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT', '2022/11/24', N'', '2022/11/24', 1, ''), 
-		(N'973/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT từ kì Spring 2023', '2022/10/26', N'', '2022/10/28', 1, ''), 
-		(N'669/QĐ-ĐH-FPT', N'Quyết định điều chỉnh CTĐT từ kì Fall 2022', '2022/05/08', N'', '2022/08/15', 1, ''),
-		(N'336/QĐ-DHFPT', N'Ban hành điều chỉnh CTĐT kì Spring 2022', '2022/04/27', N'', '2022/04/27', 1, ''), 
-		(N'201/QĐ-ĐHFPT', N'Phê duyệt điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Công nghệ thông tin các khóa sinh viên từ K15A (Chuyên ngành Kỹ thuật phần mềm, Hệ thống thông tin, An toàn thông tin, Internet vạn vật) và các khóa sinh viên từ K15A ...', '2022/03/08', N'', '2022/03/17', 1, ''), 
-		(N'200/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh từ K15 (Chuyên ngành Tài chính, Marketing, Kinh doanh quốc tế, Quản trị khách sạn, Quản trị du lịch và lữ hành)', '2022/03/08', N'', '2022/03/17', 1, ''), 
-		(N'199/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh, chuyên ngành Quản trị truyền thông đa phương tiện từ Khóa 15A', '2022/03/08', N'', '2022/03/17', 1, ''), 
-		(N'1039/QĐ-ĐHFPT', N'Chương trình TACB-k15', '2019/08/09', N'Ban hành lại, thêm TRS401, level 4 trong TACB 24/10/2019 QĐ_FA19', '2021/11/13', 1, ''), 
-		(N'1042/QĐ-ĐHFPT', N'1042/QĐ-ĐHFPT', '2019/08/10', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
-		(N'1145/QĐ-ĐHFPT', N'1145/QĐ-ĐHFPT', '2016/12/30', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
-		(N'1189/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2023', '2022/12/22', N'', '2022/12/22', 1, ''),
-        (N'1009/QĐ-ĐHFPT', N'QĐ 1009/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Fall 2021', '2021/09/01', N'1 SU21', '2021/11/13', 1, ''), 
-		(N'1341/QĐ-ĐHFPT', N'QĐ 1341/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Spring 2022', '2021/11/22', N'', '2021/12/13', 1, ''), 
-		(N'1485/QĐ-ĐH-FPT', N'Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Spring 2022', '2021/12/31', N'', '2021/12/31', 1, ''), 
-		(N'333/QĐ-ĐHFPT', N'333/QĐ-ĐHFPT', '2017/04/20', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
-		(N'05/QĐ-ĐHFPT', N'05/QĐ-ĐHFPT', '2020/01/03', N'Bổ sung theo flm', '2021/11/13', 1, ''), 
-		(N'796/QĐ-ĐHFPT', N'QĐ 796/QĐ-ĐHFPT Ban hành đề cương thực tập (OJT) của các ngành đào tạo hệ đại học chính quy và phiếu đánh giá sinh viên kỳ OJT của Đại học FPT triển khai từ Khóa 15 học kỳ Fall 2021', '2021/07/21', N'1 SU21', '2021/11/13', 1, ''), 
-		(N'295/QĐ-ĐHFPT', N'295/QĐ-ĐHFPT', '2022/07/04', N'Add by import excel', '2022/04/06', 1, ''),
-        (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022/08/05', N'', '2022/08/05', 1, ''),
-        (N'378/QĐ-ĐHFPT', N'QĐ 378/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Summer 2021', '2021/02/04', N'SP21', '2021/11/13', 1, ''),
-        (N'703/QĐ-ĐH-FPT', N'Ban hành điều chỉnh đề cương kì Fall 2022', '2022/08/17', N'', '2022/08/19', 1, ''),
-        (N'1077/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2022', '2022/11/24', N'', '2022/11/25', 1, ''),
-        (N'889/QĐ-ĐHFPT', N'QĐ 889/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh một số đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Fall 2020 theo Quyết định số 823/QĐ-ĐHFPT', '2020/03/09', N'FA2020', '2022/11/13', 1, '');
+VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trải nghiệm khởi nghiệp vào Chương trình đào tạo đại học hệ chính quy', '2022-11-28', N'', '2022-12-02', 1, ''), 
+		(N'1076/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT', '2022-11-24', N'', '2022-11-24', 1, ''), 
+		(N'973/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT từ kì Spring 2023', '2022-10-26', N'', '2022-10-28', 1, ''), 
+		(N'669/QĐ-ĐH-FPT', N'Quyết định điều chỉnh CTĐT từ kì Fall 2022', '2022-05-08', N'', '2022-08-15', 1, ''),
+		(N'336/QĐ-DHFPT', N'Ban hành điều chỉnh CTĐT kì Spring 2022', '2022-04-27', N'', '2022-04-27', 1, ''), 
+		(N'201/QĐ-ĐHFPT', N'Phê duyệt điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Công nghệ thông tin các khóa sinh viên từ K15A (Chuyên ngành Kỹ thuật phần mềm, Hệ thống thông tin, An toàn thông tin, Internet vạn vật) và các khóa sinh viên từ K15A ...', '2022-03-08', N'', '2022-03-17', 1, ''), 
+		(N'200/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh từ K15 (Chuyên ngành Tài chính, Marketing, Kinh doanh quốc tế, Quản trị khách sạn, Quản trị du lịch và lữ hành)', '2022-03-08', N'', '2022-03-17', 1, ''), 
+		(N'199/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh, chuyên ngành Quản trị truyền thông đa phương tiện từ Khóa 15A', '2022-03-08', N'', '2022-03-17', 1, ''), 
+		(N'1039/QĐ-ĐHFPT', N'Chương trình TACB-k15', '2019-08-09', N'Ban hành lại, thêm TRS401, level 4 trong TACB 24/10/2019 QĐ_FA19', '2021-11-13', 1, ''), 
+		(N'1042/QĐ-ĐHFPT', N'1042/QĐ-ĐHFPT', '2019-08-10', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
+		(N'1145/QĐ-ĐHFPT', N'1145/QĐ-ĐHFPT', '2016-12-30', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
+		(N'1189/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2023', '2022-12-22', N'', '2022-12-22', 1, ''),
+        (N'1009/QĐ-ĐHFPT', N'QĐ 1009/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Fall 2021', '2021-09-01', N'1 SU21', '2021-11-13', 1, ''), 
+		(N'1341/QĐ-ĐHFPT', N'QĐ 1341/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Spring 2022', '2021-11-22', N'', '2021-12-13', 1, ''), 
+		(N'1485/QĐ-ĐH-FPT', N'Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Spring 2022', '2021-12-31', N'', '2021-12-31', 1, ''), 
+		(N'889/QĐ-ĐHFPT', N'QĐ 889/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh một số đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Fall 2020 theo Quyết định số 823/QĐ-ĐHFPT', '2020-09-03', N'FA2020', '2021-11-13', 1, ''), 
+		(N'333/QĐ-ĐHFPT', N'333/QĐ-ĐHFPT', '2017-04-20', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
+		(N'05/QĐ-ĐHFPT', N'05/QĐ-ĐHFPT', '2020-01-03', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
+		(N'796/QĐ-ĐHFPT', N'QĐ 796/QĐ-ĐHFPT Ban hành đề cương thực tập (OJT) của các ngành đào tạo hệ đại học chính quy và phiếu đánh giá sinh viên kỳ OJT của Đại học FPT triển khai từ Khóa 15 học kỳ Fall 2021', '2021-07-21', N'1 SU21', '2021-11-13', 1, ''), 
+		(N'295/QĐ-ĐHFPT', N'295/QĐ-ĐHFPT', '2022-07-04', N'Add by import excel', '2022-04-06', 1, ''),
+        (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022-08-05', N'', '2022-08-05', 1, ''),
+        (N'378/QĐ-ĐHFPT', N'QĐ 378/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Summer 2021', '2021-02-04', N'SP21', '2021-11-13', 1, ''),
+        (N'703/QĐ-ĐH-FPT', N'Ban hành điều chỉnh đề cương kì Fall 2022', '2022-08-17', N'', '2022-08-19', 1, ''),
+        (N'1077/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2022', '2022-11-24', N'', '2022-11-25', 1, '');
 
 
 
@@ -638,7 +638,8 @@ INSERT INTO `swp391`.`curriculum`
 `majorID`,
 `CurriculumNameEN`,
 `CurriculumNameVN`,
-`Description`)
+`Description`,
+`DecisionNo`)
 VALUES
 ('BBA_MC_K16B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
 General objectives:
@@ -684,7 +685,7 @@ Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phươ
 • Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
 • CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
 • Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
-Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.'),
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
 ('BBA_MC_K16C',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -759,7 +760,7 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_IA_K16C',10,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. TRAINING OBJECTIVES
 
 1.1. General objectives:
@@ -851,7 +852,7 @@ Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạ
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. CÁCH THỨC ĐÁNH GIÁ
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_IA_K16B',10,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. TRAINING OBJECTIVES
 
 1.1. General objectives:
@@ -943,7 +944,7 @@ Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạ
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. CÁCH THỨC ĐÁNH GIÁ
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BBA_MKT_K16B',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -963,7 +964,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BBA_MKT_K16C',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -983,7 +984,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BIT_GD_K16B',5,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
 Specific objectives:
@@ -1016,7 +1017,7 @@ Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thê
 - Trưởng nhóm thiết kế.
 - Giám đốc sáng tạo.
 - Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.
-IsActive: True'),
+IsActive: True','1095/QĐ-ĐHFPT'),
 ('BIT_GD_K16C',5,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
 Specific objectives:
@@ -1048,7 +1049,7 @@ Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thê
 - Chuyên gia thiết kế trải nghiệm người dùng (UX).
 - Trưởng nhóm thiết kế.
 - Giám đốc sáng tạo.
-- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.'),
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
 ('BBA_FIN_K16B',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1067,7 +1068,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BBA_FIN_K16C',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1086,7 +1087,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BBA_IB_K16B',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1105,7 +1106,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BBA_IB_K16C',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1124,7 +1125,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
 ('BIT_SE_K16B',1,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1199,7 +1200,7 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_SE_K16C',1,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1274,7 +1275,7 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_IS_K16B',7,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1344,7 +1345,7 @@ Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội v
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_IS_K16C',7,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1414,7 +1415,7 @@ Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội v
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_AI_K16B',8,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1487,7 +1488,7 @@ Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội vi
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_AI_K16C',8,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
@@ -1560,7 +1561,7 @@ Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội vi
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BBA_TM_K16B',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1579,7 +1580,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','1095/QĐ-ĐHFPT'),
 ('BBA_TM_K16C',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1598,7 +1599,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','1095/QĐ-ĐHFPT'),
 ('BIT_IoT_K16B',11,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. TRAINING OBJECTIVES
 
 1.1. General objectives:
@@ -1684,7 +1685,7 @@ Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạn
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. CÁCH THỨC ĐÁNH GIÁ
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BIT_IoT_K16C',11,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. TRAINING OBJECTIVES
 
 1.1. General objectives:
@@ -1770,7 +1771,7 @@ Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạn
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. CÁCH THỨC ĐÁNH GIÁ
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.'),
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BBA_HM_K16C',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','	The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1789,7 +1790,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.'),
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
 ('BBA_HM_K16B',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
 
 The program consists of four main modules:
@@ -1808,7 +1809,7 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.');
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT');
 
 INSERT INTO `swp391`.`curriculumsubject`
 (`CurriculumCode`,
