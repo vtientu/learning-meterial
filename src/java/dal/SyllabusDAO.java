@@ -251,8 +251,7 @@ public class SyllabusDAO extends DBContext {
                     + "    `decision`.`isActive`,\n"
                     + "    `decision`.`FileName`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
-                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
-                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
                     + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
                     + "WHERE `syllabus`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`SubjectNameVN` LIKE ?";
             if (role == 1) {

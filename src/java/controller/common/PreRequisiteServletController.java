@@ -84,7 +84,7 @@ public class PreRequisiteServletController extends HttpServlet {
         }
         int start, end;
         start = (page - 1) * numberPerPage;
-        end = Math.min(page * numberPerPage, size - 1);
+        end = Math.min(page * numberPerPage, size);
         ArrayList<Syllabus> listByPage = ld.getListByPage(list, start, end);
         request.setAttribute("totalPage", numberOfPage);
         request.setAttribute("page", page);
@@ -129,7 +129,7 @@ public class PreRequisiteServletController extends HttpServlet {
         }
         int start, end;
         start = (page - 1) * numberPerPage;
-        end = Math.min(page * numberPerPage, size - 1);
+        end = Math.min(page * numberPerPage, size);
         ArrayList<Syllabus> listByPage = sd.getListByPage(list, start, end);
         processPreRequisite(request, response, listByPage, page, numberOfPage, key);
     }
@@ -179,14 +179,14 @@ public class PreRequisiteServletController extends HttpServlet {
         if (page == 1) {
             str += "<li class=\"previous\"><a style=\"pointer-events: none\"><i class=\"ti-arrow-left\"></i> Prev</a></li>\n";
         } else {
-            str += "<li class=\"previous\"><a onclick=\"searchSyllabus(" + (page - 1) + ")\"><i class=\"ti-arrow-left\"></i> Prev</a></li>\n";
+            str += "<li class=\"previous\"><a onclick=\"searchPreRequisite(" + (page - 1) + ")\"><i class=\"ti-arrow-left\"></i> Prev</a></li>\n";
         }
 
         str += "<li class=\"active\"><a id=\"page\">" + page + "</a></li>\n";
         if (page == numberOfPage) {
             str += "<li class=\"next\"><a style=\"pointer-events: none\">Next<i class=\"ti-arrow-right\"></i></a></li>\n";
         } else if (page < numberOfPage) {
-            str += "<li class=\"next\"><a onclick=\"searchSyllabus(" + (page + 1) + ")\">Next<i class=\"ti-arrow-right\"></i></a></li>\n";
+            str += "<li class=\"next\"><a onclick=\"searchPreRequisite(" + (page + 1) + ")\">Next<i class=\"ti-arrow-right\"></i></a></li>\n";
         }
         str += "                                    </ul>\n"
                 + "                                </div>\n"

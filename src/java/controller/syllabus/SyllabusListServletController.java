@@ -142,14 +142,6 @@ public class SyllabusListServletController extends HttpServlet {
         processSyllabus(request, response, listByPage, page, numberOfPage, key);
     }
 
-    public static void main(String[] args) {
-        SyllabusDAO sd = new SyllabusDAO();
-        ArrayList<Syllabus> list = sd.getAllSyllabus(1);
-        ArrayList<Syllabus> listByPage = sd.getListByPage(list, 0, 10);
-        for(int i = 0; i<listByPage.size(); i++){
-            System.out.println(listByPage.get(i).getSyllabusID());
-        }
-    }
 
     public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key)
             throws ServletException, IOException {

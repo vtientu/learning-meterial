@@ -68,14 +68,6 @@ CREATE TABLE Subjects(
 );
 
 
-CREATE TABLE PreRequisite(
-	PreID INT auto_increment PRIMARY KEY,
-    subjectCode NVARCHAR(20),
-    subjectPre text
-);
-
-
-
 
 CREATE TABLE Syllabus(
 	SyllabusID int auto_increment,
@@ -101,7 +93,12 @@ CREATE TABLE Syllabus(
 
 
 
-
+CREATE TABLE PreRequisite(
+	PreID INT auto_increment PRIMARY KEY,
+    SyllabusID INT,
+    subjectCode NVARCHAR(20),
+    subjectPre text
+);
 
 
 CREATE TABLE Feedback(
@@ -116,12 +113,12 @@ CREATE TABLE Feedback(
 
 
 CREATE TABLE Material(
-	MaterialDescription TEXT,
 	MaterialID int AUTO_INCREMENT,
+	MaterialDescription TEXT,
 	SyllabusID int,
 	Author NVARCHAR(255),
 	Publisher NVARCHAR(255),
-	PublishedDate date,
+	PublishedDate NVARCHAR(255),
 	Edition NVARCHAR(255),
 	ISBN NVARCHAR(255),
 	IsMainMaterial NVARCHAR(255),
@@ -129,7 +126,7 @@ CREATE TABLE Material(
 	IsOnline NVARCHAR(255),
 	Note TEXT,
     isActive bit DEFAULT 1,
-	primary key(MaterialID, SyllabusID)
+	primary key(MaterialID)
 );
 
 
@@ -219,7 +216,8 @@ CREATE TABLE Elective(
 
 
 
-ALTER TABLE PreRequisite add constraint fk_prerequisite foreign key (subjectCode) references Subjects(subjectCode);
+ALTER TABLE PreRequisite add constraint fk_prerequisite foreign key (subjectCode) references Subjects(subjectCode),
+						add constraint fk_prerequisite_syllabus foreign key (SyllabusID) references Syllabus(SyllabusID);
 
 ALTER TABLE Feedback 
 ADD CONSTRAINT fk_account foreign key(accountID) references account(accountID),
@@ -271,30 +269,31 @@ INSERT INTO Account(username, password, firstname, lastname, email, roleID) VALU
 
 
 INSERT INTO `swp391`.`decision`(decisionNo, decisionName, approvedDate, note, createDate, isActive, fileName)
-VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trải nghiệm khởi nghiệp vào Chương trình đào tạo đại học hệ chính quy', '2022-11-28', N'', '2022-12-02', 1, ''), 
-		(N'1076/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT', '2022-11-24', N'', '2022-11-24', 1, ''), 
-		(N'973/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT từ kì Spring 2023', '2022-10-26', N'', '2022-10-28', 1, ''), 
-		(N'669/QĐ-ĐH-FPT', N'Quyết định điều chỉnh CTĐT từ kì Fall 2022', '2022-05-08', N'', '2022-08-15', 1, ''),
-		(N'336/QĐ-DHFPT', N'Ban hành điều chỉnh CTĐT kì Spring 2022', '2022-04-27', N'', '2022-04-27', 1, ''), 
-		(N'201/QĐ-ĐHFPT', N'Phê duyệt điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Công nghệ thông tin các khóa sinh viên từ K15A (Chuyên ngành Kỹ thuật phần mềm, Hệ thống thông tin, An toàn thông tin, Internet vạn vật) và các khóa sinh viên từ K15A ...', '2022-03-08', N'', '2022-03-17', 1, ''), 
-		(N'200/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh từ K15 (Chuyên ngành Tài chính, Marketing, Kinh doanh quốc tế, Quản trị khách sạn, Quản trị du lịch và lữ hành)', '2022-03-08', N'', '2022-03-17', 1, ''), 
-		(N'199/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh, chuyên ngành Quản trị truyền thông đa phương tiện từ Khóa 15A', '2022-03-08', N'', '2022-03-17', 1, ''), 
+VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trải nghiệm khởi nghiệp vào Chương trình đào tạo đại học hệ chính quy', '2022-11-28', null, '2022-12-02', 1, ''), 
+		(N'1076/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT', '2022-11-24', null, '2022-11-24', 1, ''), 
+		(N'973/QĐ-ĐHFPT', N'Ban hành điều chỉnh CTĐT từ kì Spring 2023', '2022-10-26', null, '2022-10-28', 1, ''), 
+		(N'669/QĐ-ĐH-FPT', N'Quyết định điều chỉnh CTĐT từ kì Fall 2022', '2022-05-08', null, '2022-08-15', 1, ''),
+		(N'336/QĐ-DHFPT', N'Ban hành điều chỉnh CTĐT kì Spring 2022', '2022-04-27', null, '2022-04-27', 1, ''), 
+		(N'201/QĐ-ĐHFPT', N'Phê duyệt điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Công nghệ thông tin các khóa sinh viên từ K15A (Chuyên ngành Kỹ thuật phần mềm, Hệ thống thông tin, An toàn thông tin, Internet vạn vật) và các khóa sinh viên từ K15A ...', '2022-03-08', null, '2022-03-17', 1, ''), 
+		(N'200/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh từ K15 (Chuyên ngành Tài chính, Marketing, Kinh doanh quốc tế, Quản trị khách sạn, Quản trị du lịch và lữ hành)', '2022-03-08', null, '2022-03-17', 1, ''), 
+		(N'199/QĐ-ĐHFPT', N'Phê duyệt Điều chỉnh chương trình đào tạo đại học hệ chính quy ngành Quản trị Kinh doanh, chuyên ngành Quản trị truyền thông đa phương tiện từ Khóa 15A', '2022-03-08', null, '2022-03-17', 1, ''), 
 		(N'1039/QĐ-ĐHFPT', N'Chương trình TACB-k15', '2019-08-09', N'Ban hành lại, thêm TRS401, level 4 trong TACB 24/10/2019 QĐ_FA19', '2021-11-13', 1, ''), 
 		(N'1042/QĐ-ĐHFPT', N'1042/QĐ-ĐHFPT', '2019-08-10', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
 		(N'1145/QĐ-ĐHFPT', N'1145/QĐ-ĐHFPT', '2016-12-30', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
-		(N'1189/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2023', '2022-12-22', N'', '2022-12-22', 1, ''),
+		(N'1189/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2023', '2022-12-22', null, '2022-12-22', 1, ''),
         (N'1009/QĐ-ĐHFPT', N'QĐ 1009/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Fall 2021', '2021-09-01', N'1 SU21', '2021-11-13', 1, ''), 
-		(N'1341/QĐ-ĐHFPT', N'QĐ 1341/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Spring 2022', '2021-11-22', N'', '2021-12-13', 1, ''), 
-		(N'1485/QĐ-ĐH-FPT', N'Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Spring 2022', '2021-12-31', N'', '2021-12-31', 1, ''), 
+		(N'1341/QĐ-ĐHFPT', N'QĐ 1341/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Spring 2022', '2021-11-22', null, '2021-12-13', 1, ''), 
+		(N'1485/QĐ-ĐH-FPT', N'Ban hành bổ sung, điều chỉnh đề cương chi tiết hệ đại học chính quy triển khai trong Học kỳ Spring 2022', '2021-12-31', null, '2021-12-31', 1, ''), 
 		(N'889/QĐ-ĐHFPT', N'QĐ 889/QĐ-ĐHFPT Ban hành bổ sung, điều chỉnh một số đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Fall 2020 theo Quyết định số 823/QĐ-ĐHFPT', '2020-09-03', N'FA2020', '2021-11-13', 1, ''), 
 		(N'333/QĐ-ĐHFPT', N'333/QĐ-ĐHFPT', '2017-04-20', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
 		(N'05/QĐ-ĐHFPT', N'05/QĐ-ĐHFPT', '2020-01-03', N'Bổ sung theo flm', '2021-11-13', 1, ''), 
 		(N'796/QĐ-ĐHFPT', N'QĐ 796/QĐ-ĐHFPT Ban hành đề cương thực tập (OJT) của các ngành đào tạo hệ đại học chính quy và phiếu đánh giá sinh viên kỳ OJT của Đại học FPT triển khai từ Khóa 15 học kỳ Fall 2021', '2021-07-21', N'1 SU21', '2021-11-13', 1, ''), 
 		(N'295/QĐ-ĐHFPT', N'295/QĐ-ĐHFPT', '2022-07-04', N'Add by import excel', '2022-04-06', 1, ''),
-        (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022-08-05', N'', '2022-08-05', 1, ''),
+        (N'670/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Fall 2022', '2022-08-05', null, '2022-08-05', 1, ''),
         (N'378/QĐ-ĐHFPT', N'QĐ 378/QĐ-ĐHFPT Ban hành đề cương chi tiết hệ đại học chính quy triển khai trong học kỳ Summer 2021', '2021-02-04', N'SP21', '2021-11-13', 1, ''),
-        (N'703/QĐ-ĐH-FPT', N'Ban hành điều chỉnh đề cương kì Fall 2022', '2022-08-17', N'', '2022-08-19', 1, ''),
-        (N'1077/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2022', '2022-11-24', N'', '2022-11-25', 1, '');
+        (N'703/QĐ-ĐH-FPT', N'Ban hành điều chỉnh đề cương kì Fall 2022', '2022-08-17', null, '2022-08-19', 1, ''),
+        (N'1077/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2022', '2022-11-24', null, '2022-11-25', 1, '');
+
 
 
 
@@ -587,29 +586,154 @@ Note: Student gets 0.165 bonus points for each course completed on time.','Acces
 - Read the textbook in advance
 - Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17');
 
+
+
+INSERT INTO `swp391`.`material`
+(`SyllabusID`,
+`MaterialDescription`,
+`Author`,
+`Publisher`,
+`PublishedDate`,
+`Edition`,
+`ISBN`,
+`IsMainMaterial`,
+`IsHardCopy`,
+`IsOnline`,
+`Note`,
+`isActive`)
+VALUES
+(1, 'Introductory documents aout FPT Group and FPT University', null, null, null, null, null, 0, 0, 0, null, 1),
+(1, '"Hồi ký: Từ nhân dân mà ra"', null, null, null, null, null, 0, 0, 0, null, 1),
+(1, '"Hồi ký: Những điều đọng lại qua hai cuộc chiến tranh"', null, null, null, null, null, 0, 0, 0, null, 1),
+(1, '"Hồi ký: Tổng hành dinh"', null, null, null, null, null, 0, 0, 0, null, 1),
+
+(2, 'Working in Groups', 'Isa N.Engleberg and Dianna R.Wynn', 'Pearson/Allyn & Bacon', null, null, null, 1, 1, 0, null, 1),
+(2, 'Business Communication', 'Krizan, et al.', 'Thomson South-Western', null, null, null, 1, 1, 0, null, 1),
+
+(3, 'Main book and its resource:<br>
+Advance in Academic Writing 1- English for Academic Purposes<br>
+Package, including:<br>
+For Student:<br>
+1) ST: Student’s Book (hardcopy or EText and My ELAB)<br>
+2) http://cms.fpt.edu.vn<br>
+For Teacher:<br>
+3) Student’s Book (hardcopy or ETEXT and My ELAB)<br>
+4) My ELAB Documents', null, 'Pearson', 2019, null, 9780134663326, 1, 1, 0, null, 1),
+(3, 'Longman Academic Writing Series 4 - Pearson', null, 'Pearson', null, '(fifth Edition)', null, 1, 1, 0, null, 1),
+
+(4, 'Video Production Handbook', 'Gerald Millerson and Jim Owens', 'Focal Press', 2008, null, 'ASIN:B00DT6B8PI', 1, 0, 1, 'Link: https://library.books24x7.com', 1),
+(4, 'https://www.lynda.com/learning-paths/Video/become-a-video-editor', null, null, null, null, null, 0, 0, 1, null, 1),
+(4, 'https://www.lynda.com/learning-paths/Video/improve-your-video-lighting-skills', null, null, null, null, null, 0, 0, 1, null, 1),
+(4, 'https://www.lynda.com/learning-paths/Video/become-a-film-producer', null, null, null, null, null, 0, 0, 1, null, 1),
+
+(5, 'Adobe Design Basics', 'Thomas Payne', 'Adobe Education Exchange', 2020, null, '9781714208852', 1, 0, 1, 'Nguồn sách Creative Commons licensing', 1),
+(5, 'Adobe Photoshops CC<br/>
+https://helpx.adobe.com/pdf/photoshop_reference.pdf', null, 'Adobe', 2019, '20th', null, 0, 0, 1, null, 1),
+(5, 'Adobe Design Basics', 'Thomas Payne', 'Adobe Education Exchange', 2019, '20th', null, 0, 0, 1, null, 1),
+(5, 'Adobe Design Basics', 'Thomas Payne', 'Adobe Education Exchange', 2019, '20th', null, 0, 0, 1, null, 1),
+
+(6, 'Media Now: Understanding Media, Culture, and Technology', 'Joseph Straubhaar, Robert LaRose, Lucinda Davenport', 'Cengage', 2017, '10th', '978-1305950849', 1, 1, 0, null, 1),
+(6, 'https://www.brandsvietnam.com/', null, null, null, null, null, 0, 0, 1, null, 1),
+(6, 'https://www.makeitnoise.com/', null, null, null, null, null, 0, 0, 1, null, 1),
+(6, 'https://blog.marketo.com/', null, null, null, null, null, 0, 0, 1, null, 1),
+(6, 'https://blog.hubspot.com/', null, null, null, null, null, 0, 0, 1, null, 1),
+
+(7, 'Fundamentals of Management', 'Ricky W.Griffin', 'Cengage', 2019, '9th', '978-1305970229', 1, 1, 0, null, 1),
+(7, 'Essentials of Management', 'Adrew.J. DuBrin', 'Cengage', 2011, '9th', null, 0, 1, 0, null, 1),
+(7, 'AE Fundamentals of Management', 'Ricky Griffin', 'Cengage', 2021, '10th', 'ISBN-13: 9789814986236 | ISBN-10: 9814986232', 1, 1, 0, 'Chọn một trong 2 ấn bản. Ưu tiên mua ấn bản mới nhất', 1),
+
+(8, 'Principles of Marketing', 'Kotler, Philip and Armstrong, Gary', 'Pearson', 2020, '18th Edition', null, 1, 1, 0, 'Chọn một trong 2 quyển. Ưu tiên mua ấn bản mới nhất', 1),
+(8, 'Principles of Marketing: A global perspective', 'Kotler, Philip and Armstrong, Gary', 'Pearson', 2009, null, null, 1, 1, 0, null, 1),
+(8, 'Principles of Marketing', 'Philip Kotler and Gary Armstrong', 'Prentice Hall', 2012, '14th ed', null, 1, 1, 0, null, 1),
+
+(9, 'https://learner.coursera.help/hc/en-us/articles/208280036-Coursera-Code-of-Conduct', null, 'Coursera', null, null, null, 0, 0, 1, null, 1),
+(9, 'https://www.coursera.org/learn/introtoux-principles-and-processes', null, null, null, null, null, 1, 0, 1, 'MOOC 1: Introduction to User Experience Principles and Processes', 1),
+(9, 'https://www.coursera.org/learn/understanding-user-needs', null, null, null, null, null, 1, 0, 1, '	MOOC 2: Understanding User Needs', 1),
+(9, 'https://www.coursera.org/learn/evaluating-designs-with-users', null, null, null, null, null, 1, 0, 1, 'MOOC 3: Evaluating Designs with Users', 1),
+(9, 'https://www.coursera.org/learn/ux-design-concept-wireframe', null, null, null, null, null, 1, 0, 1, 'MOOC 4: UX Design: From Concept to Prototype', 1),
+(9, 'https://www.coursera.org/learn/ux-research-at-scale', null, null, null, null, null, 1, 0, 1, 'MOOC 5: UX Research at Scale: Surveys, Analytics, Online Testing', 1),
+(9, 'https://www.coursera.org/learn/user-experience-capstone', null, null, null, null, null, 1, 0, 1, 'MOOC 6: UX (User Experience) Capstone', 1),
+(9, 'https://www.coursera.org/specializations/michiganux', null, null, null, null, null, 1, 0, 1, 'SPEC: User Experience Research and Design', 1),
+
+(10, 'https://www.coursera.org/specializations/academic-skills', null, 'Coursera', null, null, null, 1, 0, 1, 'SPEC: Academic Skills for University Success Specialization', 1),
+(10, 'https://www.coursera.org/learn/digital-literacy', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 01: Introduction to Information & Digital Literacy for University Success', 1),
+(10, 'https://www.coursera.org/learn/problem-solving-skills', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 02: Introduction to Problem-Solving Skill for University Success', 1),
+(10, 'https://www.coursera.org/learn/critical-thinking-skills', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 03: Critical Thinking Skills for University Success', 1),
+(10, 'https://www.coursera.org/learn/communication-skills', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 04: Communication Skills for University Success', 1),
+(10, 'https://www.coursera.org/learn/academic-skills-project', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 05: Academic Skills for University Success: Capstone', 1),
+
+(11, 'Fundamental accounting principles', 'Wild, Larson, Chiappetta', 'Mc Graw-Hill', 2013, null, null, 1, 1, 0, null, 1),
+(11, 'Principles of Accounting', 'Wild, Larson, Chiappetta', 'Mc Graw-Hill', 2009, null, null, 1, 1, 0, null, 1),
+(11, 'Fundamental accounting principles', 'John J. Wild, Winston Kwok, Sundar Venkatesh', 'Mc Graw-Hill', null, '3rd', '9789814923378', 1, 1, 0, 'Chọn một trong ba sách. Ưu tiên ấn bản mới nhất.', 1),
+
+(12, 'https://www.coursera.org/specializations/creative-writing', null, 'Coursera', null, null, null, 1, 0, 1, 'SPEC: Creative Writing Specialization', 1),
+(12, 'https://www.coursera.org/learn/craft-of-plot', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 01: Creative Writing: The Craft of Plot', 1),
+(12, 'https://www.coursera.org/learn/craft-of-character', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 02: Creative Writing: The Craft of Character', 1),
+(12, 'https://www.coursera.org/learn/craft-of-setting-and-description', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 03: Creative Writing: The Craft of Setting and Description', 1),
+(12, 'https://www.coursera.org/learn/craft-of-style', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 04: Creative Writing: The Craft of Style', 1),
+(12, 'https://www.coursera.org/learn/story-writing-project', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 05: Capstone: Your Story', 1),
+
+(13, 'Adobe Design Basics', 'Thomas Payne', 'Adobe Education Exchange', 2020, '2020', '9781714208852', 1, 0, 1, 'Nguồn sách Creative Commons licensing', 1),
+(13, 'Introduction to UX & UI Design<br/>
+https://edex.adobe.com/en/resource/v3b9bc716', 'unknown', 'Adobe', 2018, 'CC', null, 0, 0, 1, null, 1),
+(13, 'Adobe Indesign CC<br/>
+https://helpx.adobe.com/content/dam/help/en/pdf/indesign_reference.pdf', 'unknown', 'Adobe', 2019, '20th', null, 0, 0, 1, null, 1),
+(13, 'Design & Layout', 'Roger C. Parker', 'NXB Trẻ', 2010, '1st', null, 0, 1, 0, 'MOOC 05: Capstone: Your Story', 1),
+
+(14, 'A Cognitive Psychology of Mass Communication', 'Richard Jackson Harris, Fred W. Sanborn', 'Routledge', 2019, '7th', '9781138046276', 1, 1, 0, 'Chọn 1 trong 2 Giáo trình (ưu tiên mua Giáo trình mới)', 1),
+(14, 'A Cognitive Psychology of Mass Communication', 'Richard Jackson Harris, Fred W. Sanborn', 'Routledge', 2013, '6th', '9780415537056', 1, 1, 0, 'Chọn 1 trong 2 Giáo trình (ưu tiên mua Giáo trình mới)', 1),
+
+(15, 'Problem Solving in Teams and Groups', 'Cameron W. Piercy', 'University of Kansas Libraries', null, null, null, 1, 0, 1, 'https://open.umn.edu/opentextbooks/textbooks/problem-solving-in-teams-and-groups', 1), 
+(15, 'College Success', 'N/A', 'Lumen Learning courseware', null, null, null, 1, 0, 1, 'https://courses.lumenlearning.com/lumencollegesuccessxtraining2/ or https://courses.lumenlearning.com/lumencollegesuccessxtraining/', 1), 
+(15, 'Business communication for success', 'N/A', 'University of Minnesota i', null, '2th', null, 1, 0, 1, 'https://www.oercommons.org/courses/basics-of-written-business-communication/view', 1), 
+(15, 'Working in group 7th ed.', null, 'Pearson', null, null, null, 0, 1, 0, null, 1), 
+(15, 'Business communication 7th ed.', null, 'Thomson-South Western', null, null, null, 0, 1, 0, null, 1), 
+(15, 'PowerPoint Slides', null, null, null, null, null, 0, 0, 0, null, 1),
+
+(16, 'Corporate Communication: A Guide to Theory and Practice', 'Joep P. Cornelissen', 'SAGE Publications Ltd', 2017, '5th', null, 1, 1, 0, null, 1),
+(16, 'https.//hbr.org (Corporate Communication – HBR/ Harvard Business review)', null, null, null, null, null, 0, 0, 1, null, 1),
+(16, 'https.//network.bepress.com (Business and Corporate Communications – open access section)', null, null, null, null, null, 0, 0, 1, null, 1),
+(16, 'www. apps.prsa.org (create an account to view articles)', null, null, null, null, null, 0, 0, 0, null, 1),
+(16, 'www.insituteforpr.org', null, null, null, null, null, 0, 0, 0, null, 1),
+
+(17, 'https://www.coursera.org/specializations/social-media-marketing', null, 'Coursera', null, null, null, 1, 0, 1, '	Spec: https://www.coursera.org/specializations/social-media-marketing', 1),
+(17, 'https://www.coursera.org/learn/social-marketing-capstone', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 6: Social Marketing Capstone Project', 1),
+(17, 'https://www.coursera.org/learn/business-of-social', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 5: The Business of Social', 1),
+(17, 'https://www.coursera.org/learn/social-imc', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 4: Content, Advertising & Social IMC', 1),
+(17, 'https://www.coursera.org/learn/nurture-market-strategies', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 3: Engagement & Nurture Marketing Strategies', 1),
+(17, 'https://www.coursera.org/learn/importance-of-listening', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 2: The Importance of Listening', 1),
+(17, 'https://www.coursera.org/learn/what-is-social', null, 'Coursera', null, null, null, 1, 0, 1, 'MOOC 1: What is Social?', 1),
+
+(18, 'Advertising and Promotion: An Integrated Marketing Communications Perspective', 'George E. Belch and Michael A. Belch', 'Irwin/McGraw-Hill', 2012, '9th', null, 1, 1, 0, null, 1),
+(18, 'Additional readings on AdAge.com, Harvard Business Review, BusinessWeek', null, null, null, null, null, 0, 0, 1, null, 1),
+(18, 'ISE Advertising and Promotion: An Integrated Marketing Communications Perspective', 'George E. Belch, Michael A. Belch', 'McGraw-Hill Education', 2021, '12th', 'ISBN13: 9781260570991', 1, 1, 0, 'Chọn một trong 2 quyển. Ưu tiên mua ấn bản mới nhất', 1);
+
+
+
+
 INSERT INTO `swp391`.`prerequisite`
-(`subjectCode`,
+(`SyllabusID`,`subjectCode`,
 `subjectPre`)
 VALUES
-('OTP101', null),
-('EAW211', 'EAS202'),
-('EAW211', 'ASG203'),
-('VDP201', 'CDP391'),
-('SSG103', null),
-('DTG111', null),
-('MED201', 'MAD211'),
-('MGT103', null),
-('MKT101', null),
-('WDU203c', null),
-('SSL101c', null),
-('ACC101', null),
-('CMC201c', null),
-('DTG121', null),
-('MMP201', null),
-('SSG104', null),
-('CCO201', null),
-('MKT208c', 'MKT101'),
-('MKT304', null);
+(1, 'OTP101', null),
+(3, 'EAW211', 'EAS202'),
+(3, 'EAW211', 'ASG203'),
+(4, 'VDP201', 'CDP391'),
+(2, 'SSG103', null),
+(5, 'DTG111', null),
+(6, 'MED201', 'MAD211'),
+(7, 'MGT103', null),
+(8, 'MKT101', null),
+(9, 'WDU203c', null),
+(10, 'SSL101c', null),
+(11, 'ACC101', null),
+(12, 'CMC201c', null),
+(13, 'DTG121', null),
+(14, 'MMP201', null),
+(15, 'SSG104', null),
+(16, 'CCO201', null),
+(17, 'MKT208c', 'MKT101'),
+(18, 'MKT304', null);
 
 
 
