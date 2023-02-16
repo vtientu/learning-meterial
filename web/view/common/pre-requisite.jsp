@@ -1,6 +1,6 @@
 <%-- 
-    Document   : pre-requisite
-    Created on : Feb 6, 2023, 3:03:27 AM
+    Document   : leaning-path
+    Created on : Feb 6, 2023, 2:55:25 AM
     Author     : tient
 --%>
 
@@ -11,24 +11,129 @@
         <%@include file="gui/header.jsp" %>
     </head>
     <body>
-        <div class="bg my-5 py-5">
-            <div class="page-wraper">
-                <div id="loading-icon-bx"></div>
-                <div class="account-form">
-                    <div class="account-form-inner">
-                        <div class="account-container">
-                            <div class="error-page">
-                                <h3>Ooopps :(</h3>
-                                <h2 class="error-title">404</h2>
-                                <h5>The Page you were looking for, couldn't be found.</h5>
-                                <p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
-                                <a href="home" class="btn outline black">Back To Home</a>
+        <div class="page-content bg-white">
+            <!-- inner page banner -->
+            <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner.png);">
+                <div class="container">
+                    <div class="page-banner-entry">
+                        <h1 class="text-white">Pre-Requisite</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- inner page banner END -->
+            <div class="content-block">
+                <!-- About Us -->
+                <div class="section-area section-sp1">
+                    <div class="container">
+                        <div class="row justify-content-between">
+                            <div>
+                                <h3 style="border-bottom:10px solid #f7b205">Pre-Requisite</h3>
+                            </div>
+                            <div class="col-sm-4 m-b30" style="float: right;">
+                                <div class="widget courses-search-bx placeani">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label><i class="fa fa-search"></i> Search</label>
+                                            <input oninput="searchPreRequisite(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  id="list-items">
+                            <table class="table text-center">
+                                <thead class="thead-orange">
+                                <th>Syllabus ID</th>
+                                <th>Subject Name</th>
+                                <th>Syllabus Name</th>
+                                <th>DecisionNo MM/dd/yyyy</th>
+                                <th>All subject need to learn before</th>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${listPreRequisite}" var="list">
+                                        <tr>
+                                            <td>${list.syllabusID}</td>
+                                            <td>${list.subject.subjectName}</td>
+                                            <td><a style="color: blue;" href="syllabus-details?syID=${list.subjectCode}">${list.syllabusNameEN}</a></td>
+                                            <td>${list.decisionNo}</td>
+                                            <td>
+                                                <c:if test="${list.subject.prerequisite.isEmpty()}">
+                                                    ${list.subjectCode}<br/>(No pre-requisite)
+                                                </c:if>
+                                                <c:if test="${!list.subject.prerequisite.isEmpty()}">
+                                                    <c:forEach items="${list.subject.prerequisite}" var="c">
+                                                        ${c.subjectCode}: ${c.subjectPre == null || list.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subjectPre}
+                                                    </c:forEach>
+                                                </c:if>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+
+
+                            <div class="col-lg-12 m-b20">
+                                <div class="pagination-bx rounded-sm gray clearfix">
+                                    <ul class="pagination">
+                                        <c:if test="${page == 1}">
+                                            <li class="previous"><a style="pointer-events: none"><i class="ti-arrow-left"></i> Prev</a></li>
+                                            </c:if>
+                                            <c:if test="${page != 1}">
+                                            <li class="previous"><a onclick="searchPreRequisite(${page - 1})"><i class="ti-arrow-left"></i> Prev</a></li>
+                                            </c:if>
+
+                                        <li class="active"><a id="page">${page}</a></li>
+
+                                        <c:if test="${page == totalPage}">
+                                            <li class="next"><a style="pointer-events: none">Next<i class="ti-arrow-right"></i></a></li>
+                                                </c:if>
+                                                <c:if test="${page < totalPage}">
+                                            <li class="next"><a onclick="searchPreRequisite(${page + 1})">Next<i class="ti-arrow-right"></i></a></li>
+                                                </c:if>
+
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- contact area END -->
+
         </div>
+        <script>
+
+
+            let request;
+            function searchPreRequisite(page) {
+                let key = document.getElementById("keyseach").value;
+                let url = './prequisite?page=' + page + '&keysearch=' + key;
+
+
+                if (window.XMLHttpRequest) {
+                    request = new XMLHttpRequest();
+                } else if (window.ActiveXObject) {
+                    request = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                try {
+                    request.onreadystatechange = getInfo;
+                    request.open("POST", url, true);
+                    request.send("POST");
+                } catch (e) {
+                    alert("Unable to connect server");
+                }
+            }
+
+
+            function getInfo() {
+                if (request.readyState === 4) {
+                    var val = request.responseText;
+                    document.getElementById("list-items").innerHTML = val;
+                }
+            }
+
+        </script>
         <%@include file="gui/footer.jsp" %>
     </body>
 </html>

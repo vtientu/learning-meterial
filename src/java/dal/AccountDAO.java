@@ -26,11 +26,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`avatar`,\n"
                     + "    `account`.`firstname`,\n"
                     + "    `account`.`lastname`,\n"
-                    + "    `account`.`birthday`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
-                    + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
@@ -51,13 +49,11 @@ public class AccountDAO extends DBContext {
                 a.setAvatar(rs.getString(5));
                 a.setFirstName(rs.getString(6));
                 a.setLastName(rs.getString(7));
-                a.setBirthday(rs.getDate(8));
-                a.setEmail(rs.getString(9));
-                a.setPhone(rs.getString(10));
-                a.setAddress(rs.getString(11));
-                a.setGender(rs.getInt(12));
-                a.setTypeAccount(rs.getInt(13));
-                a.setIsActive(rs.getBoolean(14));
+                a.setEmail(rs.getString(8));
+                a.setPhone(rs.getString(9));
+                a.setAddress(rs.getString(10));
+                a.setTypeAccount(rs.getInt(11));
+                a.setIsActive(rs.getBoolean(12));
                 a.setRole(role);
                 return a;
             }
@@ -76,11 +72,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`avatar`,\n"
                     + "    `account`.`firstname`,\n"
                     + "    `account`.`lastname`,\n"
-                    + "    `account`.`birthday`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
-                    + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
@@ -100,13 +94,11 @@ public class AccountDAO extends DBContext {
                 a.setAvatar(rs.getString(5));
                 a.setFirstName(rs.getString(6));
                 a.setLastName(rs.getString(7));
-                a.setBirthday(rs.getDate(8));
-                a.setEmail(rs.getString(9));
-                a.setPhone(rs.getString(10));
-                a.setAddress(rs.getString(11));
-                a.setGender(rs.getInt(12));
-                a.setTypeAccount(rs.getInt(13));
-                a.setIsActive(rs.getBoolean(14));
+                a.setEmail(rs.getString(8));
+                a.setPhone(rs.getString(9));
+                a.setAddress(rs.getString(10));
+                a.setTypeAccount(rs.getInt(11));
+                a.setIsActive(rs.getBoolean(12));
                 a.setRole(role);
                 return a;
             }
@@ -125,11 +117,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`avatar`,\n"
                     + "    `account`.`firstname`,\n"
                     + "    `account`.`lastname`,\n"
-                    + "    `account`.`birthday`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
-                    + "    `account`.`gender`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
@@ -149,13 +139,11 @@ public class AccountDAO extends DBContext {
                 a.setAvatar(rs.getString(5));
                 a.setFirstName(rs.getString(6));
                 a.setLastName(rs.getString(7));
-                a.setBirthday(rs.getDate(8));
-                a.setEmail(rs.getString(9));
-                a.setPhone(rs.getString(10));
-                a.setAddress(rs.getString(11));
-                a.setGender(rs.getInt(12));
-                a.setTypeAccount(rs.getInt(13));
-                a.setIsActive(rs.getBoolean(14));
+                a.setEmail(rs.getString(8));
+                a.setPhone(rs.getString(9));
+                a.setAddress(rs.getString(10));
+                a.setTypeAccount(rs.getInt(11));
+                a.setIsActive(rs.getBoolean(12));
                 a.setRole(role);
                 return a;
             }
@@ -222,11 +210,9 @@ public class AccountDAO extends DBContext {
                     + "                          ,avatar\n"
                     + "                          ,firstname\n"
                     + "                          ,lastname\n"
-                    + "                          ,birthday\n"
                     + "                          ,email\n"
                     + "                          ,phone\n"
                     + "                          ,address\n"
-                    + "                          ,gender\n"
                     + "                      FROM Account\n"
                     + "                      WHERE email = ?;";
             PreparedStatement st = connection.prepareStatement(sql);
@@ -272,20 +258,16 @@ public class AccountDAO extends DBContext {
                     + "                      SET avatar = ?\n"
                     + "                         ,firstname = ?\n"
                     + "                         ,lastname = ?\n"
-                    + "                         ,birthday = ?\n"
                     + "                         ,phone = ?\n"
                     + "                         ,address = ?\n"
-                    + "                         ,gender = ?\n"
                     + "                    WHERE username = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, a.getAvatar());
             st.setString(2, a.getFirstName());
             st.setString(3, a.getLastName());
-            st.setDate(4, a.getBirthday());
-            st.setString(5, a.getPhone());
-            st.setString(6, a.getAddress());
-            st.setInt(7, a.getGender());
-            st.setString(8, a.getUserName());
+            st.setString(4, a.getPhone());
+            st.setString(5, a.getAddress());
+            st.setString(6, a.getUserName());
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);

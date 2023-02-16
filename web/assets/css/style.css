@@ -24,6 +24,14 @@
         1. HEADER
 =================================*/
 
+
+
+.table thead th{
+    vertical-align: inherit;
+    font-weight: bold;
+}
+
+
 *{
     font-family: 'Roboto';
     font-size: 16px;
@@ -42,7 +50,7 @@
 
 
 .thead-orange{
-    background-color: #f7b205;
+    background-color: orange;
 }
 
 .thead-orange>tr>th{

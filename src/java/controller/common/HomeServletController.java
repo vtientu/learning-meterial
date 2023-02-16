@@ -21,11 +21,14 @@ import java.util.Properties;
 import java.util.Random;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import module.Account;
 import module.Constants;
 import module.Curriculum;
@@ -103,7 +106,7 @@ public class HomeServletController extends HttpServlet {
                 loginGoogle(request, response);
                 break;
             default:
-                home(request, response);
+                request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
         }
     }
 
@@ -130,19 +133,10 @@ public class HomeServletController extends HttpServlet {
                 forgetPassword(request, response);
                 break;
             default:
-                home(request, response);
+                request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
         }
     }
 
-    public void home(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        SyllabusDAO sd = new SyllabusDAO();
-        CurriculumDAO cd = new CurriculumDAO();
-        ArrayList<Syllabus> listSyllabus = sd.getAllSyllabus(1);
-        ArrayList<Curriculum> listCurriculum = cd.getListForCurriculum();
-        request.setAttribute("listSyllabus", listSyllabus);
-        request.setAttribute("listCurriculum", listCurriculum);
-        request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
-    }
 
     public void loginGoogle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         AccountDAO ad = new AccountDAO();
@@ -245,7 +239,44 @@ public class HomeServletController extends HttpServlet {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
             message.setSubject("Verification Mail");
-            message.setText("Verification Code: \n" + getVerifyCode());
+            String htmlEmail = "<!DOCTYPE html>\n"
+                    + "<html lang=\"en\">\n"
+                    + "<body>\n"
+                    + "    <div style=\"margin: 0 10rem;\">\n"
+                    + "        <div style=\"text-align: center;\">\n"
+                    + "            <h1>Đơn Hàng Đã Đặt <label style=\"color: rgba(0, 0, 0, 0.652);\">#123123</label> </h1>\n"
+                    + "            <div style=\" justify-content: center; display: flex;\">\n"
+                    + "                <table border=\"1\">\n"
+                    + "                    <tr>\n"
+                    + "                        <th style=\"padding: 0 50px;\">Tên Sản Phẩm</th>\n"
+                    + "                        <th style=\"padding: 0 50px;\">Giá</th>\n"
+                    + "                        <th>Số lượng</th>\n"
+                    + "                    </tr>\n"
+                    + "                    <tr>\n"
+                    + "                        <td>Iphone 14 Pro Max</td>\n"
+                    + "                        <td>24.000.000 Đ</td>\n"
+                    + "                        <td>2</td>\n"
+                    + "                    </tr>\n"
+                    + "                    <tr>\n"
+                    + "                        <td>Tổng: </td>\n"
+                    + "                        <td>Tổng tiền</td>\n"
+                    + "                        <td>Số lượng</td>\n"
+                    + "                    </tr>\n"
+                    + "                </table>\n"
+                    + "            </div>\n"
+                    + "        </div>\n"
+                    + "    </div>\n"
+                    + "</body>\n"
+                    + "\n"
+                    + "</html>";
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(htmlEmail, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
 
             Transport.send(message);
 

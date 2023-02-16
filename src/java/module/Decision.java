@@ -5,6 +5,7 @@
 package module;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -32,6 +33,18 @@ public class Decision {
         this.isActive = isActive;
     }
 
+    public String getApprovedDateFormat(){
+        SimpleDateFormat date = new SimpleDateFormat("dd-mm-yyyy");
+        return date.format(this.approvedDate);
+    }
+    
+    
+    public String getCreateDateFormat(){
+        SimpleDateFormat date = new SimpleDateFormat("dd-mm-yyyy");
+        return date.format(this.createDate);
+    }
+    
+    
     public boolean isIsActive() {
         return isActive;
     }

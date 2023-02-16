@@ -4,6 +4,8 @@
  */
 package module;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author tient
@@ -13,13 +15,13 @@ public class Subject {
     private int semester;
     private String subjectCode;
     private String subjectName;
-    private PreRequisite prerequisite;
+    private ArrayList<PreRequisite> prerequisite;
     private boolean isActive;
 
     public Subject() {
     }
 
-    public Subject(int noCredit, int semester, String subjectCode, String subjectName, PreRequisite prerequisite, boolean isActive) {
+    public Subject(int noCredit, int semester, String subjectCode, String subjectName, ArrayList<PreRequisite> prerequisite, boolean isActive) {
         this.noCredit = noCredit;
         this.semester = semester;
         this.subjectCode = subjectCode;
@@ -27,6 +29,7 @@ public class Subject {
         this.prerequisite = prerequisite;
         this.isActive = isActive;
     }
+
 
     public boolean isIsActive() {
         return isActive;
@@ -36,16 +39,13 @@ public class Subject {
         this.isActive = isActive;
     }
 
-    
-
-    public PreRequisite getPrerequisite() {
+    public ArrayList<PreRequisite> getPrerequisite() {
         return prerequisite;
     }
 
-    public void setPrerequisite(PreRequisite prerequisite) {
+    public void setPrerequisite(ArrayList<PreRequisite> prerequisite) {
         this.prerequisite = prerequisite;
     }
-
    
 
     public int getNoCredit() {

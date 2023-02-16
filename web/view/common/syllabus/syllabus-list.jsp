@@ -82,55 +82,93 @@
                                 <div class="col-sm-4 m-b30" style="float: right;">
                                     <div class="widget courses-search-bx placeani">
                                         <div class="form-group">
-                                            <form action="search" method="get">
                                                 <div class="input-group">
                                                     <label><i class="fa fa-search"></i> Search</label>
-                                                    <input oninput="searchSyllabus()" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                    <input oninput="searchSyllabus(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
                                                 </div>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
-                                <div id="list-items" class="row">
-                                    <c:forEach items="${listSyllabus}" var="list">
-                                        <div class="col-md-4 col-lg-3 col-sm-6 m-b30">
-                                            <div class="cours-bx">
-                                                <div class="action-box">
-                                                    <img src="assets/images/banner.png" alt="" style="height: 10rem">
-                                                    <a href="syllabus-details?syID=${list.subjectCode}" class="btn">View</a>
-                                                </div>
-                                                <div class="info-bx text-center" style="max-height: 100px">
-                                                    <h5><a href="syllabus-details?syID=${list.subjectCode}">${list.subjectNameEN} (${list.subjectCode})</a></h5>
-                                                    <h5></h5>
-                                                    <span>${list.decisionNo != ""?list.decisionNo:'None'}</span>
-                                                </div>
-                                                <div class="review text-center">
-
+                            <div  id="list-items">
+                                <table class="table text-center">
+                                    <thead class="thead-orange">
+                                    <th>Syllabus ID</th>
+                                    <th>Subject Code</th>
+                                    <th>Subject Name</th>
+                                    <th>Syllabus Name</th>
+                                    <th>IsActive</th>
+                                    <th>IsApproved</th>
+                                    <th>DecisionNo<br/>MM/dd/yyyy</th>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${listSyllabus}" var="list">
+                                            <tr>
+                                                <td>${list.syllabusID}</td>
+                                                <td>${list.subjectCode}</td>
+                                                <td>${list.subject.subjectName}</td>
+                                                <td><a style="color: blue;" href="syllabus-details?syID=${list.subjectCode}">${list.syllabusNameEN}</a></td>
+                                                <td><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
+                                                <td><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
+                                                <td><a style="cursor: pointer; color: blue" data-target="#decision${list.syllabusID}" data-toggle="modal" ">${list.decisionNo}</a></td>
+                                        <div id="decision${list.syllabusID}" class=" mt-5 modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" >
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <label class="col-2">DecisionNo</label><p class="col-10">${list.decision.decisionNo}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-2">DecisionName</label><p class="col-10">${list.decision.decisionName}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-2">ApprovedDate (MM/dd/yyyy)</label><p class="col-10">${list.decision.approvedDate}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-2">Note</label><p class="col-10">${list.decision.note}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-2">CreateDate (MM/dd/yyyy)</label><p class="col-10">${list.decision.createDate}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <label class="col-2">FileName</label><p class="col-10">${list.decision.fileName}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <div class="col-md-12">
+                                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                                        </div>	
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        </tr>
+
                                     </c:forEach>
-                                </div>
+                                    </tbody>
+                                </table>
+
 
                                 <div class="col-lg-12 m-b20">
                                     <div class="pagination-bx rounded-sm gray clearfix">
                                         <ul class="pagination">
                                             <c:if test="${page == 1}">
-                                                <li class="previous"><a href="#!"><i class="ti-arrow-left"></i> Prev</a></li>
+                                                <li class="previous"><a style="pointer-events: none"><i class="ti-arrow-left"></i> Prev</a></li>
                                                 </c:if>
                                                 <c:if test="${page != 1}">
-                                                <li class="previous"><a href="syllabus?page=${page - 1}"><i class="ti-arrow-left"></i> Prev</a></li>
+                                                <li class="previous"><a onclick="searchSyllabus(${page - 1})"><i class="ti-arrow-left"></i> Prev</a></li>
                                                 </c:if>
 
-                                            <li class="active"><a href="syllabus?page=${page}">${page}</a></li>
+                                            <li class="active"><a id="page">${page}</a></li>
 
                                             <c:if test="${page == totalPage}">
-                                                <li class="next"><a href="#!">Next<i class="ti-arrow-right"></i></a></li>
+                                                <li class="next"><a style="pointer-events: none">Next<i class="ti-arrow-right"></i></a></li>
                                                     </c:if>
                                                     <c:if test="${page < totalPage}">
-                                                <li class="next"><a href="syllabus?page=${page + 1}">Next<i class="ti-arrow-right"></i></a></li>
+                                                <li class="next"><a onclick="searchSyllabus(${page + 1})">Next<i class="ti-arrow-right"></i></a></li>
                                                     </c:if>
 
                                         </ul>
@@ -147,9 +185,8 @@
 
 
                 let request;
-                function searchSyllabus() {
+                function searchSyllabus(page) {
                     let key = document.getElementById("keyseach").value;
-                    let page = document.getElementById("page");
                     let url = './syllabus?page=' + page + '&keysearch=' + key;
 
 
@@ -164,9 +201,10 @@
                         request.open("POST", url, true);
                         request.send("POST");
                     } catch (e) {
-                        alert("Unable to connect server")
+                        alert("Unable to connect server");
                     }
                 }
+
 
                 function getInfo() {
                     if (request.readyState === 4) {

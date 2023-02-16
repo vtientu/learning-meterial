@@ -14,8 +14,8 @@ import java.text.SimpleDateFormat;
 public class Syllabus {
     private int syllabusID;
     private String subjectCode;
-    private String subjectNameEN;
-    private String subjectNameVN;
+    private String syllabusNameEN;
+    private String syllabusNameVN;
     private boolean isActive;
     private boolean isApproved;
     private String decisionNo;
@@ -36,11 +36,11 @@ public class Syllabus {
     public Syllabus() {
     }
 
-    public Syllabus(int syllabusID, String subjectCode, String subjectNameEN, String subjectNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject, Decision decision) {
+    public Syllabus(int syllabusID, String subjectCode, String syllabusNameEN, String syllabusNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject, Decision decision) {
         this.syllabusID = syllabusID;
         this.subjectCode = subjectCode;
-        this.subjectNameEN = subjectNameEN;
-        this.subjectNameVN = subjectNameVN;
+        this.syllabusNameEN = syllabusNameEN;
+        this.syllabusNameVN = syllabusNameVN;
         this.isActive = isActive;
         this.isApproved = isApproved;
         this.decisionNo = decisionNo;
@@ -58,6 +58,8 @@ public class Syllabus {
         this.subject = subject;
         this.decision = decision;
     }
+
+    
 
     public Decision getDecision() {
         return decision;
@@ -105,21 +107,23 @@ public class Syllabus {
         this.subjectCode = subjectCode;
     }
 
-    public String getSubjectNameEN() {
-        return subjectNameEN;
+    public String getSyllabusNameEN() {
+        return syllabusNameEN;
     }
 
-    public void setSubjectNameEN(String subjectNameEN) {
-        this.subjectNameEN = subjectNameEN;
+    public void setSyllabusNameEN(String syllabusNameEN) {
+        this.syllabusNameEN = syllabusNameEN;
     }
 
-    public String getSubjectNameVN() {
-        return subjectNameVN;
+    public String getSyllabusNameVN() {
+        return syllabusNameVN;
     }
 
-    public void setSubjectNameVN(String subjectNameVN) {
-        this.subjectNameVN = subjectNameVN;
+    public void setSyllabusNameVN(String syllabusNameVN) {
+        this.syllabusNameVN = syllabusNameVN;
     }
+
+    
 
     public boolean isIsActive() {
         return isActive;
@@ -230,11 +234,8 @@ public class Syllabus {
         return date.format(this.approvedDate);
     }
     
+          
     
-    @Override
-    public String toString() {
-        return "Syllabus{" + "subjectCode=" + subjectCode + ", subjectNameEN=" + subjectNameEN + ", subjectNameVN=" + subjectNameVN + ", isActive=" + isActive + ", isApproved=" + isApproved + ", decisionNo=" + decisionNo + ", noCredit=" + noCredit + ", degreeLevel=" + degreeLevel + ", timeAllocation=" + timeAllocation + ", description=" + description + ", studentTasks=" + studentTasks + ", tools=" + tools + ", scoringScale=" + scoringScale + ", note=" + note + ", MinAvgMarkToPass=" + MinAvgMarkToPass + ", approvedDate=" + approvedDate + ", subject=" + subject + '}';
-    }
     
     
 }

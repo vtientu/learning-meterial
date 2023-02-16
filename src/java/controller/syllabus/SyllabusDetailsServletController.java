@@ -4,7 +4,6 @@
  */
 package controller.syllabus;
 
-import dal.ReviewDAO;
 import dal.SyllabusDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
-import module.Feedback;
 import module.Syllabus;
 
 /**
@@ -64,10 +62,12 @@ public class SyllabusDetailsServletController extends HttpServlet {
             throws ServletException, IOException {
         String code = request.getParameter("syID");
         SyllabusDAO sd = new SyllabusDAO();
-        Syllabus s = sd.getSyllabus(code);
-        ReviewDAO rdao = new ReviewDAO();
-        ArrayList<Feedback> listReview = rdao.getFeedbackBySyID(s.getSyllabusID());
-        request.setAttribute("feedback", listReview);
+        HttpSession session = request.getSession();
+        Account a = (Account) session.getAttribute("account");
+        Syllabus s = sd.getSyllabus(code, 1);
+        if (a != null && a.getRoleID() != 1) {
+            s = sd.getSyllabus(code, a.getRoleID());
+        }
         request.setAttribute("syllabus", s);
         request.getRequestDispatcher("view/common/syllabus/syllabus-details.jsp").forward(request, response);
     }
@@ -83,27 +83,7 @@ public class SyllabusDetailsServletController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            int sid = Integer.parseInt(request.getParameter("syID"));
-            String title = request.getParameter("title");
-            String description = request.getParameter("description");
-            HttpSession session = request.getSession();
-            Account a = (Account) session.getAttribute("account");
-            ReviewDAO rd = new ReviewDAO();
-            Feedback fb = new Feedback(0, 0, title, description, a, true);
 
-            rd.createFeedbackSyllabus(sid, fb);
-
-            SyllabusDAO sd = new SyllabusDAO();
-            Syllabus s = sd.getSyllabus(request.getParameter("syCode"));
-            ReviewDAO rdao = new ReviewDAO();
-            ArrayList<Feedback> listReview = rdao.getFeedbackBySyID(sid);
-            request.setAttribute("feedback", listReview);
-            request.setAttribute("syllabus", s);
-            request.getRequestDispatcher("view/common/syllabus/syllabus-details.jsp").forward(request, response);
-        } catch (NumberFormatException e) {
-            System.out.println(e);
-        }
     }
 
     /**

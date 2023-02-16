@@ -77,68 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Main Slider -->
-                <div class="content-block">
-                    <!-- Popular Courses -->
-                    <div class="section-area section-sp2 popular-courses-bx">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12 heading-bx left">
-                                    <h2 class="title-head"><span>Syllabus</span></h2>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="courses-carousel owl-carousel owl-btn-1 col-12 p-lr0">
-                                    <c:forEach items="${listSyllabus}" var="list">
-                                    <div class="item">
-                                        <div class="cours-bx">
-                                            <div class="action-box">
-                                                <img src="assets/images/banner.png" alt="" style="height: 10rem">
-                                                <a href="syllabus-details?syID=${list.subjectCode}" class="btn">View</a>
-                                            </div>
-                                            <div class="info-bx text-center">
-                                                <h5 style="min-height: 50px"><a href="syllabus-details?syID=${list.subjectCode}">${list.subjectNameEN}</a></h5>
-                                                <span>${list.subjectCode}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </c:forEach>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-block">
-                    <!-- Popular Courses -->
-                    <div class="section-area section-sp2 popular-courses-bx">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12 heading-bx left">
-                                    <h2 class="title-head"><span>Curriculum</span></h2>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="courses-carousel owl-carousel owl-btn-1 col-12 p-lr0">
-                                    <c:forEach items="${listCurriculum}" var="list">
-                                    <div class="item">
-                                        <div class="cours-bx">
-                                            <div class="action-box">
-                                                <img src="assets/images/banner.png" alt="" style="height: 10rem">
-                                                <a href="curriculum-details?curID=${list.curriculumCode}" class="btn">View</a>
-                                            </div>
-                                            <div class="info-bx text-center">
-                                                <h5 style="min-height: 50px"><a href="curriculum-details?curID=${list.curriculumCode}">${list.getCurriculumNameEN()}, ${list.major.majorNameEN}</a></h5>
-                                                <span>${list.curriculumCode}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </c:forEach>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- contact area END -->
+                
             </div>
             <!-- Content END-->
             <!-- Footer ==== -->

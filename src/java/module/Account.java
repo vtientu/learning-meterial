@@ -18,11 +18,9 @@ public class Account {
     private String avatar;
     private String firstName;
     private String lastName;
-    private Date birthday;
     private String email;
     private String phone;
     private String address;
-    private int gender;
     private Role role;
     private int typeAccount;
     private boolean isActive;
@@ -30,7 +28,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(int accountID, String userName, int roleID, String password, String avatar, String firstName, String lastName, Date birthday, String email, String phone, String address, int gender, Role role, int typeAccount, boolean isActive) {
+    public Account(int accountID, String userName, int roleID, String password, String avatar, String firstName, String lastName, String email, String phone, String address, Role role, int typeAccount, boolean isActive) {
         this.accountID = accountID;
         this.userName = userName;
         this.roleID = roleID;
@@ -38,15 +36,14 @@ public class Account {
         this.avatar = avatar;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.birthday = birthday;
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.gender = gender;
         this.role = role;
         this.typeAccount = typeAccount;
         this.isActive = isActive;
     }
+
 
     public boolean isIsActive() {
         return isActive;
@@ -55,9 +52,6 @@ public class Account {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
-
-    
-    
 
     
 
@@ -119,13 +113,6 @@ public class Account {
         this.lastName = lastName;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
 
     public String getEmail() {
         return email;
@@ -149,14 +136,6 @@ public class Account {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
     }
 
     

@@ -13,11 +13,9 @@ CREATE TABLE Account(
 	avatar NVARCHAR(255),
 	firstname NVARCHAR(50) NOT NULL,
 	lastname NVARCHAR(50) NOT NULL,
-	birthday date,
 	email NVARCHAR(120) NOT NULL UNIQUE,
 	phone NVARCHAR(20),
 	address NVARCHAR(255),
-	gender int DEFAULT -1,
     typeAccount int DEFAULT -1,
     isActive bit DEFAULT 1,
 	primary key (accountID)

@@ -73,75 +73,27 @@
                 <!-- inner page banner END -->
                 <div class="content-block">
                     <!-- About Us -->
-                    <div class="section-area section-sp1">
-                        <div class="container">
+                    <div class="section-area" >
+                        <div class="container p-5" style="box-shadow: 0px 4px 20px 4px rgb(0 0 0 / 15%)">
                             <div class="row d-flex flex-row-reverse">
-                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                    <div class="course-detail-bx">
-                                        <c:if test="${account != null && account.role.roleName != 'GUEST'}">
-                                            <div class="course-price border-bottom">
-                                                <p>Download All Student Material</p>
-                                                <button class="btn radius-xl text-uppercase"><a href="files/materials/material" download="">Download</a></button>
-                                            </div>
-                                            <div class="course-price border-bottom">
-                                                <p>Download All Teacher Material</p>
-                                                <button class="btn radius-xl text-uppercase"><a href="files/materials/material" download="">Download</a></button>
-                                            </div>
-                                        </c:if>
-                                        <div class="teacher-bx" style="border-top: none; margin: 0">
-                                            <div class="teacher-name text-center">
-                                                <h5>${syllabus.subjectNameEN}</h5>
-                                                <span>${syllabus.subjectCode}</span>
-                                            </div>
-                                        </div>
-                                        <div class="cours-more-info align-items-center">
-                                            <div class="review text-center">
-                                                <span>Semester</span>
-                                                <h5>${syllabus.subject.semester}</h5>
-                                            </div>
-                                            <div class="review categories text-center">
-                                                <span>Pre-Requisite</span>
-                                                <h5>${syllabus.preRequisite != null ? syllabus.preRequisite:'None'}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="course-info-list scroll-page">
-                                            <ul class="navbar">
-                                                <li><a class="nav-link" href="#overview"><i class="ti-zip"></i>Overview</a>
-                                                </li>
-                                                <li><a class="nav-link" href="#curriculum"><i
-                                                            class="ti-bookmark-alt"></i>Details</a></li>
-                                                <li><a class="nav-link" href="#instructor"><i
-                                                            class="ti-user"></i>Skills</a></li>
-                                                        <c:if test="${account.role.roleName == 'ADMIN' || account.role.roleName == 'REVIEWER'}">
-                                                    <li><a class="nav-link" href="#reviews"><i
-                                                                class="ti-comments"></i>Reviews</a></li>
-                                                        </c:if>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-lg-9 col-md-8 col-sm-12">
-                                    <div class="courses-post">
-                                        <div class="ttr-post-info">
-                                            <div class="ttr-post-title ">
-                                                <h2 class="post-title">${syllabus.subjectNameEN}</h2>
-                                                <h5 class="mb-3">Description</h5>
-                                            </div>
-                                            <div class="ttr-post-text">
-                                                <p>${syllabus.description}</p>
-                                            </div>
+
+                                <div class="tab-content">
+
+                                    <div class="courese-overview" id="overview">
+
+                                        <div class="ttr-post-title ">
+                                            <h2 class="post-title">${syllabus.syllabusNameEN}</h2>
                                         </div>
-                                    </div>
-                                    <div class="courese-overview mt-5 border-top pt-5" id="overview">
-                                        <h4>Overview</h4>
-                                        <div class="row">
-                                            <div class="col-md-12 col-lg-5">
+                                        <div class="row mt-5 border-top pt-5">
+                                            <div class="col-md-12 col-lg-4">
+
+                                                <h4>Overview</h4>
                                                 <ul class="course-features">
                                                     <li><i class="ti-book"></i> <span class="label">Subject Code</span> <span
                                                             class="value">${syllabus.subjectCode}</span></li>
                                                     <li><i class="ti-smallcap"></i> <span class="label">Syllabus Name</span>
-                                                        <span class="value">${syllabus.subjectNameEN}</span>
+                                                        <span class="value">${syllabus.syllabusNameEN}</span>
                                                     </li>
                                                     <li><i class="ti-info-alt"></i> <span class="label">NoCredit</span>
                                                         <span class="value">${syllabus.noCredit != null?syllabus.noCredit:'None'}</span>
@@ -164,7 +116,9 @@
                                                     </li>
                                                 </ul>
                                             </div>
-                                            <div class="col-md-12 col-lg-7">
+                                            <div class="col-md-12 col-lg-8">
+                                                <h5 class="m-b5">Description</h5>
+                                                <p>${syllabus.description}</p>
                                                 <h5 class="m-b5">Time Allocation</h5>
                                                 <p>${syllabus.timeAllocation}</p>
                                                 <h5 class="m-b5">Tools</h5>
@@ -176,148 +130,211 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="m-b30 mt-5 border-top pt-5" id="curriculum">
-                                        <h4>Curriculum</h4>
-                                        <ul class="curriculum-list">
-                                            <li>
-                                                <h5 class="mb-3">Material</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                    <ul class="nav nav-fill nav-tabs mt-5 border-top pt-5" id="other">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#material">Material(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#lo">LO(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#session">Session(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#question">Question(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#assessment">Assessment(s)</a>
+                                        </li>
+                                    </ul>
 
-                                            </li>
-                                            <li>
-                                                <h5 class="mb-3">Sessions</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </li>
-                                            <li>
-                                                <h5 class="mb-3">Assessment</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </li>
-                                        </ul>
+                                    <div id="material" class="tab-pane fade show active">
+                                        <h3 class="mb-3 mt-5">Material</h3>
+                                        <div class="table-responsive mt-5">
+                                            <table class="table table-hover table-bordered">
+                                                <thead class="thead-orange">
+                                                <th style="font-weight: bold" class=" text-light">MaterialDescription</th>
+                                                <th style="font-weight: bold" class=" text-light">Author</th>
+                                                <th style="font-weight: bold" class=" text-light">Publisher</th>
+                                                <th style="font-weight: bold" class=" text-light">PublishedDate</th>
+                                                <th style="font-weight: bold" class=" text-light">Edition</th>
+                                                <th style="font-weight: bold" class=" text-light">ISBN</th>
+                                                <th style="font-weight: bold" class=" text-light">IsMainMaterial</th>
+                                                <th style="font-weight: bold" class=" text-light">IsHardCopy</th>
+                                                <th style="font-weight: bold" class=" text-light">IsOnline</th>
+                                                <th style="font-weight: bold" class=" text-light">Note</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Introductory documents aout FPT Group and FPT University</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <div class="mt-5 border-top pt-5" id="instructor">
+                                    <div id="question" class="tab-pane fade">
+                                        <h5 class="mb-3">Questions</h5>
+                                        <table border="1" class="table table-striped">
+                                            <thead class="thead-orange">
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="session" class="tab-pane fade">
+                                        <h5 class="mb-3">Sessions</h5>
+                                        <table border="1" class="table table-striped">
+                                            <thead class="thead-orange">
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="assessment" class="tab-pane fade">
+                                        <h5 class="mb-3">Assessment</h5>
+                                        <table border="1" class="table table-striped">
+                                            <thead class="thead-orange">
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                    <td>a</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="lo" class="tab-pane fade">
                                         <h4>LO(s)</h4>
                                         <table border="1" class="table table-striped">
                                             <thead class="thead-orange">
@@ -362,41 +379,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <c:if test="${account != null && account.role.roleName != 'GUEST' && account.role.roleName != 'STUDENT' && account.role.roleName != 'TEACHER'}">
-                                        <div class="mt-5 border-top pt-5" id="reviews">
-                                            <h4>Reviews</h4>
-                                            <c:if test="${account.role.roleName == 'REVIEWER' || account.role.roleName == 'ADMIN'}">
-                                                <form action="syllabus-details" method="post">
-                                                    <input type="text" name="syID" value="${syllabus.syllabusID}" hidden="">
-                                                    <input type="text" name="syCode" value="${syllabus.subjectCode}" hidden="">
-                                                    <div class="form-group">
-                                                        <label for="titleReview">Title *</label>
-                                                        <input name="title" type="text" class="form-control" id="titleReview" placeholder="Title">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="descriptionReview">Description *</label>
-                                                        <textarea name="description" type="password" class="form-control" id="descriptionReview" placeholder="Description"></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                </form>
-                                            </c:if>
-                                            <div id="feedback">
-                                                <c:forEach items="${feedback}" var="f">
-                                                    <div class="instructor-bx mt-5">
-                                                        <div class="instructor-author">
-                                                            <img src="images/${f.account.avatar == null?'profile/pic1.png':f.account.avatar}" alt="avatar">
-                                                        </div>
-                                                        <div class="instructor-info">
-
-                                                            <h5>${f.account.displayName}</h5>
-                                                            <span style="font-weight: bold">${f.title}</span>
-                                                            <p class="m-b0">${f.description}</p>
-                                                        </div>
-                                                    </div>
-                                                </c:forEach>
-                                            </div>
-                                        </div>
-                                    </c:if>
                                 </div>
                             </div>
                         </div>
@@ -404,77 +386,76 @@
                 </div>
             </div>
             <!-- contact area END -->
-        </div>
 
-        <div id="decision" class=" mt-5 modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg" >
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <table border="1">
-                            <tbody><tr>
-                                    <td style="width:12%;text-align:right;"> DecisionNo</td>
-                                    <td>${syllabus.decisionNo}</td>
-                                </tr>
-                                <tr>
-                                    <td style="width:12%;text-align:right;">DecisionName</td>
-                                    <td>
-                                        ${syllabus.decision.decisionName}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:12%;text-align:right;"> ApprovedDate (MM/dd/yyyy)</td>
-                                    <td>${syllabus.decision.approvedDate}</td>
-                                </tr>
-                                <tr>
-                                    <td style="width:12%;text-align:right;">Note</td>
-                                    <td>${syllabus.decision.note}</td>
-                                </tr>
-                                <tr>
-                                    <td style="width:12%;text-align:right;">CreateDate (MM/dd/yyyy)</td>
-                                    <td>${syllabus.decision.createDate}</td>
-                                </tr>
-                                <tr>
-                                    <td style="width:12%;text-align:right;"> FileName</td>
-                                    <td>
-                                        ${syllabus.decision.fileName}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="col-md-12">
-                            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                        </div>	
+            <div id="decision" class=" mt-5 modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <table border="1">
+                                <tbody><tr>
+                                        <td style="width:12%;text-align:right;"> DecisionNo</td>
+                                        <td>${syllabus.decisionNo}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%;text-align:right;">DecisionName</td>
+                                        <td>
+                                            ${syllabus.decision.decisionName}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%;text-align:right;"> ApprovedDate (MM/dd/yyyy)</td>
+                                        <td>${syllabus.decision.approvedDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%;text-align:right;">Note</td>
+                                        <td>${syllabus.decision.note}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%;text-align:right;">CreateDate (MM/dd/yyyy)</td>
+                                        <td>${syllabus.decision.createDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:12%;text-align:right;"> FileName</td>
+                                        <td>
+                                            ${syllabus.decision.fileName}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="col-md-12">
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                            </div>	
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Content END-->
+            <!-- Footer ==== -->
+            <%@include file="../gui/footer.jsp" %>
+            <!-- Footer END ==== -->
+            <button class="back-to-top fa fa-chevron-up"></button>
         </div>
-        <!-- Content END-->
-        <!-- Footer ==== -->
-        <%@include file="../gui/footer.jsp" %>
-        <!-- Footer END ==== -->
-        <button class="back-to-top fa fa-chevron-up"></button>
-    </div>
-    <!-- External JavaScripts -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/vendors/bootstrap/js/popper.min.js"></script>
-    <script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-    <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
-    <script src="assets/vendors/counter/waypoints-min.js"></script>
-    <script src="assets/vendors/counter/counterup.min.js"></script>
-    <script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
-    <script src="assets/vendors/masonry/masonry.js"></script>
-    <script src="assets/vendors/masonry/filter.js"></script>
-    <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
-    <script src="assets/js/jquery.scroller.js"></script>
-    <script src="assets/js/functions.js"></script>
-    <script src="assets/js/contact.js"></script>
-</body>
+        <!-- External JavaScripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="assets/vendors/counter/waypoints-min.js"></script>
+        <script src="assets/vendors/counter/counterup.min.js"></script>
+        <script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="assets/vendors/masonry/masonry.js"></script>
+        <script src="assets/vendors/masonry/filter.js"></script>
+        <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="assets/js/jquery.scroller.js"></script>
+        <script src="assets/js/functions.js"></script>
+        <script src="assets/js/contact.js"></script>
+    </body>
 
 </html>

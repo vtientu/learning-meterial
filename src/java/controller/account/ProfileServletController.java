@@ -82,8 +82,6 @@ public class ProfileServletController extends HttpServlet {
         if (action.equalsIgnoreCase("profile")) {
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
-            int gender = Integer.parseInt(request.getParameter("gender"));
-            String birthday_raw = request.getParameter("birthday");
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
             HttpSession session = request.getSession();
@@ -104,14 +102,6 @@ public class ProfileServletController extends HttpServlet {
 
             if (!a.getLastName().equals(lastName) && lastName != null) {
                 a.setLastName(lastName);
-            }
-
-            if (birthday_raw != null) {
-                a.setBirthday(Date.valueOf(birthday_raw));
-            }
-
-            if (a.getGender() != gender) {
-                a.setGender(gender);
             }
 
             if (phone != null) {
