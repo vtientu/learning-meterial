@@ -147,7 +147,7 @@ public class SyllabusListServletController extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table text-center\">\n"
-                + "                                    <thead style=\"background-color: #f7b205; \">\n"
+                + "                                    <thead class=\"thead-orange\">\n"
                 + "                                    <th>Syllabus ID</th>\n"
                 + "                                    <th>Subject Code</th>\n"
                 + "                                    <th>Subject Name</th>\n"

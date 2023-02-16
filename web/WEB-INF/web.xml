@@ -56,6 +56,10 @@
         <servlet-name>SendMailServletController</servlet-name>
         <servlet-class>controller.sendmail.SendMailServletController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SyllabusViewServletController</servlet-name>
+        <servlet-class>controller.admin.syllabus.SyllabusViewServletController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -91,6 +95,10 @@
     <servlet-mapping>
         <servlet-name>SendMailServletController</servlet-name>
         <url-pattern>/sendmail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SyllabusViewServletController</servlet-name>
+        <url-pattern>/admin/syllabus-list</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
