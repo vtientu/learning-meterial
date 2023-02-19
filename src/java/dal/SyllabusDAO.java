@@ -8,7 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import module.Assessment;
+import module.CLO;
 import module.Decision;
+import module.Material;
 import module.PreRequisite;
 import module.Subject;
 import module.Syllabus;
@@ -18,7 +21,6 @@ import module.Syllabus;
  * @author tient
  */
 public class SyllabusDAO extends DBContext {
-
 
     public ArrayList<Syllabus> getAllSyllabus(int role) {
         ArrayList<Syllabus> list = new ArrayList<>();
@@ -322,8 +324,7 @@ public class SyllabusDAO extends DBContext {
         }
         return list;
     }
-    
-    
+
     public ArrayList<Syllabus> getAllSyllabusPreRequisite(int role) {
         ArrayList<Syllabus> list = new ArrayList<>();
         try {
@@ -422,17 +423,131 @@ public class SyllabusDAO extends DBContext {
         }
         return list;
     }
-    
+
+    public ArrayList<Material> getListMaterialBySyID(int id) {
+        ArrayList<Material> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `material`.`MaterialID`,\n"
+                    + "    `material`.`MaterialDescription`,\n"
+                    + "    `material`.`SyllabusID`,\n"
+                    + "    `material`.`Author`,\n"
+                    + "    `material`.`Publisher`,\n"
+                    + "    `material`.`PublishedDate`,\n"
+                    + "    `material`.`Edition`,\n"
+                    + "    `material`.`ISBN`,\n"
+                    + "    `material`.`IsMainMaterial`,\n"
+                    + "    `material`.`IsHardCopy`,\n"
+                    + "    `material`.`IsOnline`,\n"
+                    + "    `material`.`Note`,\n"
+                    + "    `material`.`isActive`\n"
+                    + "FROM `swp391`.`material`\n"
+                    + "WHERE `material`.`SyllabusID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Material m = new Material();
+                m.setMaterialID(rs.getInt("MaterialID"));
+                m.setMaterialDescription(rs.getString("MaterialDescription"));
+                m.setSyllabusID(rs.getInt("SyllabusID"));
+                m.setAuthor(rs.getString("Author"));
+                m.setPublisher(rs.getString("Publisher"));
+                m.setPublishedDate(rs.getString("PublishedDate"));
+                m.setEdition(rs.getString("Edition"));
+                m.setISBN(rs.getString("ISBN"));
+                m.setIsMainMaterial(rs.getBoolean("IsMainMaterial"));
+                m.setIsHardCopy(rs.getBoolean("IsHardCopy"));
+                m.setIsOnline(rs.getBoolean("IsOnline"));
+                m.setNote(rs.getString("Note"));
+                m.setIsActive(rs.getBoolean("isActive"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public ArrayList<CLO> getListCLOBySyID(int syID) {
+        ArrayList<CLO> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `clo`.`cloID`,\n"
+                    + "    `clo`.`syID`,\n"
+                    + "    `clo`.`cloName`,\n"
+                    + "    `clo`.`cloDetails`,\n"
+                    + "    `clo`.`loDetails`\n"
+                    + "FROM `swp391`.`clo`\n"
+                    + "WHERE `clo`.`syID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, syID);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                CLO clo = new CLO();
+                clo.setCloID(rs.getInt("cloID"));
+                clo.setSyID(rs.getInt("syID"));
+                clo.setCloName(rs.getString("cloName"));
+                clo.setCloDetails(rs.getString("cloDetails"));
+                clo.setLoDetails(rs.getString("loDetails"));
+                list.add(clo);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public ArrayList<Assessment> getListAssessmentBySyID(int syID) {
+        ArrayList<Assessment> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `assessment`.`assessmentID`,\n"
+                    + "    `assessment`.`SyllabusID`,\n"
+                    + "    `assessment`.`category`,\n"
+                    + "    `assessment`.`Type`,\n"
+                    + "    `assessment`.`Part`,\n"
+                    + "    `assessment`.`Weight`,\n"
+                    + "    `assessment`.`CompletionCriteria`,\n"
+                    + "    `assessment`.`Duration`,\n"
+                    + "    `assessment`.`QuestionType`,\n"
+                    + "    `assessment`.`NoQuestion`,\n"
+                    + "    `assessment`.`KnowledgeandSkill`,\n"
+                    + "    `assessment`.`GradingGuide`,\n"
+                    + "    `assessment`.`Note`\n"
+                    + "FROM `swp391`.`assessment`\n"
+                    + "WHERE `assessment`.`SyllabusID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, syID);
+            ResultSet rs = st.executeQuery();
+            while(rs.next()){
+                Assessment ass = new Assessment();
+                    ass.setAssessmentID(rs.getInt("assessmentID"));
+                    ass.setSyllabusID(rs.getInt("SyllabusID"));
+                    ass.setCategory(rs.getString("category"));
+                    ass.setType(rs.getString("Type"));
+                    ass.setPart(rs.getInt("Part"));
+                    ass.setWeight(rs.getString("Weight"));
+                    ass.setCompletionCriteria(rs.getString("CompletionCriteria"));
+                    ass.setDuration(rs.getString("Duration"));
+                    ass.setQuestionType(rs.getString("QuestionType"));
+                    ass.setNoQuestion(rs.getString("NoQuestion"));
+                    ass.setKnowledgeandSkill(rs.getString("KnowledgeandSkill"));
+                    ass.setGradingGuide(rs.getString("GradingGuide"));
+                    ass.setNote(rs.getString("Note"));
+                list.add(ass);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
 
     public static void main(String[] args) {
         SyllabusDAO sd = new SyllabusDAO();
         ArrayList<Syllabus> list = sd.getAllSyllabusPreRequisite(1);
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i).getSubject().getPrerequisite());
         }
     }
-    
-    
+
     public ArrayList<Syllabus> getListByPage(ArrayList<Syllabus> list,
             int start, int end) {
         ArrayList<Syllabus> arr = new ArrayList<>();

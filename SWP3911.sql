@@ -29,7 +29,8 @@ CREATE TABLE Roles(
 
 
 CREATE TABLE Decision(
-	DecisionNo NVARCHAR(30) Primary Key,
+	decisionID int auto_increment not null primary key,
+	DecisionNo NVARCHAR(30) not null unique,
     DecisionName NVARCHAR(255),
     ApprovedDate DATE,
     Note TEXT,
@@ -64,7 +65,9 @@ CREATE TABLE Subjects(
 	subjectName NVARCHAR(255),
 	Semester int,
 	NoCredit int,
-    isActive bit DEFAULT 1
+    isActive bit DEFAULT 1,
+    ElectiveID int,
+    ComboID int
 );
 
 
@@ -121,9 +124,9 @@ CREATE TABLE Material(
 	PublishedDate NVARCHAR(255),
 	Edition NVARCHAR(255),
 	ISBN NVARCHAR(255),
-	IsMainMaterial NVARCHAR(255),
-	IsHardCopy NVARCHAR(255),
-	IsOnline NVARCHAR(255),
+	IsMainMaterial bit,
+	IsHardCopy bit,
+	IsOnline bit,
 	Note TEXT,
     isActive bit DEFAULT 1,
 	primary key(MaterialID)
@@ -145,19 +148,22 @@ CREATE TABLE Session(
 
 CREATE TABLE Assessment(
 	assessmentID int AUTO_INCREMENT primary key,
-	catery NVARCHAR(255),
 	SyllabusID int,
+	category NVARCHAR(255),
 	Type NVARCHAR(255),
 	Part int,
-	Weight float,
-	CompletionCriteria int,
+	Weight nvarchar(100),
+	CompletionCriteria varchar(20),
 	Duration NVARCHAR(255),
-	QuestionType NVARCHAR(255),
+	QuestionType TEXT,
 	NoQuestion NVARCHAR(255),
 	KnowledgeandSkill NVARCHAR(255),
 	GradingGuide NVARCHAR(255),
 	Note TEXT
 );
+
+
+
 
 
 CREATE TABLE ConstructiveQuestion(
@@ -176,8 +182,7 @@ CREATE TABLE CurriculumSubject(
 
 
 CREATE TABLE PO(
-	CurciculumPOID int AUTO_INCREMENT primary key,
-	CurriculumCode NVARCHAR(20),
+	id int AUTO_INCREMENT primary key,
 	POName NVARCHAR(255),
 	PODescription TEXT,
     isActive bit DEFAULT 1
@@ -185,8 +190,7 @@ CREATE TABLE PO(
 
 
 CREATE TABLE PLO(
-	PLOID int AUTO_INCREMENT primary key,
-	CurriculumCode NVARCHAR(20),
+	id int AUTO_INCREMENT primary key,
 	PLOName NVARCHAR(255),
 	PLODescription TEXT,
     isActive bit DEFAULT 1
@@ -199,6 +203,17 @@ CREATE TABLE Combo(
     isActive bit DEFAULT 1,
 	note TEXT
 );
+
+
+CREATE TABLE CLO(
+	cloID int AUTO_INCREMENT,
+    syID int,
+    cloName varchar(100),
+    cloDetails nvarchar(255),
+    loDetails TEXT,
+	PRIMARY KEY(cloID)
+);
+
 
 
 CREATE TABLE ComboSubject(
@@ -214,7 +229,7 @@ CREATE TABLE Elective(
 );
 
 
-
+ALTER TABLE CLO add constraint fk_clo_syllabus foreign key(syID) references Syllabus(SyllabusID);
 
 ALTER TABLE PreRequisite add constraint fk_prerequisite foreign key (subjectCode) references Subjects(subjectCode),
 						add constraint fk_prerequisite_syllabus foreign key (SyllabusID) references Syllabus(SyllabusID);
@@ -252,10 +267,6 @@ add constraint fk_curriculum_Subject foreign key (SubjectCode) references Subjec
     
 
 
-ALTER TABLE PO add constraint fk_POSubject foreign key (CurriculumCode) references Curriculum(CurriculumCode);
-
-
-ALTER TABLE PLO add constraint fk_PLOSubject foreign key (CurriculumCode) references Curriculum(CurriculumCode);
 
 
 ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (subjectCode) references Subjects(subjectCode);
@@ -587,6 +598,81 @@ Note: Student gets 0.165 bonus points for each course completed on time.','Acces
 - Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17');
 
 
+INSERT INTO `swp391`.`clo`
+(`syID`,
+`cloName`,
+`cloDetails`,
+`loDetails`)
+VALUES
+(1, '1', 'CLO1', 'Know general information about FPT university and the roles of functional department supporting students during the studying period.' ),
+(1, '2', 'CLO2', 'Define training models and regulations of FPT university, know the curriculum that the students will study and information systems to support students\' learning. Understand study skills for university students.' ),
+(1, '3', 'CLO3', 'Indicate the fundermentals of military and national security and practice the basic skills in military training and Vovinam. Enhance fitness, sense of patriotism and national pride as well as the awareness of constructing and protecting the nation.' ),
+(1, '4', 'CLO4', 'Develop soft skills such as team spirit, disciplines and positive attitude in different environment.' ),
+(1, '5', 'CLO5', 'Experience plentiful activities in order to develop personalities, life skills and sense of community.' ),
+
+
+(2, '1', 'CLO1', 'Establish relationships between class members and group organization' ),
+(2, '2', 'CLO10', 'Understand leadership theories and model of leadership effectiveness.' ),
+(2, '3', 'CLO11', 'Describe and identify importance of verbal and nonverbal in teamwork and how to use them effectiveness' ),
+(2, '4', 'CLO12', 'Understand how conflicts appear in groups and how to manage them in cohesion.' ),
+(2, '5', 'CLO13', 'Develop a professtional meeting and practice dealing the behavior problems of members in the meeting time.' ),
+(2, '6', 'CLO14', 'Apply of parliamentary principles and summary the basic procedures when organizing the meeting.' ),
+(2, '7', 'CLO15', 'Identify words and develop clear, concise,logical, coherent,and effective paragraphs.' ),
+(2, '8', 'CLO16', 'Format business letters using the full block,modified block,and simplified styles.' ),
+(2, '9', 'CLO17', 'Format memos and e-mail properly.' ),
+(2, '10', 'CLO18', 'Prepare competently a variety of positive and neutral messages using the direct plan.' ),
+(2, '11', 'CLO19', 'Prepare effective negative messages for a variety of purposes using the indirect plan' ),
+(2, '12', 'CLO2', 'Form a group and conduct group work' ),
+(2, '13', 'CLO20', 'Write messages that are used for the various stages of collection' ),
+(2, '14', 'CLO21', 'Write formal and informal reports' ),
+(2, '15', 'CLO22', 'Prepare targeted and general résumés in chronological, functional,or combination format.' ),
+(2, '16', 'CLO23', 'Prepare for a successful job interview' ),
+(2, '17', 'CLO24', 'Review the knowledge learned and practice overview' ),
+(2, '18', 'CLO3', 'Define common teamwork skills such as group communication, membership, leadership, planning and conducting meeting, verbal and nonverbal communication, conflict and cohesion,' ),
+(2, '19', 'CLO4', 'Identify key elements, advantages, disavantages and the nature of group communication.' ),
+(2, '20', 'CLO5', 'Describe stages of group development and types of group norms.' ),
+(2, '21', 'CLO6', 'Explain why member join, stay or leave groups through theory of needs.' ),
+(2, '22', 'CLO7', 'Determine group roles and how each role helps hinders groups from achieving a common goal.' ),
+(2, '23', 'CLO8', 'Describe and apply strategies for reducing communication apprehensions.' ),
+(2, '24', 'CLO9', 'Analyse ways to become effective and powerful leaders.' ),
+
+
+(3, '1', 'CLO1', '*Identify 6 stages of the writing process ; * apply four strategies for learning vocabulary; *identify nouns and noun phrases; *learn about parallel structure; * write an exploratory paragraph following 6 stages of the writing process' ),
+(3, '2', 'CLO2', '* Explain past, present, and future tenses; use four strategies for learning vocabulary; identify features of informal style; *write about critical thinking; * learn about assessing the reliability of sources; *write personal narratives about your past, present, and future tenses' ),
+(3, '3', 'CLO3', '*Distinguish opinion from fact; *support argument with reasons, examples, and evidence; *apply language of opinion, argument, and concession in the writing; *present a closing position; *corporate APA, MLA in-text citation; *write an argumentative paragraph using personal language' ),
+(3, '4', 'CLO4', '*Write topic sentences and keep paragraphs unified; identify logical fallacies;* write compound and complex sentences; use Latinate verbs in academic writing* rewrite a paragraph to avoid logical fallacies' ),
+(3, '5', 'CLO5', '	*Distinguish three more key features of paragraphs: coherence, cohesion, and concluding sentences; *apply conjunctive adverbs and reference words in the writing; * write relative clauses and participle phrases; identify logical fallacies based on generalization; *write 2 paragraphs: one presenting the positive sides of a given topic, one presenting the negative aspects' ),
+(3, '6', 'LO6', '	*Recognize plagiarism and quote directly; *integrate their awareness of plagiarism into writing practice; *apply language of attribution, reporting verbs, and passive voice; *corporate citation in the writing; * write two paragraphs with at least 2 citations from a reliable academic source, incorporate the author\'s ideas by paraphrasing one and directly quoting the other' ),
+
+
+(4, '1', 'CLO1', 'Demonstrate an understanding of the theories and practices involved in video production.'),
+(4, '2', 'CLO10', 'Master the methods to use a variety of lighting instruments, lighting support, grip, and equipment to demonstrate skills in lighting' ),
+(4, '3', 'CLO11', 'Interpret the importance and impact of background on video quality and learn how to leverage video background' ),
+(4, '4', 'CLO12', 'Demonstrate an understanding of the communicative capacity of video graphics to learn how to showcase an effective transference of ideas' ),
+(4, '5', 'CLO13', 'Interpret the design and format of video and audio recording systems to control image quality' ),
+(4, '6', 'CLO14', 'Master the mechanics of editing and the subtle effects of the editor’s choices to form a convincing, persuasive presentation' ),
+(4, '7', 'CLO2', 'Define basic video production terms to understand the process of video production' ),
+(4, '8', 'CLO3', 'Differentiate crew’s roles of the Film Production Team' ),
+(4, '9', 'CLO4', 'Understand how people can organize the process of video production' ),
+(4, '10', 'CLO5', 'Gain insight into necessary production techniques and their functions' ),
+(4, '11', 'CLO6', 'Interpret the importance of script in production and the process of making script' ),
+(4, '12', 'CLO7', 'Master camera main features and the methods of using camera to shoot videos' ),
+(4, '13', 'CLO8', 'Master the methods to choose and motivate the actors' ),
+(4, '14', 'CLO9', 'Demonstrate the ability to accomplish production tasks incorporating a practical understanding of audio production' ),
+
+
+(5, '1', 'CLO1', '2D graphic, vector-based appliction, bitmap-based application and layout application.'),
+(5, '2', 'CLO2', 'Using application tools to create graphic design works, logo, characters, editing images, layout.'),
+(5, '3', 'CLO3', 'With assignments as case study, students know how to create typography, color study, and value study works'),
+(5, '4', 'CLO4', 'Operate and master vector skills to draw, edit, colorize, making shapes and form.'),
+(5, '5', 'CLO5', 'Operate and master bitmap skills to edit photo, collaging, cut and clone, manipulation.'),
+(5, '6', 'CLO6', 'Design simple 2D graphic works such as logo, flyer, icon set, poster, small magazine.'),
+(5, '7', 'CLO7', 'Create a web design using combined text, vector illustration and bitmap works.');
+
+
+
+
+
 
 INSERT INTO `swp391`.`material`
 (`SyllabusID`,
@@ -735,6 +821,33 @@ VALUES
 (17, 'MKT208c', 'MKT101'),
 (18, 'MKT304', null);
 
+INSERT INTO `swp391`.`assessment`
+(`SyllabusID`,
+`category`,
+`Type`,
+`Part`,
+`Weight`,
+`CompletionCriteria`,
+`Duration`,
+`QuestionType`,
+`NoQuestion`,
+`KnowledgeandSkill`,
+`GradingGuide`,
+`Note`)
+VALUES
+(2, 'Activity', 'on-going', 1, '10.0%', '>0', '"Option1: along the course Option2: Follow lecturer\'s proposal "',
+ '"Option1: Participation Option2: Questions or Activities proposed by lecturer "', 'N/A', '"Option1: Based on student\'s class participation
+Option2: Follow lecturer\'s proposal"', '"Option1: Class participation
+Option2: Follow lecturer\'s proposal"', 'Lecturer selects appropriate assessment types according to the applied teaching method'),
+(2, 'Group Assignment', 'on-going', 1, '15.0%', '>0', '	"Option1: 90\' Option2: Follow lecturer\'s proposal "', '"Option1: Each student group consists of 5 to 7 people, working together to develop a social project to be carried out in the real life. Student must draft and finalize their plan into a project proposal, then present it in front of classmates and lecturer. Option2: Questions or Activities proposed by lecturer"', 'N/A', 'Based on all the chapter in the textbook', '"Option1: Presentation in class
+Option2: Follow lecturer\'s proposal"', 'Lecturer selects appropriate assessment types according to the applied teaching method'),
+(2, 'Group Project', 'on-going', 1, '30.0%', '>0', '"Option1: along the course Option2: Follow lecturer\'s proposal "', '"Option1: Group projects are prepared from group assignment. Students work on a group project, based on the approved project proposal After carrying the project out the community, students must write a report of the entire project process and class presentations at the end of the semster. The presentations must reflect the ability to follow the oral presentation guidelines discussed in the textbook Option2: Questions or Activities proposed by lecturer"', 'N/A', 'All Course', '"Option1: Group products, reports on paper, and oral presentations on class
+Option2: Follow lecturer\'s proposal"', 'Lecturer selects appropriate assessment types according to the applied teaching method'),
+(2, 'Quiz 2', 'on-going', 1, '7.0%', '>0', 'Option1:30\'-60\' Option2 : Follow lecturer\'s proposal', '"Option1: Multiple choice or Essay Option2: Questions or Activities proposed by lecturer "', '"Option1: MC: 30-50 questions; Or Essay: 1-2 questions Option2: Follow lecturer\'s proposal"', 'Test the acquired knowledge in chapters 6-12.', '"Option1: EOS
+Option2: Follow lecturer\'s proposal"','Lecturer selects appropriate assessment types according to the applied teaching method'),
+(2, 'Quiz 1', 'on-going', 1, '8.0%', '>0', 'Option1: 30\'-60\' Option 2: Follow lecturer\'s proposal', '"Option1: Multiple choice or Essay Option2: Questions or Activities proposed by lecturer"','"Option1: MC: 30-50 questions; Or Essay: 1-2 questions Option2: Follow lecturer\'s proposal"', 'Test the acquired knowledge in chapters 1-5.', '"Option1: EOS
+Option2: Follow lecturer\'s proposal"', 'Lecturer selects appropriate assessment types according to the applied teaching method'),
+(2, 'Final Exam', 'final exam', 1, '30.0%', 4, '60\'', 'multiple choice questions', '50', null, 'Cover materials from the textbook, class discussions/lectures. All chapters covered in class.', null);
 
 
 INSERT INTO `swp391`.`majors`
@@ -2062,8 +2175,3 @@ VALUES
 ('BBA_FIN_K16C','VDP201'),
 ('BBA_FIN_K16C','DTG111'),
 ('BBA_FIN_K16C','WDU203c');
-
-
-
-
-

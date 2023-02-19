@@ -18,18 +18,18 @@ public class Curriculum {
     private String curriculumNameEN;
     private String curriculumNameVN;
     private String description;
-    private String decisionNo;
+    private Decision decision;
 
     public Curriculum() {
     }
 
-    public Curriculum(String curriculumCode, Major major, String curriculumNameEN, String curriculumNameVN, String description, String decisionNo) {
+    public Curriculum(String curriculumCode, Major major, String curriculumNameEN, String curriculumNameVN, String description, Decision decision) {
         this.curriculumCode = curriculumCode;
         this.major = major;
         this.curriculumNameEN = curriculumNameEN;
         this.curriculumNameVN = curriculumNameVN;
         this.description = description;
-        this.decisionNo = decisionNo;
+        this.decision = decision;
     }
 
     public String getCurriculumCode() {
@@ -72,12 +72,14 @@ public class Curriculum {
         this.description = description;
     }
 
-    public String getDecisionNo() {
-        return decisionNo;
+    public Decision getDecision() {
+        return decision;
     }
 
-    public void setDecisionNo(String decisionNo) {
-        this.decisionNo = decisionNo;
+    public void setDecision(Decision decision) {
+        this.decision = decision;
     }
+
+    
 
 }

@@ -17,6 +17,8 @@ public class Subject {
     private String subjectName;
     private ArrayList<PreRequisite> prerequisite;
     private boolean isActive;
+    private int electiveID;
+    private int comboID;
 
     public Subject() {
     }
@@ -29,6 +31,35 @@ public class Subject {
         this.prerequisite = prerequisite;
         this.isActive = isActive;
     }
+
+    public Subject(int noCredit, int semester, String subjectCode, String subjectName, ArrayList<PreRequisite> prerequisite, boolean isActive, int electiveID, int comboID) {
+        this.noCredit = noCredit;
+        this.semester = semester;
+        this.subjectCode = subjectCode;
+        this.subjectName = subjectName;
+        this.prerequisite = prerequisite;
+        this.isActive = isActive;
+        this.electiveID = electiveID;
+        this.comboID = comboID;
+    }
+    
+    public int getElectiveID() {
+        return electiveID;
+    }
+
+    public void setElectiveID(int electiveID) {
+        this.electiveID = electiveID;
+    }
+
+    public int getComboID() {
+        return comboID;
+    }
+
+    public void setComboID(int comboID) {
+        this.comboID = comboID;
+    }
+
+    
 
 
     public boolean isIsActive() {

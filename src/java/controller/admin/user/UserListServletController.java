@@ -2,59 +2,52 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.syllabus;
 
-import dal.SyllabusDAO;
+package controller.admin.user;
+
+import dal.AccountDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
-import module.Assessment;
-import module.CLO;
-import module.Material;
-import module.Syllabus;
 
 /**
  *
  * @author tient
  */
-public class SyllabusDetailsServletController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+public class UserListServletController extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SyllabusDetailsServletController</title>");
+            out.println("<title>Servlet UserListServletController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SyllabusDetailsServletController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserListServletController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -62,28 +55,15 @@ public class SyllabusDetailsServletController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String code = request.getParameter("syID");
-        SyllabusDAO sd = new SyllabusDAO();
-        HttpSession session = request.getSession();
-        Account a = (Account) session.getAttribute("account");
-        Syllabus s = sd.getSyllabus(code, 1);
-        if (a != null && a.getRoleID() != 1) {
-            s = sd.getSyllabus(code, a.getRoleID());
-        }
-        ArrayList<CLO> listCLO = sd.getListCLOBySyID(s.getSyllabusID());
-        ArrayList<Material> listMaterial = sd.getListMaterialBySyID(s.getSyllabusID());
-        ArrayList<Assessment> listAssessment = sd.getListAssessmentBySyID(s.getSyllabusID());
-        request.setAttribute("syllabus", s);
-        request.setAttribute("listAssessment", listAssessment);
-        request.setAttribute("listCLO", listCLO);
-        request.setAttribute("listMaterial", listMaterial);
-        request.getRequestDispatcher("view/common/syllabus/syllabus-details.jsp").forward(request, response);
-    }
+    throws ServletException, IOException {
+        AccountDAO ad = new AccountDAO();
+        ArrayList<Account> listUser = ad.getAllAccount();
+        request.setAttribute("listUser", listUser);
+        request.getRequestDispatcher("../view/admin/user/user-list.jsp").forward(request, response);
+    } 
 
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -91,13 +71,24 @@ public class SyllabusDetailsServletController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    throws ServletException, IOException {
+        AccountDAO ad = new AccountDAO();
+        try {
+            int aid = Integer.parseInt(request.getParameter("aid"));
+            String check = request.getParameter("active");
+            boolean active = false;
+            if(check.equalsIgnoreCase("Active")){
+                active = true;
+            }
+            ad.changeStatus(aid, active);
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+        }
+        response.sendRedirect("user-list");
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

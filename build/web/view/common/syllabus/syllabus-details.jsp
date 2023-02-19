@@ -74,8 +74,8 @@
                 <div class="content-block">
                     <!-- About Us -->
                     <div class="section-area" >
-                        <div class="container p-5" style="box-shadow: 0px 4px 20px 4px rgb(0 0 0 / 15%)">
-                            <div class="row d-flex flex-row-reverse">
+                        <div class="container-fluid" style="box-shadow: 0px 4px 20px 4px rgb(0 0 0 / 15%)">
+                            <div class="row d-flex flex-row-reverse  p-4">
 
 
                                 <div class="tab-content">
@@ -149,10 +149,10 @@
                                     </ul>
 
                                     <div id="material" class="tab-pane fade show active">
-                                        <h3 class="mb-3 mt-5">Material</h3>
-                                        <div class="table-responsive mt-5">
+                                        <h3 class="mb-3 mt-5">${listMaterial.size()} Material(s)</h3>
+                                        <div class="mt-5 ">
                                             <table class="table table-hover table-bordered">
-                                                <thead class="thead-orange">
+                                                <thead class="thead-orange" style="width: 100%">
                                                 <th style="font-weight: bold" class=" text-light">MaterialDescription</th>
                                                 <th style="font-weight: bold" class=" text-light">Author</th>
                                                 <th style="font-weight: bold" class=" text-light">Publisher</th>
@@ -165,10 +165,41 @@
                                                 <th style="font-weight: bold" class=" text-light">Note</th>
                                                 </thead>
                                                 <tbody>
+                                                    <c:forEach items="${listMaterial}" var="listMate">
+                                                        <tr>
+                                                            <td class="text-wrap">${listMate.materialDescription}</td>
+                                                            <td>${listMate.author}</td>
+                                                            <td>${listMate.publisher}</td>
+                                                            <td>${listMate.publishedDate}</td>
+                                                            <td>${listMate.edition}</td>
+                                                            <td>${listMate.ISBN}</td>
+                                                            <td><i  style="color: ${listMate.isMainMaterial == true ? 'green':'red'}" class="fa ${listMate.isMainMaterial == true ? 'fa-check':'fa-close'}"/></td>
+                                                            <td><i  style="color: ${listMate.isHardCopy == true ? 'green':'red'}" class="fa ${listMate.isHardCopy == true ? 'fa-check':'fa-close'}"/></td>
+                                                            <td><i  style="color: ${listMate.isOnline == true ? 'green':'red'}" class="fa ${listMate.isOnline == true ? 'fa-check':'fa-close'}"/></td>
+                                                            <td>${listMate.note}</td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="question" class="tab-pane fade">
+                                        <h3 class="mb-3 mt-5">Question(s)</h3>
+                                        <div class="mt-5 ">
+                                            <table border="1" class="table table-striped">
+                                                <thead class="thead-orange">
                                                     <tr>
-                                                        <td>Introductory documents aout FPT Group and FPT University</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
                                                         <td>a</td>
                                                         <td>a</td>
                                                         <td>a</td>
@@ -199,185 +230,116 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="question" class="tab-pane fade">
-                                        <h5 class="mb-3">Questions</h5>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
                                     <div id="session" class="tab-pane fade">
-                                        <h5 class="mb-3">Sessions</h5>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h3 class="mb-3 mt-5">Session(s)</h3>
+                                        <div class="mt-5 ">
+                                            <table border="1" class="table table-striped">
+                                                <thead class="thead-orange">
+                                                    <tr>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                        <th>a</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                        <td>a</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div id="assessment" class="tab-pane fade">
-                                        <h5 class="mb-3">Assessment</h5>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h3 class="mb-3 mt-5">Assessment(s)</h3>
+                                        <div class="mt-5 ">
+                                            <table border="1" class="table table-striped">
+                                                <thead class="thead-orange">
+                                                    <tr>
+                                                        <th>Category</th>
+                                                        <th>Type</th>
+                                                        <th>Part</th>
+                                                        <th>Weight</th>
+                                                        <th>Completion Criteria</th>
+                                                        <th>Duration</th>
+                                                        <th>CLO</th>
+                                                        <th>Question Type</th>
+                                                        <th>No Question</th>
+                                                        <th>Knowledge and Skill</th>
+                                                        <th>Grading Guide</th>
+                                                        <th>Note</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach items="${listAssessment}" var="listAss">
+                                                    <tr>
+                                                        <td>${listAss.category}</td>
+                                                        <td>${listAss.type}</td>
+                                                        <td>${listAss.part}</td>
+                                                        <td>${listAss.weight}</td>
+                                                        <td>${listAss.completionCriteria}</td>
+                                                        <td>${listAss.duration}</td>
+                                                        <td></td>
+                                                        <td>${listAss.questionType}</td>
+                                                        <td>${listAss.noQuestion}</td>
+                                                        <td>${listAss.knowledgeandSkill}</td>
+                                                        <td>${listAss.gradingGuide}</td>
+                                                        <td>${listAss.note}</td>
+                                                    </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div id="lo" class="tab-pane fade">
-                                        <h4>LO(s)</h4>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h3 class="mb-3 mt-5">${listCLO.size()} LO(s)</h3>
+                                        <div class="mt-5 ">
+                                            <table border="1" class="table table-striped">
+                                                <thead class="thead-orange">
+                                                    <tr>
+                                                        <th>CLO Name</th>
+                                                        <th>CLO Details</th>
+                                                        <th>LO Details</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach items="${listCLO}" var="listCLO">
+                                                    <tr>
+                                                        <td>${listCLO.cloName}</td>
+                                                        <td>${listCLO.cloDetails}</td>
+                                                        <td>${listCLO.loDetails}</td>
+                                                    </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

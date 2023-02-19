@@ -7,6 +7,7 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import module.Account;
 import module.GooglePojo;
 import module.Role;
@@ -16,6 +17,65 @@ import module.Role;
  * @author tient
  */
 public class AccountDAO extends DBContext {
+
+    public ArrayList<Account> getAllAccount() {
+        ArrayList<Account> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `account`.`accountID`,\n"
+                    + "	`account`.`username`,\n"
+                    + "    `account`.`roleID`,\n"
+                    + "    `account`.`password`,\n"
+                    + "    `account`.`avatar`,\n"
+                    + "    `account`.`firstname`,\n"
+                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`email`,\n"
+                    + "    `account`.`phone`,\n"
+                    + "    `account`.`address`,\n"
+                    + "    `account`.`typeAccount`,\n"
+                    + "    `account`.`isActive`,\n"
+                    + "     `roles`.`rolename`\n"
+                    + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "ON `account`.`roleID` = `roles`.`roleID`\n";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role role = new Role(rs.getInt("roleID"), rs.getString("rolename"));
+                Account a = new Account();
+                a.setAccountID(rs.getInt(1));
+                a.setUserName(rs.getString(2));
+                a.setRoleID(rs.getInt(3));
+                a.setPassword(rs.getString(4));
+                a.setAvatar(rs.getString(5));
+                a.setFirstName(rs.getString(6));
+                a.setLastName(rs.getString(7));
+                a.setEmail(rs.getString(8));
+                a.setPhone(rs.getString(9));
+                a.setAddress(rs.getString(10));
+                a.setTypeAccount(rs.getInt(11));
+                a.setIsActive(rs.getBoolean(12));
+                a.setRole(role);
+                list.add(a);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public void changeStatus(int aid, boolean status) {
+        try {
+            String sql = "UPDATE `swp391`.`account`\n"
+                    + "SET\n"
+                    + "`isActive` = ?\n"
+                    + "WHERE `accountID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setBoolean(1, status);
+            st.setInt(2, aid);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
 
     public Account loginAccount(String user, String password) {
         try {
@@ -184,7 +244,7 @@ public class AccountDAO extends DBContext {
                         + "                                 (?, ?, ?, ?, ?, ?);";
                 PreparedStatement st1 = connection.prepareStatement(sql1);
                 st1.setString(1, user);
-                if(email.endsWith("@fpt.edu.vn")){
+                if (email.endsWith("@fpt.edu.vn")) {
                     st1.setInt(6, 2);
                 } else {
                     st1.setInt(6, 1);
@@ -232,7 +292,7 @@ public class AccountDAO extends DBContext {
                         + "(?, ?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement st1 = connection.prepareStatement(sql1);
                 st1.setString(1, null);
-                if(user.getEmail().endsWith("@fpt.edu.vn")){
+                if (user.getEmail().endsWith("@fpt.edu.vn")) {
                     st1.setInt(2, 2);
                 } else {
                     st1.setInt(2, 1);
@@ -286,5 +346,48 @@ public class AccountDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+
+    public void forgetPassword(String email, String password) {
+        try {
+            String sql = "UPDATE `swp391`.`account`\n"
+                    + "SET\n"
+                    + "`password` = ?\n"
+                    + "WHERE `email` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, password);
+            st.setString(2, email);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public boolean checkEmailForget(String email) {
+        try {
+            String sql = "SELECT `account`.`accountID`,\n"
+                    + "    `account`.`username`,\n"
+                    + "    `account`.`roleID`,\n"
+                    + "    `account`.`password`,\n"
+                    + "    `account`.`avatar`,\n"
+                    + "    `account`.`firstname`,\n"
+                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`email`,\n"
+                    + "    `account`.`phone`,\n"
+                    + "    `account`.`address`,\n"
+                    + "    `account`.`typeAccount`,\n"
+                    + "    `account`.`isActive`\n"
+                    + "FROM `swp391`.`account`\n"
+                    + "WHERE `account`.`email` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
     }
 }

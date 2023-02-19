@@ -105,6 +105,22 @@ public class HomeServletController extends HttpServlet {
             case "login-google":
                 loginGoogle(request, response);
                 break;
+            case "forget-password":
+                if (session.getAttribute("verifyCode") == null) {
+                    request.setAttribute("messageLogin", "Please enter email forget-password again !");
+                    request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
+                } else {
+                    String verifyCode = request.getParameter("code");
+                    String email = request.getParameter("email");
+                    if (verifyCode.equals(session.getAttribute("verifyCode"))) {
+                        request.setAttribute("email", email);
+                        request.getRequestDispatcher("view/common/account/forget-password.jsp").forward(request, response);
+                    } else {
+                        request.setAttribute("messageLogin", "Please enter email forget-password again !");
+                        request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
+                    }
+                    break;
+                }
             default:
                 request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
         }
@@ -132,11 +148,23 @@ public class HomeServletController extends HttpServlet {
             case "forget-password":
                 forgetPassword(request, response);
                 break;
+            case "change-password":
+                changePassword(request, response);
+                break;
             default:
                 request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
         }
     }
 
+    public void changePassword(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        AccountDAO ad = new AccountDAO();
+        ad.forgetPassword(email, password);
+        request.setAttribute("messageLogin", "Change password successful !");
+        request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
+    }
 
     public void loginGoogle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         AccountDAO ad = new AccountDAO();
@@ -185,13 +213,20 @@ public class HomeServletController extends HttpServlet {
 
     public void forgetPassword(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String emailForget = request.getParameter("email");
-        String npw = request.getParameter("password");
+        HttpSession session = request.getSession();
+        AccountDAO ad = new AccountDAO();
         if (emailForget != null) {
-            send(emailForget);
-            request.setAttribute("messageLogin", "Check your verification mail in email!");
-            request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
-        } else {
-
+            if (ad.checkEmailForget(emailForget)) {
+                String code = getVerifyCode();
+                send(emailForget, code);
+                session.setAttribute("verifyCode", code);
+                session.setMaxInactiveInterval(300);
+                request.setAttribute("messageLogin", "Check your verification mail in email!");
+                request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
+            } else {
+                request.setAttribute("messageRegister", "Email is not registered");
+                request.getRequestDispatcher("view/common/account/register.jsp").forward(request, response);
+            }
         }
     }
 
@@ -218,7 +253,7 @@ public class HomeServletController extends HttpServlet {
         return googlePojo;
     }
 
-    public void send(String to) {
+    public void send(String to, String code) {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -239,36 +274,7 @@ public class HomeServletController extends HttpServlet {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
             message.setSubject("Verification Mail");
-            String htmlEmail = "<!DOCTYPE html>\n"
-                    + "<html lang=\"en\">\n"
-                    + "<body>\n"
-                    + "    <div style=\"margin: 0 10rem;\">\n"
-                    + "        <div style=\"text-align: center;\">\n"
-                    + "            <h1>Đơn Hàng Đã Đặt <label style=\"color: rgba(0, 0, 0, 0.652);\">#123123</label> </h1>\n"
-                    + "            <div style=\" justify-content: center; display: flex;\">\n"
-                    + "                <table border=\"1\">\n"
-                    + "                    <tr>\n"
-                    + "                        <th style=\"padding: 0 50px;\">Tên Sản Phẩm</th>\n"
-                    + "                        <th style=\"padding: 0 50px;\">Giá</th>\n"
-                    + "                        <th>Số lượng</th>\n"
-                    + "                    </tr>\n"
-                    + "                    <tr>\n"
-                    + "                        <td>Iphone 14 Pro Max</td>\n"
-                    + "                        <td>24.000.000 Đ</td>\n"
-                    + "                        <td>2</td>\n"
-                    + "                    </tr>\n"
-                    + "                    <tr>\n"
-                    + "                        <td>Tổng: </td>\n"
-                    + "                        <td>Tổng tiền</td>\n"
-                    + "                        <td>Số lượng</td>\n"
-                    + "                    </tr>\n"
-                    + "                </table>\n"
-                    + "            </div>\n"
-                    + "        </div>\n"
-                    + "    </div>\n"
-                    + "</body>\n"
-                    + "\n"
-                    + "</html>";
+            String htmlEmail = "<button><a href=\"http://localhost:9999/Project-SWP391/home?action=forget-password&code=" + code + "&email=" + to + "\">Verify Mail</a></button>";
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
             mimeBodyPart.setContent(htmlEmail, "text/html");

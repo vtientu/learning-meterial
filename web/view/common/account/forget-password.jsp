@@ -64,16 +64,44 @@
                             <h2 class="title-head">Forget <span>Password</span></h2>
                             <p>Login Your Account <a href="login">Click here</a></p>
                         </div>	
-                        <form class="contact-bx" method="POST" action="forget-password">
+                        <form class="contact-bx" method="POST" action="home">
+                            <input type="text" value="change-password" name="action" hidden=""/>
+                            <input type="text" value="${email}" name="email" hidden=""/>
                             <div class="row placeani">
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Email Address</label>
-                                            <input name="email" type="email" required="" class="form-control">
+                                            <label>New password</label>
+                                            <input name="password" id="npswd" type="password" required="" class="form-control">
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label>Confirm new password</label>
+                                            <input id="rpswd" type="password" required="" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function checkPassword(pw) {
+                                        let npw = document.getElementById("npswd").value();
+                                        let rpw = document.getElementById("rpswd").value();
+                                        if (npw.length < 8 || npw.length > 15 || rpw.length < 8 || rpw.length > 15) {
+                                            document.getElementById("message").innerHTML = "";
+                                            document.getElementById("message").innerHTML = "Password must be between 8 and 15 characters!";
+                                            document.getElementById("register").disabled = true;
+                                        } else if(!rpw.equals(npw)){
+                                            document.getElementById("message").innerHTML = "";
+                                            document.getElementById("message").innerHTML = "New password and Confirm password are not the same";
+                                            document.getElementById("register").disabled = true;
+                                        } else {
+                                            document.getElementById("message").innerHTML = "";
+                                            document.getElementById("register").disabled = false;
+                                        }
+                                    }
+                                </script>
                                 <div class="col-lg-12 m-b30">
                                     <button name="submit" type="submit" value="Submit" class="btn button-md">Submit</button>
                                 </div>

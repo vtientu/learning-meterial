@@ -60,6 +60,10 @@
         <servlet-name>SyllabusViewServletController</servlet-name>
         <servlet-class>controller.admin.syllabus.SyllabusViewServletController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserListServletController</servlet-name>
+        <servlet-class>controller.admin.user.UserListServletController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -99,6 +103,10 @@
     <servlet-mapping>
         <servlet-name>SyllabusViewServletController</servlet-name>
         <url-pattern>/admin/syllabus-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserListServletController</servlet-name>
+        <url-pattern>/admin/user-list</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
