@@ -134,7 +134,8 @@ public class CurriculumDAO extends DBContext {
                     + "decision.`Note`,\n"
                     + "decision.`CreateDate`,\n"
                     + "decision.`FileName`,\n"
-                    + "decision.`isActive`\n"
+                    + "decision.`isActive`,\n"
+                    + "`decision`.`decisionID`"
                     + "FROM swp391.curriculum join swp391.majors on\n"
                     + "curriculum.`majorID` = majors.`majorID` join\n"
                     + "swp391.decision on curriculum.DecisionNo = decision.DecisionNo\n"
@@ -144,7 +145,7 @@ public class CurriculumDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Major major = new Major(rs.getInt(2), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(9));
-                Decision d = new Decision(rs.getString(10), rs.getString(11), rs.getDate(12), rs.getString(13), rs.getDate(14), rs.getString(16), rs.getBoolean(16));
+                Decision d = new Decision(rs.getInt("decisionID"), rs.getString(10), rs.getString(11), rs.getDate(12), rs.getString(13), rs.getDate(14), rs.getString(16), rs.getBoolean(16));
                 Curriculum curriculum = new Curriculum(rs.getString(1), major, rs.getString(3), rs.getString(4), rs.getString(5), d);
                 return curriculum;
             }

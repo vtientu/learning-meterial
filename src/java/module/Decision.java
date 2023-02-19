@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
  * @author tient
  */
 public class Decision {
+    private int decisionID;
     private String decisionNo;
     private String decisionName;
     private Date approvedDate;
@@ -23,7 +24,8 @@ public class Decision {
     public Decision() {
     }
 
-    public Decision(String decisionNo, String decisionName, Date approvedDate, String note, Date createDate, String fileName, boolean isActive) {
+    public Decision(int decisionID, String decisionNo, String decisionName, Date approvedDate, String note, Date createDate, String fileName, boolean isActive) {
+        this.decisionID = decisionID;
         this.decisionNo = decisionNo;
         this.decisionName = decisionName;
         this.approvedDate = approvedDate;
@@ -32,6 +34,16 @@ public class Decision {
         this.fileName = fileName;
         this.isActive = isActive;
     }
+
+    public int getDecisionID() {
+        return decisionID;
+    }
+
+    public void setDecisionID(int decisionID) {
+        this.decisionID = decisionID;
+    }
+
+    
 
     public String getApprovedDateFormat(){
         SimpleDateFormat date = new SimpleDateFormat("dd-mm-yyyy");
