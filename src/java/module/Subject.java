@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * @author tient
  */
 public class Subject {
+    private int subjectID;
     private int noCredit;
     private int semester;
     private String subjectCode;
@@ -22,6 +23,20 @@ public class Subject {
 
     public Subject() {
     }
+
+    public Subject(int subjectID, int noCredit, int semester, String subjectCode, String subjectName, ArrayList<PreRequisite> prerequisite, boolean isActive, int electiveID, int comboID) {
+        this.subjectID = subjectID;
+        this.noCredit = noCredit;
+        this.semester = semester;
+        this.subjectCode = subjectCode;
+        this.subjectName = subjectName;
+        this.prerequisite = prerequisite;
+        this.isActive = isActive;
+        this.electiveID = electiveID;
+        this.comboID = comboID;
+    }
+    
+    
 
     public Subject(int noCredit, int semester, String subjectCode, String subjectName, ArrayList<PreRequisite> prerequisite, boolean isActive) {
         this.noCredit = noCredit;
@@ -42,6 +57,16 @@ public class Subject {
         this.electiveID = electiveID;
         this.comboID = comboID;
     }
+
+    public int getSubjectID() {
+        return subjectID;
+    }
+
+    public void setSubjectID(int subjectID) {
+        this.subjectID = subjectID;
+    }
+    
+    
     
     public int getElectiveID() {
         return electiveID;

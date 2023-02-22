@@ -61,8 +61,16 @@
         <servlet-class>controller.admin.syllabus.SyllabusViewServletController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UserListServletController</servlet-name>
-        <servlet-class>controller.admin.user.UserListServletController</servlet-class>
+        <servlet-name>SubjectListServletController</servlet-name>
+        <servlet-class>controller.admin.subject.SubjectListServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HomeAdminServletController</servlet-name>
+        <servlet-class>comtroller.admin.home.HomeAdminServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminListServletController</servlet-name>
+        <servlet-class>comtroller.admin.admin_list.AdminListServletController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
@@ -105,8 +113,16 @@
         <url-pattern>/admin/syllabus-list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UserListServletController</servlet-name>
-        <url-pattern>/admin/user-list</url-pattern>
+        <servlet-name>SubjectListServletController</servlet-name>
+        <url-pattern>/admin/subject-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeAdminServletController</servlet-name>
+        <url-pattern>/admin/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminListServletController</servlet-name>
+        <url-pattern>/admin/admin-list</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -7,8 +7,6 @@ package controller.common;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dal.AccountDAO;
-import dal.CurriculumDAO;
-import dal.SyllabusDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,7 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.Random;
 import javax.mail.Message;
@@ -29,17 +28,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.bind.DatatypeConverter;
 import module.Account;
 import module.Constants;
-import module.Curriculum;
 import module.GooglePojo;
-import module.Syllabus;
-import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 
 /**
  *
@@ -155,11 +150,25 @@ public class HomeServletController extends HttpServlet {
                 request.getRequestDispatcher("view/common/gui/home.jsp").forward(request, response);
         }
     }
+    
+    
+    public String convertPassToMD5(String password) {
+        MessageDigest convert = null;
+
+        try {
+            convert = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+        }
+        
+        convert.update(password.getBytes());
+        byte [] passwordByte = convert.digest();
+        return DatatypeConverter.printHexBinary(passwordByte);
+    }
 
     public void changePassword(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String password = convertPassToMD5(request.getParameter("password"));
         AccountDAO ad = new AccountDAO();
         ad.forgetPassword(email, password);
         request.setAttribute("messageLogin", "Change password successful !");
@@ -181,8 +190,7 @@ public class HomeServletController extends HttpServlet {
 
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String user = request.getParameter("user");
-        String password = request.getParameter("password");
-
+        String password = convertPassToMD5(request.getParameter("password"));
         AccountDAO ad = new AccountDAO();
         Account a = ad.loginAccount(user, password);
         if (a != null) {
@@ -197,7 +205,7 @@ public class HomeServletController extends HttpServlet {
 
     public void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String userRegister = request.getParameter("userName");
-        String passwordRegister = request.getParameter("password");
+        String passwordRegister = convertPassToMD5(request.getParameter("password"));
         String email = request.getParameter("email");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");

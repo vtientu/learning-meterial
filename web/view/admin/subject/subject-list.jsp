@@ -16,6 +16,10 @@
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
+
+        <!-- header start -->
+
+        <!-- header end -->
         <!-- Left sidebar menu start -->
         <%@include file="../gui/sidebar.jsp" %>
         <!-- Left sidebar menu end -->
@@ -36,36 +40,35 @@
                                         <div class="form-group m-0">
                                             <div class="input-group">
                                                 <label><i class="fa fa-search"></i> Search</label>
-                                                <input oninput="processUserList(${page}, false)" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                <input oninput="processSubjectList(${page}, false)" name="keysearch" id="keyseach" type="text" class="form-control">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="widget-inner">
                                 <div  id="list-items">
                                     <table class="table text-center">
                                         <thead class="thead-orange">
                                         <th>#</th>
-                                        <th>Name</th>
-                                        <th>User Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
+                                        <th>Subject Code</th>
+                                        <th>Subject Name</th>
+                                        <th>Semester</th>
+                                        <th>NoCredit</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${listUser}" var="list">
+                                            <c:forEach items="${listSubject}" var="list">
                                                 <tr>
-                                                    <td>${list.accountID}</td>
-                                                    <td>${list.displayName}</td>
-                                                    <td>${list.userName}</td>
-                                                    <td>${list.email}</td>
-                                                    <td>${list.role.roleName}</td>
-                                                    <td>${list.isActive != false?'Active':'Block'}</td>
+                                                    <td>${list.subjectID}</td>
+                                                    <td>${list.subjectCode}</td>
+                                                    <td>${list.subjectName}</td>
+                                                    <td>${list.semester}</td>
+                                                    <td>${list.noCredit}</td>
+                                                    <td>${list.isActive != false?'Active':'Non Active'}</td>
                                                     <td>
-                                                        <button name="aid" class="btn bg-white" value="${list.accountID}" onclick="processUserList(${page}, this.value)">
+                                                        <button name="sid" class="btn bg-white" value="${list.subjectID}" onclick="processSubjectList(${page}, this.value)">
                                                             <i class="ti ${list.isActive == false?'ti-close':'ti-check'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
                                                         </button>
                                                     </td>
@@ -79,7 +82,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                                 <c:if test="${page > 1}">
-                                                <li class="page-item"><a onclick="processUserList(${page - 1}, false) style ="pointer-events: none" class="page-link">Previous</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}, false) style ="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
 
 
@@ -89,7 +92,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Next</a></li>
                                                 </c:if>
                                                 <c:if test="${page < totalPage}">
-                                                <li class="page-item"><a onclick="processUserList(${page + 1}, false)" class="page-link">Next</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page + 1}, false)" class="page-link">Next</a></li>
                                                 </c:if>
                                         </ul>
                                     </div>
@@ -104,11 +107,11 @@
 
 
             let request;
-            function processUserList(page, aid) {
+            function processSubjectList(page, sid) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=user&page=' + page + '&keysearch=' + key;
-                if (aid != false) {
-                    url += '&aid=' + aid;
+                let url = './admin-list?adminpage=subject&page=' + page + '&keysearch=' + key;
+                if (sid != false) {
+                    url += '&sid=' + sid;
                 }
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
@@ -134,9 +137,6 @@
 
         </script>
         <%@include file="../gui/footer.jsp" %>
-
-        <!-- External JavaScripts -->
-
     </body>
 
 

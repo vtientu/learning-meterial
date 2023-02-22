@@ -61,13 +61,12 @@ CREATE TABLE Curriculum(
 
 
 CREATE TABLE Subjects(
-	SubjectCode NVARCHAR(20) primary key,
+	SubjectID INT AUto_increment primary key,
+	SubjectCode NVARCHAR(20) UNIQUE,
 	subjectName NVARCHAR(255),
 	Semester int,
 	NoCredit int,
-    isActive bit DEFAULT 1,
-    ElectiveID int,
-    ComboID int
+    isActive bit DEFAULT 1
 );
 
 
@@ -163,9 +162,6 @@ CREATE TABLE Assessment(
 );
 
 
-
-
-
 CREATE TABLE ConstructiveQuestion(
 	QuestionID int primary key,
 	SessionID int,
@@ -217,17 +213,38 @@ CREATE TABLE CLO(
 
 
 CREATE TABLE ComboSubject(
-	ID int AUTO_INCREMENT primary key
+	ComboID int,
+    SubjectCode NVARCHAR(20),
+    primary key(ComboID,SubjectCode)
 );
 
 
 CREATE TABLE Elective(
 	ElectiveID int AUTO_INCREMENT,
-	ElectiveName NVARCHAR(255),
+	ElectiveNameVN NVARCHAR(255),
+    ElectiveNameEN NVARCHAR(255),
+    note NVARCHAR(255),
     isActive bit DEFAULT 1,
     PRIMARY KEY(ElectiveID)
 );
 
+CREATE TABLE ElectiveSubject(
+ElectiveID int,
+SubjectCode NVARCHAR(20),
+primary key(ElectiveID, SubjectCode)
+);
+
+CREATE TABLE CurriculumElective(
+ElectiveID int,
+CurriculumCode NVARCHAR(20),
+primary key(ElectiveID, CurriculumCode)
+);
+
+CREATE TABLE ComboCurriculum(
+ComboID int,
+CurriculumCode NVARCHAR(20),
+primary key(ComboID, CurriculumCode)
+);
 
 ALTER TABLE CLO add constraint fk_clo_syllabus foreign key(syID) references Syllabus(SyllabusID);
 
@@ -240,6 +257,15 @@ ADD CONSTRAINT fk_syllabus foreign key(syllabusID) references syllabus(SyllabusI
 
 ALTER TABLE Account add constraint fk_accountRole foreign key (roleID) references Roles(roleID);
 
+ALTER TABLE CurriculumElective
+add constraint fk_curriculum_Elective foreign key (CurriculumCode) references Curriculum(CurriculumCode),
+add constraint fk_Elective_curriculum foreign key (ElectiveID) references Elective(ElectiveID);
+
+ALTER TABLE ElectiveSubject add constraint fk_elective_subject foreign key (ElectiveID) references Elective(ElectiveID),
+add constraint fk_subject_elective foreign key (SubjectCode) references Subjects(SubjectCode);
+
+ALTER TABLE ComboCurriculum add constraint fk_combo_curriculum foreign key (ComboID) references Combo(ComboID),
+add constraint fk_curriculum_combo foreign key (CurriculumCode) references Curriculum(CurriculumCode);
 
 ALTER TABLE Curriculum add constraint fk_majorCurriculum foreign key (majorID) references Majors(majorID),
 						add constraint fk_decisionCurriculum foreign key (DecisionNo) references Decision(DecisionNo);
@@ -265,9 +291,8 @@ ALTER TABLE CurriculumSubject
 add constraint fk_Subject_curriculum foreign key (CurriculumCode) references Curriculum(CurriculumCode),
 add constraint fk_curriculum_Subject foreign key (SubjectCode) references Subjects(subjectCode);
     
-
-
-
+ALTER TABLE ComboSubject add constraint fk_combo_subject foreign key (ComboID) references Combo(ComboID),
+add constraint fk_subject_combo foreign key (SubjectCode) references Subjects(SubjectCode);
 
 ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (subjectCode) references Subjects(subjectCode);
 
@@ -276,7 +301,25 @@ ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (subjectCode
 INSERT INTO Roles(rolename) VALUES('GUEST'),('STUDENT'),('TEACHER'),('REVIEWER'),('DESIGNER'),('CRDD'),('ADMIN');
 
 
-INSERT INTO Account(username, password, firstname, lastname, email, roleID) VALUES ('admin', '123', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 7);
+INSERT INTO Account(username, password, firstname, lastname, email, roleID) 
+VALUES ('admin', '202CB962AC59075B964B07152D234B70', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 7),
+		('user1', '202CB962AC59075B964B07152D234B70', 'USER', '1', '1tuvthe160803@fpt.edu.vn', 1),
+        ('user2', '202CB962AC59075B964B07152D234B70', 'USER', '2', '2tuvthe160803@fpt.edu.vn', 2),
+        ('user3', '202CB962AC59075B964B07152D234B70', 'USER', '3', '3tuvthe160803@fpt.edu.vn', 3),
+        ('user4', '202CB962AC59075B964B07152D234B70', 'USER', '4', '4tuvthe160803@fpt.edu.vn', 4),
+        ('user5', '202CB962AC59075B964B07152D234B70', 'USER', '5', '5tuvthe160803@fpt.edu.vn', 5),
+        ('user6', '202CB962AC59075B964B07152D234B70', 'USER', '6', '6tuvthe160803@fpt.edu.vn', 6),
+        ('user7', '202CB962AC59075B964B07152D234B70', 'USER', '7', '7tuvthe160803@fpt.edu.vn', 1),
+        ('user8', '202CB962AC59075B964B07152D234B70', 'USER', '8', '8tuvthe160803@fpt.edu.vn', 1),
+        ('user9', '202CB962AC59075B964B07152D234B70', 'USER', '9', '9tuvthe160803@fpt.edu.vn', 1),
+        ('user10', '202CB962AC59075B964B07152D234B70', 'USER', '10', '10tuvthe160803@fpt.edu.vn', 1),
+        ('user11', '202CB962AC59075B964B07152D234B70', 'USER', '11', '11tuvthe160803@fpt.edu.vn', 1),
+        ('user12', '202CB962AC59075B964B07152D234B70', 'USER', '12', '12tuvthe160803@fpt.edu.vn', 1),
+        ('user13', '202CB962AC59075B964B07152D234B70', 'USER', '13', '13tuvthe160803@fpt.edu.vn', 1),
+        ('user14', '202CB962AC59075B964B07152D234B70', 'USER', '14', '14tuvthe160803@fpt.edu.vn', 1),
+        ('user15', '202CB962AC59075B964B07152D234B70', 'USER', '15', '15tuvthe160803@fpt.edu.vn', 1),
+        ('user16', '202CB962AC59075B964B07152D234B70', 'USER', '16', '16tuvthe160803@fpt.edu.vn', 1),
+        ('user17', '202CB962AC59075B964B07152D234B70', 'USER', '17', '17tuvthe160803@fpt.edu.vn', 1);
 
 
 INSERT INTO `swp391`.`decision`(decisionNo, decisionName, approvedDate, note, createDate, isActive, fileName)
@@ -877,49 +920,49 @@ INSERT INTO `swp391`.`curriculum`
 `DecisionNo`)
 VALUES
 ('BBA_MC_K16B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
-General objectives:
-The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
-Specific objectives:
-PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
-PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
-PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
-PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
-PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
-PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
-PO7: Help students use English fluently and a second language at a basic level.
-Job positions after graduation:
-Graduates of the Multimedia communication specialty have diverse job opportunities such as:
-• Content creation specialist/director;
-• Communication specialist/director;
-• Advertising and public relations specialist;
-• Reporters, editors for television, radio, print newspapers, magazines;
-• Multimedia research analyst;
-• Take charge of media startups/agency, media product production;
-• Startup CEO in the field of multimedia communication.
-• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
-Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+General objectives:<br/>
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.<br/>
+Specific objectives:<br/>
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.<br/>
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.<br/>
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.<br/>
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.<br/>
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.<br/>
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.<br/>
+PO7: Help students use English fluently and a second language at a basic level.<br/>
+Job positions after graduation:<br/>
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:<br/>
+• Content creation specialist/director;<br/>
+• Communication specialist/director;<br/>
+• Advertising and public relations specialist;<br/>
+• Reporters, editors for television, radio, print newspapers, magazines;<br/>
+• Multimedia research analyst;<br/>
+• Take charge of media startups/agency, media product production;<br/>
+• Startup CEO in the field of multimedia communication.<br/>
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.<br/>
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.<br/>
 
-1. Mục tiêu của chương trình
-Mục tiêu chung:
-Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
-Mục tiêu cụ thể:
-PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
-PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
-PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
-PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
-PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
-PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
-PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
-Vị trí việc làm sau khi tốt nghiệp:
-Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
-• Chuyên viên/giám đốc sáng tạo nội dung;
-• Chuyên viên/giám đốc truyền thông;
-• Chuyên viên quảng cáo và quan hệ công chúng;
-• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
-• Chuyên gia nghiên cứu truyền thông đa phương tiện;
-• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
-• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
-• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+1. Mục tiêu của chương trình<br/>
+Mục tiêu chung:<br/>
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.<br/>
+Mục tiêu cụ thể:<br/>
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.<br/>
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.<br/>
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.<br/>
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...<br/>
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.<br/>
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.<br/>
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.<br/>
+Vị trí việc làm sau khi tốt nghiệp:<br/>
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:<br/>
+• Chuyên viên/giám đốc sáng tạo nội dung;<br/>
+• Chuyên viên/giám đốc truyền thông;<br/>
+• Chuyên viên quảng cáo và quan hệ công chúng;<br/>
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;<br/>
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;<br/>
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;<br/>
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.<br/>
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.<br/>
 Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
 ('BBA_MC_K16C',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
 1.1 General objective:
@@ -2044,8 +2087,962 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT');
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'), 
+('BBA_MC_K16D,K17A',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
 
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
+('BBA_MC_K17B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
+('BBA_MC_K17C',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
+('BBA_MC_K17D,18A',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
+('BBA_HM_K17C',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Lodging management; Restaurant management; Event organization; Lodging-Restaurant management.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; Tổ chức sự kiện; Quản trị Lưu trú-Nhà hàng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BBA_HM_K17B',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Lodging management; Restaurant management; Event organization; Lodging-Restaurant management.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện; Quản trị Lưu trú-Nhà hàng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện','1095/QĐ-ĐHFPT'),
+('BBA_HM_K17D, K18A',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Lodging management; Restaurant management; Event organization; Lodging-Restaurant management.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant & bars, and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; Tổ chức sự kiện; Quản trị Lưu trú-Nhà hàng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BBA_HM_K18B',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Lodging management; Restaurant management; Event organization; Lodging-Restaurant management.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant & bars, and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; Tổ chức sự kiện; Quản trị Lưu trú-Nhà hàng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BBA_MC_K18B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
+('BIT_AI_K15A',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of AI specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Engineers graduating AI specialty have diverse employment opportunities with a number of typical positions such as:
+✔ AI application development engineers
+✔ Automation system and robot developer
+✔ Data architects
+✔ Researchers in the Artificial Intelligence field
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Trí tuệ nhân tạo (TTNT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Kỹ sư phát triển ứng dụng AI
+✔ Kỹ sư phát triển hệ thống tự động hóa, robot
+✔ Kiến trúc sư dữ liệu
+✔ Chuyên gia nghiên cứu chuyên sâu về trí tuệ nhân tạo
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_SE_K15C',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_SE_K15D, K16A',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BBA_FIN_K17D 18A',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
+('BBA_FIN_K18B',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
+('BBA_FIN_K18C',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K15B',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K15C',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K15D,K16A',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K16D,K17A',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K17B',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K17C',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K17D,K18A',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','1095/QĐ-ĐHFPT'),
+('BIT_SE_K17C',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_SE_K17D, K18A',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT');
 INSERT INTO `swp391`.`curriculumsubject`
 (`CurriculumCode`,
 `SubjectCode`)
@@ -2175,3 +3172,81 @@ VALUES
 ('BBA_FIN_K16C','VDP201'),
 ('BBA_FIN_K16C','DTG111'),
 ('BBA_FIN_K16C','WDU203c');
+
+INSERT INTO `swp391`.`combo`
+(`ComboName`,
+`note`)
+VALUES
+('Default',''),
+('PHE_COM1: Vovinam BBA_MC_K16B',''),
+('PHE_COM2: Cờ Vua BBA_MC_K16B',''),
+('MC_COM1: Creative Content Production_Sản xuất nội dung truyền thông BBA_MC_K16B',''),
+('MC_COM2: Public Relations_Quan hệ công chúng BBA_MC_K16B',''),
+('MC_COM3: Digital marketing_Marketing số BBA_MC_K16B','');
+INSERT INTO `swp391`.`combocurriculum`
+(`ComboID`,
+`CurriculumCode`)
+VALUES
+(1,'BBA_MC_K16B'),
+(1,'BBA_MKT_K16B'),
+(1,'BBA_MKT_K16C'),
+(1,'BIT_SE_K16C'),
+(1,'BBA_MC_K16C'),
+(1,'BBA_TM_K16B'),
+(1,'BBA_TM_K16C'),
+(1,'BIT_GD_K16B'),
+(1,'BIT_IA_K16B'),
+(1,'BBA_FIN_K16B'),
+(1,'BBA_FIN_K16C'),
+(1,'BIT_AI_K16B'),
+(1,'BIT_IoT_K16B'),
+(1,'BIT_AI_K16C'),
+(1,'BBA_HM_K16B'),
+(1,'BBA_HM_K16C'),
+(1,'BIT_IS_K16B'),
+(1,'BIT_IS_K16C'),
+(1,'BIT_IoT_K16C'),
+(1,'BBA_IB_K16B'),
+(1,'BBA_IB_K16C'),
+(2,'BBA_MC_K16B'),
+(2,'BBA_MKT_K16B'),
+(2,'BBA_MKT_K16C'),
+(2,'BIT_SE_K16C'),
+(2,'BBA_MC_K16C'),
+(2,'BBA_TM_K16B'),
+(2,'BBA_TM_K16C'),
+(2,'BIT_GD_K16B'),
+(2,'BIT_IA_K16B'),
+(2,'BBA_FIN_K16B'),
+(2,'BBA_FIN_K16C'),
+(2,'BIT_AI_K16B'),
+(2,'BIT_IoT_K16B'),
+(2,'BIT_AI_K16C'),
+(2,'BBA_HM_K16B'),
+(2,'BBA_HM_K16C'),
+(2,'BIT_IS_K16B'),
+(2,'BIT_IS_K16C'),
+(2,'BIT_IoT_K16C'),
+(2,'BBA_IB_K16B'),
+(2,'BBA_IB_K16C'),
+(3,'BBA_MC_K16B'),
+(3,'BBA_MKT_K16B'),
+(3,'BBA_MKT_K16C'),
+(3,'BIT_SE_K16C'),
+(3,'BBA_MC_K16C'),
+(3,'BBA_TM_K16B'),
+(3,'BBA_TM_K16C'),
+(3,'BIT_GD_K16B'),
+(3,'BIT_IA_K16B'),
+(3,'BBA_FIN_K16B'),
+(3,'BBA_FIN_K16C'),
+(3,'BIT_AI_K16B'),
+(3,'BIT_IoT_K16B'),
+(3,'BIT_AI_K16C'),
+(3,'BBA_HM_K16B'),
+(3,'BBA_HM_K16C'),
+(3,'BIT_IS_K16B'),
+(3,'BIT_IS_K16C'),
+(3,'BIT_IoT_K16C'),
+(3,'BBA_IB_K16B'),
+(3,'BBA_IB_K16C');

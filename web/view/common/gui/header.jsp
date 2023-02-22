@@ -55,9 +55,46 @@
         <link rel="stylesheet" type="text/css" href="assets/vendors/revolution/css/settings.css">
         <link rel="stylesheet" type="text/css" href="assets/vendors/revolution/css/navigation.css">
         <!-- REVOLUTION SLIDER END -->	
+        <style>
+            .dropbtn {
+                color: black;
+                font-size: 16px;
+                border: none;
+            }
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f1f1f1;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+            }
+
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+
+            .dropdown-content a:hover {
+                background-color: #ddd;
+            }
+
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+
+        </style>
     </head>
     <body>
-        <header class="header rs-nav">
+        <header class="header rs-nav" style="height: 300px">
             <div class="top-bar">
                 <div class="container">
                     <div class="row d-flex justify-content-between">
@@ -69,12 +106,23 @@
                         <div class="topbar-right">
                             <ul>
                                 <c:if test="${account == null}">
-                                <li><a href="home?action=login">Login</a></li>
-                                <li><a href="home?action=register">Register</a></li>
-                                </c:if>
-                                <c:if test="${account != null}">
-                                <li><a href="profile">${account.displayName}</a></li>
-                                <li><a href="home?action=logout">Logout</a></li>
+                                    <li><a href="home?action=login">Login</a></li>
+                                    <li><a href="home?action=register">Register</a></li>
+                                    </c:if>
+                                    <c:if test="${account != null}">
+                                    <li>
+                                        <div class="dropdown">
+                                            <div class="dropbtn p-0">
+                                                <img class="rounded-circle shadow-4" style="width: 50px" src="${account.typeAccount == -1?'./assets/images/':''}${account.avatar == null?'profile/pic1.png': account.avatar}" alt="alt"/>
+                                                <label>${account.displayName == null ? '':account.displayName}</label>
+                                            </div>
+                                            <div class="dropdown-content">
+                                                <c:if test="${account.role.roleID > 3}"><a href="admin/home">Manager System</a></c:if>
+                                                <a href="profile">Profile</a>
+                                                <a href="home?action=logout">Logout</a>
+                                            </div>
+                                        </div>
+                                    </li>
                                 </c:if>
                             </ul>
                         </div>

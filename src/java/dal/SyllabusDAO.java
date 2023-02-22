@@ -121,6 +121,92 @@ public class SyllabusDAO extends DBContext {
         return list;
     }
 
+    public void changeStatus(int sid) {
+        try {
+            String sql = "UPDATE `swp391`.`subjects`\n"
+                    + "SET\n"
+                    + "`isActive` = NOT `isActive`\n"
+                    + "WHERE `SubjectID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, sid);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public ArrayList<Subject> getListSubject() {
+        ArrayList<Subject> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `subjects`.`SubjectID`,\n"
+                    + "    `subjects`.`SubjectCode`,\n"
+                    + "    `subjects`.`subjectName`,\n"
+                    + "    `subjects`.`Semester`,\n"
+                    + "    `subjects`.`NoCredit`,\n"
+                    + "    `subjects`.`isActive`\n"
+                    + "FROM `swp391`.`subjects` ORDER BY `subjects`.`SubjectID` ASC;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Subject s = new Subject();
+                s.setSubjectID(rs.getInt("SubjectID"));
+                s.setSubjectCode(rs.getString("SubjectCode"));
+                s.setSubjectName(rs.getString("subjectName"));
+                s.setSemester(rs.getInt("Semester"));
+                s.setNoCredit(rs.getInt("NoCredit"));
+                s.setIsActive(rs.getBoolean("isActive"));
+                list.add(s);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public ArrayList<Subject> getListSubjectByKey(String key) {
+        ArrayList<Subject> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `subjects`.`SubjectID`,\n"
+                    + "                        `subjects`.`SubjectCode`,\n"
+                    + "                        `subjects`.`subjectName`,\n"
+                    + "                        `subjects`.`Semester`,\n"
+                    + "                        `subjects`.`NoCredit`,\n"
+                    + "                        `subjects`.`isActive`\n"
+                    + "                    FROM `swp391`.`subjects`\n"
+                    + "                    WHERE `subjects`.`SubjectCode` LIKE ?\n"
+                    + "                    OR `subjects`.`subjectName` LIKE ?\n"
+                    + "                    ORDER BY `subjects`.`SubjectID` ASC";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, "%" + key + "%");
+            st.setString(2, "%" + key + "%");
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Subject s = new Subject();
+                s.setSubjectID(rs.getInt("SubjectID"));
+                s.setSubjectCode(rs.getString("SubjectCode"));
+                s.setSubjectName(rs.getString("subjectName"));
+                s.setSemester(rs.getInt("Semester"));
+                s.setNoCredit(rs.getInt("NoCredit"));
+                s.setIsActive(rs.getBoolean("isActive"));
+                list.add(s);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+    
+    
+    public ArrayList<Subject> getListByPageSubject(ArrayList<Subject> list,
+            int start, int end) {
+        ArrayList<Subject> arr = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            arr.add(list.get(i));
+        }
+        return arr;
+    }
+    
+
     public Syllabus getSyllabus(String code, int role) {
         try {
             String sql = "SELECT `syllabus`.`SyllabusID`,\n"
@@ -517,21 +603,21 @@ public class SyllabusDAO extends DBContext {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, syID);
             ResultSet rs = st.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 Assessment ass = new Assessment();
-                    ass.setAssessmentID(rs.getInt("assessmentID"));
-                    ass.setSyllabusID(rs.getInt("SyllabusID"));
-                    ass.setCategory(rs.getString("category"));
-                    ass.setType(rs.getString("Type"));
-                    ass.setPart(rs.getInt("Part"));
-                    ass.setWeight(rs.getString("Weight"));
-                    ass.setCompletionCriteria(rs.getString("CompletionCriteria"));
-                    ass.setDuration(rs.getString("Duration"));
-                    ass.setQuestionType(rs.getString("QuestionType"));
-                    ass.setNoQuestion(rs.getString("NoQuestion"));
-                    ass.setKnowledgeandSkill(rs.getString("KnowledgeandSkill"));
-                    ass.setGradingGuide(rs.getString("GradingGuide"));
-                    ass.setNote(rs.getString("Note"));
+                ass.setAssessmentID(rs.getInt("assessmentID"));
+                ass.setSyllabusID(rs.getInt("SyllabusID"));
+                ass.setCategory(rs.getString("category"));
+                ass.setType(rs.getString("Type"));
+                ass.setPart(rs.getInt("Part"));
+                ass.setWeight(rs.getString("Weight"));
+                ass.setCompletionCriteria(rs.getString("CompletionCriteria"));
+                ass.setDuration(rs.getString("Duration"));
+                ass.setQuestionType(rs.getString("QuestionType"));
+                ass.setNoQuestion(rs.getString("NoQuestion"));
+                ass.setKnowledgeandSkill(rs.getString("KnowledgeandSkill"));
+                ass.setGradingGuide(rs.getString("GradingGuide"));
+                ass.setNote(rs.getString("Note"));
                 list.add(ass);
             }
         } catch (SQLException e) {

@@ -35,7 +35,8 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
-                    + "ON `account`.`roleID` = `roles`.`roleID`\n";
+                    + "ON `account`.`roleID` = `roles`.`roleID`\n"
+                    + "ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -58,6 +59,92 @@ public class AccountDAO extends DBContext {
             }
         } catch (SQLException e) {
             System.out.println(e);
+        }
+        return list;
+    }
+
+    public ArrayList<Account> getListByPage(ArrayList<Account> list,
+            int start, int end) {
+        ArrayList<Account> arr = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            arr.add(list.get(i));
+        }
+        return arr;
+    }
+
+    public void changeStatus(int aid) {
+        try {
+            String sql = "UPDATE `swp391`.`account`\n"
+                    + "SET\n"
+                    + "`isActive` = NOT `isActive`\n"
+                    + "WHERE `accountID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, aid);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        AccountDAO adao = new AccountDAO();
+        ArrayList<Account> list = adao.getListAccountByKey("c");
+        for(Account a : list){
+            System.out.println(a.getAccountID());
+        }
+    }
+    
+    public ArrayList<Account> getListAccountByKey(String key) {
+        ArrayList<Account> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `account`.`accountID`,\n"
+                    + "                    	`account`.`username`,\n"
+                    + "                        `account`.`roleID`,\n"
+                    + "                        `account`.`password`,\n"
+                    + "                        `account`.`avatar`,\n"
+                    + "                        `account`.`firstname`,\n"
+                    + "                        `account`.`lastname`,\n"
+                    + "                        `account`.`email`,\n"
+                    + "                        `account`.`phone`,\n"
+                    + "                        `account`.`address`,\n"
+                    + "                        `account`.`typeAccount`,\n"
+                    + "                        `account`.`isActive`,\n"
+                    + "                         `roles`.`rolename`\n"
+                    + "                    FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "                    ON `account`.`roleID` = `roles`.`roleID`\n"
+                    + "                    WHERE `account`.`username` LIKE ?\n"
+                    + "                    OR `account`.`firstname` LIKE ?\n"
+                    + "                    OR `account`.`lastname` LIKE ?\n"
+                    + "                    OR `account`.`email` LIKE ?\n"
+                    + "                    OR `roles`.`rolename` LIKE ?"
+                    + "                     ORDER BY `accountID` ASC";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, "%" + key + "%");
+            st.setString(2, "%" + key + "%");
+            st.setString(3, "%" + key + "%");
+            st.setString(4, "%" + key + "%");
+            st.setString(5, "%" + key + "%");
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role role = new Role(rs.getInt("roleID"), rs.getString("rolename"));
+                Account a = new Account();
+                a.setAccountID(rs.getInt(1));
+                a.setUserName(rs.getString(2));
+                a.setRoleID(rs.getInt(3));
+                a.setPassword(rs.getString(4));
+                a.setAvatar(rs.getString(5));
+                a.setFirstName(rs.getString(6));
+                a.setLastName(rs.getString(7));
+                a.setEmail(rs.getString(8));
+                a.setPhone(rs.getString(9));
+                a.setAddress(rs.getString(10));
+                a.setTypeAccount(rs.getInt(11));
+                a.setIsActive(rs.getBoolean(12));
+                a.setRole(role);
+                list.add(a);
+            }
+        } catch (SQLException e) {
+            System.out.println(e + "getListAccountByKey");
         }
         return list;
     }
@@ -94,7 +181,7 @@ public class AccountDAO extends DBContext {
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE username = ? AND password = ? AND typeAccount = -1";
+                    + "  WHERE username = ? AND password = ? AND typeAccount = -1 AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, user);
             st.setString(2, password);
@@ -140,7 +227,7 @@ public class AccountDAO extends DBContext {
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE email = ?";
+                    + "  WHERE email = ? AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, gb.getEmail());
             ResultSet rs = st.executeQuery();
@@ -185,7 +272,7 @@ public class AccountDAO extends DBContext {
                     + "     `roles`.`rolename`\n"
                     + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE accountID = ?";
+                    + "  WHERE accountID = ? AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, accountID);
             ResultSet rs = st.executeQuery();
@@ -216,16 +303,6 @@ public class AccountDAO extends DBContext {
     public boolean registerAccount(String user, String password, String email, String firstName, String lastName) {
         try {
             String sql = "SELECT username\n"
-                    + "                          ,roleID\n"
-                    + "                          ,password\n"
-                    + "                          ,avatar\n"
-                    + "                          ,firstname\n"
-                    + "                          ,lastname\n"
-                    + "                          ,birthday\n"
-                    + "                          ,email\n"
-                    + "                          ,phone\n"
-                    + "                          ,address\n"
-                    + "                          ,gender\n"
                     + "                      FROM Account\n"
                     + "                      WHERE username = ? OR email = ?;";
             PreparedStatement st = connection.prepareStatement(sql);
@@ -353,7 +430,7 @@ public class AccountDAO extends DBContext {
             String sql = "UPDATE `swp391`.`account`\n"
                     + "SET\n"
                     + "`password` = ?\n"
-                    + "WHERE `email` = ?;";
+                    + "WHERE `email` = ?  AND `account`.`isActive` = 1;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, password);
             st.setString(2, email);
@@ -378,7 +455,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`\n"
                     + "FROM `swp391`.`account`\n"
-                    + "WHERE `account`.`email` = ?;";
+                    + "WHERE `account`.`email` = ?  AND `account`.`isActive` = 1 AND typeAccount = -1;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, email);
             ResultSet rs = st.executeQuery();
