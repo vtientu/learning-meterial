@@ -67,11 +67,16 @@
                                                     <td>${list.semester}</td>
                                                     <td>${list.noCredit}</td>
                                                     <td>${list.isActive != false?'Active':'Non Active'}</td>
+                                                    <c:if test="${account.roleID == 7}">
                                                     <td>
                                                         <button name="sid" class="btn bg-white" value="${list.subjectID}" onclick="processSubjectList(${page}, this.value)">
                                                             <i class="ti ${list.isActive == false?'ti-close':'ti-check'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
                                                         </button>
                                                     </td>
+                                                    </c:if>
+                                                    <c:if test="${account.roleID != 7}">
+                                                        <td></td>
+                                                    </c:if>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>

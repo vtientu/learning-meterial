@@ -64,11 +64,17 @@
                                                     <td>${list.email}</td>
                                                     <td>${list.role.roleName}</td>
                                                     <td>${list.isActive != false?'Active':'Block'}</td>
+                                                    <c:if test="${account.accountID != list.accountID && account.roleID == 7 && list.roleID < 7}">
                                                     <td>
                                                         <button name="aid" class="btn bg-white" value="${list.accountID}" onclick="processUserList(${page}, this.value)">
                                                             <i class="ti ${list.isActive == false?'ti-close':'ti-check'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
                                                         </button>
                                                     </td>
+                                                    </c:if>
+                                                    
+                                                    <c:if test="${account.accountID == list.accountID || account.roleID < 7}">
+                                                        <td></td>
+                                                    </c:if>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>

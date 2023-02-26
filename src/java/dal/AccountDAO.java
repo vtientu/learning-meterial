@@ -29,8 +29,6 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`firstname`,\n"
                     + "    `account`.`lastname`,\n"
                     + "    `account`.`email`,\n"
-                    + "    `account`.`phone`,\n"
-                    + "    `account`.`address`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
@@ -50,10 +48,8 @@ public class AccountDAO extends DBContext {
                 a.setFirstName(rs.getString(6));
                 a.setLastName(rs.getString(7));
                 a.setEmail(rs.getString(8));
-                a.setPhone(rs.getString(9));
-                a.setAddress(rs.getString(10));
-                a.setTypeAccount(rs.getInt(11));
-                a.setIsActive(rs.getBoolean(12));
+                a.setTypeAccount(rs.getInt(9));
+                a.setIsActive(rs.getBoolean(10));
                 a.setRole(role);
                 list.add(a);
             }
@@ -77,7 +73,7 @@ public class AccountDAO extends DBContext {
             String sql = "UPDATE `swp391`.`account`\n"
                     + "SET\n"
                     + "`isActive` = NOT `isActive`\n"
-                    + "WHERE `accountID` = ?;";
+                    + "WHERE `accountID` = ? AND account.roleID != 7;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, aid);
             st.executeUpdate();

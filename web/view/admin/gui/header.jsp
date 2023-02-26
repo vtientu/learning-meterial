@@ -62,12 +62,12 @@
                     <ul class="ttr-header-navigation">
                         <li>
                             <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img
-                                        alt="" src="../assets/assets-admin/images/testimonials/pic3.jpg" width="32" height="32"></span></a>
+                                        alt="" src="${account.typeAccount == -1?'../assets/images/':''}${account.avatar == null?'profile/pic1.png': account.avatar}" width="32" height="32"></span></a>
                             <div class="ttr-header-submenu">
                                 <ul>
-                                    <li><a href="user-profile.html">My profile</a></li>
-                                    <li><a href="list-view-calendar.html">Change Password</a></li>
-                                    <li><a href="home?action=logout">Logout</a></li>
+                                    <li><a>My profile</a></li>
+                                    <li><a>Change Password</a></li>
+                                    <li><a href="../home?action=logout">Logout</a></li>
                                 </ul>
                             </div>
                         </li>

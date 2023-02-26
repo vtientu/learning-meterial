@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
 import module.Subject;
@@ -70,10 +71,7 @@ public class AdminListServletController extends HttpServlet {
                 break;
         }
     }
-    
-    
-    
-    
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -96,8 +94,6 @@ public class AdminListServletController extends HttpServlet {
         }
     }
 
-    
-    
 //    PrintWriter out = response.getWriter();
 //        String key = request.getParameter("keysearch");
 //        String aid = request.getParameter("aid");
@@ -107,18 +103,15 @@ public class AdminListServletController extends HttpServlet {
 //        out.println("page" + xpage);
 //        out.println("key" + key);
 //        out.println("aid" + aid);
-    
-    
-    
-
     public void getSubjectList(HttpServletRequest request, HttpServletResponse response, int type)
             throws ServletException, IOException {
         ArrayList<Subject> listSubject;
         SyllabusDAO sdao = new SyllabusDAO();
         String key = request.getParameter("keysearch");
         String sid = request.getParameter("sid");
-
-        if (sid != null && sid.length() > 0) {
+        HttpSession session = request.getSession();
+        Account account = (Account) session.getAttribute("account");
+        if (sid != null && sid.length() > 0 && account.getRoleID() == 7) {
             sdao.changeStatus(Integer.parseInt(sid));
         }
 
@@ -209,6 +202,9 @@ public class AdminListServletController extends HttpServlet {
     public void showSubjectList(HttpServletRequest request, HttpServletResponse response, ArrayList<Subject> listSubject, int page, int totalPage)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
+
+        HttpSession session = request.getSession();
+        Account account = (Account) session.getAttribute("account");
         out.print("<table class=\"table text-center\">\n"
                 + "                                        <thead class=\"thead-orange\">\n"
                 + "                                        <th>#</th>\n"
@@ -232,16 +228,20 @@ public class AdminListServletController extends HttpServlet {
             } else {
                 out.print("<td>Inactive</td>\n");
             }
-            out.print("<td>\n"
-                    + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processSubjectList(" + page + ", this.value)\" value=\"" + s.getSubjectID() + "\">\n");
-            if (s.isIsActive()) {
-                out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
+            if (account.getRoleID() == 7) {
+                out.print("<td>\n"
+                        + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processSubjectList(" + page + ", this.value)\" value=\"" + s.getSubjectID() + "\">\n");
+                if (s.isIsActive()) {
+                    out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
+                } else {
+                    out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
+                }
+                out.print("</button>\n"
+                        + "                                                    </td>\n");
             } else {
-                out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
+                out.print("<td></td>");
             }
-            out.print("</button>\n"
-                    + "                                                    </td>\n"
-                    + "                                                </tr>");
+            out.print("                                                </tr>");
 
         }
         String str = "</tbody>\n"
@@ -269,6 +269,8 @@ public class AdminListServletController extends HttpServlet {
     public void showUserList(HttpServletRequest request, HttpServletResponse response, ArrayList<Account> listUser, int page, int totalPage)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+        Account account = (Account) session.getAttribute("account");
         out.print("<table class=\"table text-center\">\n"
                 + "                                        <thead class=\"thead-orange\">\n"
                 + "                                        <th>#</th>\n"
@@ -292,16 +294,21 @@ public class AdminListServletController extends HttpServlet {
             } else {
                 out.print("<td>Block</td>\n");
             }
-            out.print("<td>\n"
-                    + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processUserList(" + page + ", this.value)\" value=\"" + a.getAccountID() + "\">\n");
-            if (a.isIsActive()) {
-                out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
+            if (account.getAccountID() != a.getAccountID() && account.getRoleID() == 7 && a.getRoleID() < 7) {
+                out.print("<td>\n"
+                        + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processUserList(" + page + ", this.value)\" value=\"" + a.getAccountID() + "\">\n");
+
+                if (a.isIsActive()) {
+                    out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
+                } else {
+                    out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
+                }
+                out.print("</button>\n"
+                        + "                                                    </td>\n");
             } else {
-                out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
+                out.print("<td></td>");
             }
-            out.print("</button>\n"
-                    + "                                                    </td>\n"
-                    + "                                                </tr>");
+            out.print("                                                </tr>");
 
         }
         String str = "</tbody>\n"
@@ -326,7 +333,6 @@ public class AdminListServletController extends HttpServlet {
         out.print(str);
     }
 
-    
     /**
      * Returns a short description of the servlet.
      *
