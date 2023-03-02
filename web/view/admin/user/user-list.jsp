@@ -65,18 +65,39 @@
                                                     <td>${list.role.roleName}</td>
                                                     <td>${list.isActive != false?'Active':'Block'}</td>
                                                     <c:if test="${account.accountID != list.accountID && account.roleID == 7 && list.roleID < 7}">
-                                                    <td>
-                                                        <button name="aid" class="btn bg-white" value="${list.accountID}" onclick="processUserList(${page}, this.value)">
-                                                            <i class="ti ${list.isActive == false?'ti-close':'ti-check'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
-                                                        </button>
-                                                    </td>
+                                                        <td>
+                                                            <button data-toggle="modal" data-target="#confirmU${list.accountID}" class="btn bg-white" >
+                                                                <i class="ti ${list.isActive == false?'ti-lock':'ti-unlock'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
+                                                            </button>
+                                                        </td>
                                                     </c:if>
-                                                    
+
                                                     <c:if test="${account.accountID == list.accountID || account.roleID < 7}">
                                                         <td></td>
                                                     </c:if>
                                                 </tr>
-                                            </c:forEach>
+                                            <div class="modal page" id="confirmU${list.accountID}">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title text-center">Do you want to change status account ${list.displayName}?</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <span>Account ID: <label>${list.accountID}</label></span><br>
+                                                            <span>Email: <label>${list.email}</label></span><br>
+                                                            <span>User Name: <label>${list.userName}</label></span>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button onclick="processUserList(${page}, ${list.accountID})" data-dismiss="modal" type="button" class="btn btn-primary" style="background-color: #007bff; color: white">${list.isActive != true?'Active':'Block'}</button>
+                                                            <button type="button" class="btn btn-secondary" style="background-color: #6c757d; color: white" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
                                         </tbody>
                                     </table>
                                     <div style="float: right">
@@ -102,13 +123,12 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Your Profile Views Chart END-->
                     </div>
                 </div>
         </main>
+
+
         <script>
-
-
             let request;
             function processUserList(page, aid) {
                 let key = document.getElementById("keyseach").value;
@@ -137,6 +157,8 @@
                     document.getElementById("list-items").innerHTML = val;
                 }
             }
+
+
 
         </script>
         <%@include file="../gui/footer.jsp" %>

@@ -169,7 +169,7 @@ public class AdminListServletController extends HttpServlet {
             listUser = adao.getListAccountByKey(key);
         }
 
-        int page, numberPerPage = 6;
+        int page, numberPerPage = 8;
         String xpage = request.getParameter("page");
         int size;
         if (listUser.isEmpty()) {
@@ -296,19 +296,46 @@ public class AdminListServletController extends HttpServlet {
             }
             if (account.getAccountID() != a.getAccountID() && account.getRoleID() == 7 && a.getRoleID() < 7) {
                 out.print("<td>\n"
-                        + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processUserList(" + page + ", this.value)\" value=\"" + a.getAccountID() + "\">\n");
+                        + "                                                        <button data-toggle=\"modal\" data-target=\"#confirmU"+a.getAccountID()+"\" class=\"btn bg-white\">\n");
 
                 if (a.isIsActive()) {
-                    out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
+                    out.print("<i class=\"ti ti-unlock font-weight-bold\" style=\"color: green\"></i>\n");
                 } else {
-                    out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
+                    out.print("<i class=\"ti ti-lock font-weight-bold\" style=\"color: red\"></i>\n");
                 }
                 out.print("</button>\n"
                         + "                                                    </td>\n");
             } else {
                 out.print("<td></td>");
             }
-            out.print("                                                </tr>");
+            out.print("                                                </tr>"
+                    + "<div class=\"modal page\" id=\"confirmU"+a.getAccountID()+"\">\n"
+                    + "                                                <div class=\"modal-dialog\" role=\"document\">\n"
+                    + "                                                    <div class=\"modal-content\">\n"
+                    + "                                                        <div class=\"modal-header\">\n"
+                    + "                                                            <h4 class=\"modal-title text-center\">Do you want to change status account "+a.getDisplayName()+"?</h4>\n"
+                    + "                                                            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n"
+                    + "                                                                <span aria-hidden=\"true\">&times;</span>\n"
+                    + "                                                            </button>\n"
+                    + "                                                        </div>\n"
+                    + "                                                        <div class=\"modal-body\">\n"
+                    + "                                                            <span>Account ID: <label>" + a.getAccountID() + "</label></span><br>\n"
+                    + "                                                            <span>Email: <label>" + a.getEmail() + "</label></span><br>\n"
+                    + "                                                            <span>User Name: <label>" + a.getUserName() + "</label></span>\n"
+                    + "                                                        </div>\n"
+                    + "                                                        <div class=\"modal-footer\">\n"
+                    + "                                                            <button id=\"aid\" onclick=\"processUserList(" + page + ", this.value)\" value=\"" + a.getAccountID() + "\"  data-dismiss=\"modal\" type=\"button\" class=\"btn btn-primary\" style=\"background-color: #007bff; color: white\">");
+            if(a.isIsActive()) {
+                out.print("Block");
+            } else {
+                out.print("Active");
+            }
+                            out.print("</button>\n"
+                    + "                                                            <button type=\"button\" class=\"btn btn-secondary\" style=\"background-color: #6c757d; color: white\" data-dismiss=\"modal\">Close</button>\n"
+                    + "                                                        </div>\n"
+                    + "                                                    </div>\n"
+                    + "                                                </div>\n"
+                    + "                                            </div>");
 
         }
         String str = "</tbody>\n"

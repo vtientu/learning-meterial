@@ -33,7 +33,7 @@
                         <div class="widget-box">
                             <div class="row justify-content-between">
                                 <div class="wc-title">
-                                    <h4>User List</h4>
+                                    <h4>Subject List</h4>
                                 </div>
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">

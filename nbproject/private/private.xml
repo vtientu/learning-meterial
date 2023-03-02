@@ -3,18 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/dal/SyllabusDAO.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/common/gui/header.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/common/syllabus/syllabus-list.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/gui/header.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/dal/AccountDAO.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/controller/common/HomeServletController.java</file>
             <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/user/user-list.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/WEB-INF/web.xml</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/filter/AdminPageFilter.java</file>
             <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/comtroller/admin/admin_list/AdminListServletController.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/subject/subject-list.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/filter/UserFilter.java</file>
         </group>
     </open-files>
 </project-private>
