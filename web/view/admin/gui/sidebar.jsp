@@ -53,6 +53,23 @@
                 <li>
                     <a class="ttr-material-button" href="#">
                         <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
+                        <span class="ttr-label">Syllabus Management</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="admin-list?adminpage=syllabus" class="ttr-material-button">
+                                <span class="ttr-label">Syllabus List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ttr-material-button" href="add-details?action=syllabus"><span class="ttr-label">Create Syllabus</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="ttr-material-button" href="#">
+                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
                         <span class="ttr-label">Curriculum List</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>

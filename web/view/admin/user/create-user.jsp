@@ -13,7 +13,6 @@
     <head>
 
         <%@include file="../gui/header.jsp" %>
-
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Left sidebar menu start -->

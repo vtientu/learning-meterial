@@ -23,7 +23,7 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Create Subject</h4>
+                    <h4 class="breadcrumb-title">Update Subject</h4>
                 </div>	
                 <div class="row">
                     <div class="col-lg-12 m-b30">

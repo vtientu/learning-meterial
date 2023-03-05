@@ -5,6 +5,7 @@
 package controller.admin.admin_details;
 
 import dal.AccountDAO;
+import dal.DecisionDAO;
 import dal.SyllabusDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,8 +15,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import module.Account;
+import module.Decision;
 import module.Role;
 import module.Subject;
+import module.Syllabus;
 
 /**
  *
@@ -64,6 +67,7 @@ public class UpdateDetailServletController extends HttpServlet {
         String action = request.getParameter("action");
         AccountDAO adao = new AccountDAO();
         SyllabusDAO sdao = new SyllabusDAO();
+        DecisionDAO ddao = new DecisionDAO();
         switch (action) {
             case "user":
                 int aid = Integer.parseInt(request.getParameter("aid"));
@@ -78,6 +82,16 @@ public class UpdateDetailServletController extends HttpServlet {
                 Subject s = sdao.getSubject(sid);
                 request.setAttribute("subject", s);
                 request.getRequestDispatcher("../view/admin/subject/update-subject.jsp").forward(request, response);
+            case "syllabus":
+                int syllabusID = Integer.parseInt(request.getParameter("sid"));
+                Syllabus syllabus = sdao.getSyllabusByID(syllabusID);
+                ArrayList<Subject> listSubject = sdao.getListSubject();
+                ArrayList<Decision> listDecision = (ArrayList<Decision>) ddao.getAllDecision();
+                request.setAttribute("listSubject", listSubject);
+                request.setAttribute("listDecision", listDecision);
+                request.setAttribute("syllabus", syllabus);
+                request.getRequestDispatcher("../view/admin/syllabus/update-syllabus.jsp").forward(request, response);
+                break;
         }
     }
 
@@ -93,56 +107,56 @@ public class UpdateDetailServletController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        AccountDAO adao = new AccountDAO();
-        SyllabusDAO sdao = new SyllabusDAO();
         switch (action) {
             case "user":
-                int aid = Integer.parseInt(request.getParameter("aid"));
-                String firstName = request.getParameter("firstName");
-                String lastName = request.getParameter("lastName");
-                int roleId = Integer.parseInt(request.getParameter("role"));
-                Account a = new Account();
-                a.setAccountID(aid);
-                a.setRoleID(roleId);
-                a.setFirstName(firstName);
-                a.setLastName(lastName);
-                adao.updateUser(a);
-                response.sendRedirect("update-details?action=user&aid=" + aid);
+                updateUser(request, response);
                 break;
             case "subject":
-                int sid = Integer.parseInt(request.getParameter("sid"));
-                String subjectCode = request.getParameter("subjectCode");
-                String subjectName = request.getParameter("subjectName");
-                int semester = Integer.parseInt(request.getParameter("semester"));
-                int noCredit = Integer.parseInt(request.getParameter("noCredit"));
-                boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
-                Subject scheck = sdao.getSubject(sid);
-
-                if (!scheck.getSubjectCode().equals(subjectCode)) {
-                    if (sdao.checkSubjectCode(subjectCode)) {
-                        request.setAttribute("message", "Subject Code already exists! Re-enter Subject Code");
-                        request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
-                    }
-                }
-
-                if (!scheck.getSubjectName().equals(subjectName)) {
-                    if (sdao.checkSubjectName(subjectName)) {
-                        request.setAttribute("message", "Subject Name already exists! Re-enter Subject Name");
-                        request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
-                    }
-                }
-
-                Subject s = new Subject();
-                s.setSubjectCode(subjectCode);
-                s.setSubjectName(subjectName);
-                s.setSemester(semester);
-                s.setNoCredit(noCredit);
-                s.setIsActive(isActive);
-                sdao.updateSubject(s);
-                request.setAttribute("message", "Add Subject successful!");
-                request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+                updateSubject(request, response);
                 break;
         }
+    }
+
+    public void updateUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        AccountDAO adao = new AccountDAO();
+        int aid = Integer.parseInt(request.getParameter("aid"));
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        int roleId = Integer.parseInt(request.getParameter("role"));
+        Account a = new Account();
+        a.setAccountID(aid);
+        a.setRoleID(roleId);
+        a.setFirstName(firstName);
+        a.setLastName(lastName);
+        adao.updateUser(a);
+        response.sendRedirect("update-details?action=user&aid=" + aid);
+    }
+
+    public void updateSubject(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        SyllabusDAO sdao = new SyllabusDAO();
+        int sid = Integer.parseInt(request.getParameter("sid"));
+        String subjectCode = request.getParameter("subjectCode");
+        String subjectName = request.getParameter("subjectName");
+        int semester = Integer.parseInt(request.getParameter("semester"));
+        int noCredit = Integer.parseInt(request.getParameter("noCredit"));
+        boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
+
+        Subject s = new Subject();
+        s.setSubjectCode(subjectCode);
+        s.setSubjectName(subjectName);
+        s.setSemester(semester);
+        s.setNoCredit(noCredit);
+        s.setIsActive(isActive);
+        if (!sdao.updateSubject(s)) {
+            request.setAttribute("message", "Update Fail! Subject Code or Subject Name already exist");
+            request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+        } else {
+            request.setAttribute("message", "Add Subject successful!");
+            request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+        }
+
     }
 
     /**

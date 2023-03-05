@@ -24,7 +24,7 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Add User</h4>
+                    <h4 class="breadcrumb-title">Update User</h4>
                 </div>	
                 <div class="row">
                     <!-- Your Profile Views Chart -->

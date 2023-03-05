@@ -135,6 +135,7 @@ CREATE TABLE Material(
 CREATE TABLE Session(
 	SessionID int AUTO_INCREMENT,
 	SyllabusID int,
+    SessionNo NVARCHAR(100),
 	Topic NVARCHAR(255),
 	LearningTeachingType NVARCHAR(255),
 	StudentMaterials NVARCHAR(255),
@@ -245,6 +246,17 @@ ComboID int,
 CurriculumCode NVARCHAR(20),
 primary key(ComboID, CurriculumCode)
 );
+
+CREATE TABLE Question (
+	QuestionID INT auto_increment PRIMARY KEY,
+    SyllabusID INT,
+    SessionID INT,
+    QuestionName INT,
+    Details TEXT,
+    foreign key(SyllabusID) REFERENCES Syllabus(SyllabusID),
+    foreign key(SessionID) REFERENCES Session(SessionID)
+);
+
 
 ALTER TABLE CLO add constraint fk_clo_syllabus foreign key(syID) references Syllabus(SyllabusID);
 

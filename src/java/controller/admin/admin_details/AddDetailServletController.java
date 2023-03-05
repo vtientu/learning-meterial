@@ -69,6 +69,9 @@ public class AddDetailServletController extends HttpServlet {
             case "subject":
                 request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
                 break;
+            case "syllabus":
+                request.getRequestDispatcher("../view/admin/syllabus/create-syllabus.jsp").forward(request, response);
+                break;
         }
     }
 
@@ -91,7 +94,22 @@ public class AddDetailServletController extends HttpServlet {
             case "subject":
                 addSubject(request, response);
                 break;
+            case "syllabus":
+                break;
         }
+    }
+    
+    public void addSyllabus(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String subjectCode = request.getParameter("subjectCode");
+        String decision = request.getParameter("decision");
+        String nameEN = request.getParameter("nameEN");
+        String nameVN = request.getParameter("nameVN");
+        String degreeLevel = request.getParameter("degreeLevel");
+        String tool = request.getParameter("tool");
+        String scoringScale = request.getParameter("scoringScale");
+        String minAvgMarkToPass = request.getParameter("minAvgMarkToPass");
+        
     }
 
     public void addSubject(HttpServletRequest request, HttpServletResponse response)

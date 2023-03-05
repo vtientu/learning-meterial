@@ -27,25 +27,20 @@
         <!--Main container start -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title" style="border-right: none">Subject List</h4>
-                </div>
                 <div class="row">
                     <!-- Your Profile Views Chart -->
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="row justify-content-between">
                                 <div class="wc-title">
-                                    <c:if test="${account.roleID >= 7}">
-                                        <a class="btn" href="add-details?action=subject">Add Subject</a>
-                                    </c:if>
+                                    <h4>Subject List</h4>
                                 </div>
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">
                                         <div class="form-group m-0">
                                             <div class="input-group">
                                                 <label><i class="fa fa-search"></i> Search</label>
-                                                <input oninput="processSubjectList(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                <input oninput="processSyllabusList(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -55,31 +50,33 @@
                                 <div  id="list-items">
                                     <table class="table text-center">
                                         <thead class="thead-orange">
-                                        <th>#</th>
+                                        <th>Syllabus ID</th>
                                         <th>Subject Code</th>
                                         <th>Subject Name</th>
-                                        <th>Semester</th>
-                                        <th>NoCredit</th>
-                                        <th>Status</th>
+                                        <th>Syllabus Name</th>
+                                        <th>IsActive</th>
+                                        <th>IsApproved</th>
+                                        <th>DecisionNo<br/>MM/dd/yyyy</th>
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${listSubject}" var="list">
+                                            <c:forEach items="${listSyllabus}" var="list">
                                                 <tr>
-                                                    <td>${list.subjectID}</td>
+                                                    <td>${list.syllabusID}</td>
                                                     <td>${list.subjectCode}</td>
-                                                    <td>${list.subjectName}</td>
-                                                    <td>${list.semester}</td>
-                                                    <td>${list.noCredit}</td>
-                                                    <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
+                                                    <td>${list.subject.subjectName}</td>
+                                                    <td>${list.syllabusNameEN}</td>
+                                                    <td><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
+                                                    <td><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
+                                                    <td>${list.decisionNo}</td>
                                                     <c:if test="${account.roleID >= 7}">
-                                                    <td>
-                                                        <button class="btn bg-white">
-                                                            <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
-                                                        </button>
-                                                    </td>
+                                                        <td>
+                                                            <button class="btn bg-white">
+                                                                <a href="update-details?action=syllabus&sid=${list.syllabusID}"><i class="ti ti-pencil-alt" style="color: black"></i></a>
+                                                            </button>
+                                                        </td>
                                                     </c:if>
-                                                    <c:if test="${account.roleID != 7}">
+                                                    <c:if test="${account.roleID < 7}">
                                                         <td></td>
                                                     </c:if>
                                                 </tr>
@@ -92,17 +89,14 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                                 <c:if test="${page > 1}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}) style ="pointer-events: none" class="page-link">Previous</a></li>
+                                                <li class="page-item"><a onclick="processSyllabusList(${page - 1}) style ="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
-
-
                                             <li class="page-item"><a id="page" class="page-link">${page}</a></li>
-
-                                            <c:if test="${page == totalPage}">
+                                                <c:if test="${page == totalPage}">
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Next</a></li>
                                                 </c:if>
                                                 <c:if test="${page < totalPage}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page + 1})" class="page-link">Next</a></li>
+                                                <li class="page-item"><a onclick="processSyllabusList(${page + 1})" class="page-link">Next</a></li>
                                                 </c:if>
                                         </ul>
                                     </div>
@@ -114,12 +108,10 @@
                 </div>
         </main>
         <script>
-
-
             let request;
-            function processSubjectList(page) {
+            function processSyllabusList(page) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=subject&page=' + page + '&keysearch=' + key;
+                let url = './admin-list?adminpage=syllabus&page=' + page + '&keysearch=' + key;
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

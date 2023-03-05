@@ -13,6 +13,7 @@ import module.CLO;
 import module.Decision;
 import module.Material;
 import module.PreRequisite;
+import module.Question;
 import module.Subject;
 import module.Syllabus;
 
@@ -171,8 +172,107 @@ public class SyllabusDAO extends DBContext {
         return null;
     }
 
-    public void updateSubject(Subject s) {
+    public ArrayList<Question> getQuestionListBySID(int sid) {
+        ArrayList<Question> list = new ArrayList<>();
         try {
+            String sql = "SELECT `question`.`QuestionID`,\n"
+                    + "    `question`.`SyllabusID`,\n"
+                    + "    `question`.`SessionID`,\n"
+                    + "    `question`.`QuestionName`,\n"
+                    + "    `question`.`Details`\n"
+                    + "FROM `question`\n"
+                    + "WHERE `question`.`SyllabusID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, sid);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionID(rs.getInt(1));
+                q.setSyllabusID(rs.getInt(2));
+                q.setSessionID(rs.getInt(3));
+                q.setQuestionName(rs.getString(4));
+                q.setDetails(rs.getString(5));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public Question getQuestionByID(int qid) {
+        try {
+            String sql = "SELECT `question`.`QuestionID`,\n"
+                    + "    `question`.`SyllabusID`,\n"
+                    + "    `question`.`SessionID`,\n"
+                    + "    `question`.`QuestionName`,\n"
+                    + "    `question`.`Details`\n"
+                    + "FROM `question`\n"
+                    + "WHERE `question`.`QuestionID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, qid);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionID(rs.getInt(1));
+                q.setSyllabusID(rs.getInt(2));
+                q.setSessionID(rs.getInt(3));
+                q.setQuestionName(rs.getString(4));
+                q.setDetails(rs.getString(5));
+                return q;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    public ArrayList<Question> getQuestionListByKey(String key) {
+        ArrayList<Question> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `question`.`QuestionID`,\n"
+                    + "    `question`.`SyllabusID`,\n"
+                    + "    `question`.`SessionID`,\n"
+                    + "    `question`.`QuestionName`,\n"
+                    + "    `question`.`Details`\n"
+                    + "FROM `question`\n"
+                    + "WHERE `question`.`QuestionName` LIKE ? OR `question`.`Details` LIKE ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, "'%" + key +"%'");
+            st.setString(2, "'%" + key +"%'");
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionID(rs.getInt(1));
+                q.setSyllabusID(rs.getInt(2));
+                q.setSessionID(rs.getInt(3));
+                q.setQuestionName(rs.getString(4));
+                q.setDetails(rs.getString(5));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public void deleteQuestion(int qid) {
+        try {
+            String sql = "DELETE FROM `question`\n"
+                    + "WHERE QuestionID = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, qid);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public boolean updateSubject(Subject s) {
+        try {
+            if (checkSubjectCode(s.getSubjectCode()) || checkSubjectName(s.getSubjectName())) {
+                return false;
+            }
             String sql = "UPDATE `subjects`\n"
                     + "SET\n"
                     + "`SubjectCode` = ?,\n"
@@ -192,6 +292,7 @@ public class SyllabusDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println(e);
         }
+        return true;
     }
 
     public boolean checkSubjectCode(String subjectCode) {
@@ -408,6 +509,104 @@ public class SyllabusDAO extends DBContext {
         }
         return null;
     }
+    
+    public Syllabus getSyllabusByID(int code) {
+        try {
+            String sql = "SELECT `syllabus`.`SyllabusID`,\n"
+                    + "    `syllabus`.`SubjectCode`,\n"
+                    + "    `syllabus`.`SubjectNameEN`,\n"
+                    + "    `syllabus`.`SubjectNameVN`,\n"
+                    + "    `syllabus`.`IsActive`,\n"
+                    + "    `syllabus`.`IsApproved`,\n"
+                    + "    `syllabus`.`DecisionNo`,\n"
+                    + "    `syllabus`.`NoCredit`,\n"
+                    + "    `syllabus`.`DegreeLevel`,\n"
+                    + "    `syllabus`.`TimeAllocation`,\n"
+                    + "    `syllabus`.`Description`,\n"
+                    + "    `syllabus`.`StudentTasks`,\n"
+                    + "    `syllabus`.`Tools`,\n"
+                    + "    `syllabus`.`ScoringScale`,\n"
+                    + "    `syllabus`.`Note`,\n"
+                    + "    `syllabus`.`MinAvgMarkToPass`,\n"
+                    + "    `syllabus`.`ApprovedDate`,\n"
+                    + "    `syllabus`.`PreRequisite`,\n"
+                    + "    `subjects`.`subjectName`,\n"
+                    + "    `subjects`.`Semester`,\n"
+                    + "    `subjects`.`NoCredit`,\n"
+                    + "    `decision`.`DecisionName`,\n"
+                    + "    `decision`.`ApprovedDate`,\n"
+                    + "    `decision`.`Note`,\n"
+                    + "    `decision`.`CreateDate`,\n"
+                    + "    `decision`.`isActive`,\n"
+                    + "    `decision`.`FileName`\n"
+                    + "FROM `syllabus` INNER JOIN `subjects`\n"
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `prerequisite`\n"
+                    + "ON `prerequisite`.`subjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
+                    + "WHERE `syllabus`.`SyllabusID` = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, code);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Decision decision = new Decision();
+                decision.setDecisionNo(rs.getString("DecisionNo"));
+                decision.setDecisionName(rs.getString("DecisionName"));
+                decision.setApprovedDate(rs.getDate("ApprovedDate"));
+                decision.setNote(rs.getString("Note"));
+                decision.setCreateDate(rs.getDate("CreateDate"));
+                decision.setIsActive(rs.getBoolean("isActive"));
+                decision.setFileName(rs.getString("FileName"));
+                Subject subject = new Subject();
+                subject.setSubjectCode(rs.getString(2));
+                subject.setSubjectName(rs.getString("subjectName"));
+                subject.setSemester(rs.getInt("Semester"));
+
+                String sql1 = "SELECT `prerequisite`.`PreID`,\n"
+                        + "    `prerequisite`.`subjectCode`,\n"
+                        + "    `prerequisite`.`subjectPre`\n"
+                        + "FROM `swp391`.`prerequisite`\n"
+                        + "WHERE `prerequisite`.`subjectCode` = ?;";
+                PreparedStatement st1 = connection.prepareStatement(sql1);
+                st1.setString(1, rs.getString("SubjectCode"));
+                ResultSet rs1 = st1.executeQuery();
+                ArrayList<PreRequisite> preList = new ArrayList<>();
+                while (rs1.next()) {
+                    PreRequisite pre = new PreRequisite();
+                    pre.setPreID(rs1.getInt("PreID"));
+                    pre.setSubjectCode(rs1.getString(2));
+                    pre.setSubjectPre(rs1.getString("subjectPre"));
+                    preList.add(pre);
+                }
+                subject.setPrerequisite(preList);
+                subject.setNoCredit(rs.getInt("NoCredit"));
+                Syllabus syllabus = new Syllabus();
+                syllabus.setSyllabusID(rs.getInt("SyllabusID"));
+                syllabus.setSubjectCode(rs.getString("SubjectCode"));
+                syllabus.setSyllabusNameEN(rs.getString("SubjectNameEN"));
+                syllabus.setSyllabusNameVN(rs.getString("SubjectNameVN"));
+                syllabus.setIsActive(rs.getBoolean("IsActive"));
+                syllabus.setIsApproved(rs.getBoolean("IsApproved"));
+                syllabus.setDecisionNo(rs.getString("DecisionNo"));
+                syllabus.setNoCredit(rs.getInt("NoCredit"));
+                syllabus.setDegreeLevel(rs.getString("DegreeLevel"));
+                syllabus.setTimeAllocation(rs.getString("TimeAllocation"));
+                syllabus.setDescription(rs.getString("Description"));
+                syllabus.setStudentTasks(rs.getString("StudentTasks"));
+                syllabus.setTools(rs.getString("Tools"));
+                syllabus.setScoringScale(rs.getInt("ScoringScale"));
+                syllabus.setNote(rs.getString("Note"));
+                syllabus.setMinAvgMarkToPass(rs.getInt("MinAvgMarkToPass"));
+                syllabus.setApprovedDate(rs.getDate("ApprovedDate"));
+                syllabus.setPreRequisite(rs.getString("PreRequisite"));
+                syllabus.setSubject(subject);
+                syllabus.setDecision(decision);
+                return syllabus;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
 
     public ArrayList<Syllabus> getListSyllabusByKey(String key, int role) {
         ArrayList<Syllabus> list = new ArrayList<>();
@@ -440,7 +639,7 @@ public class SyllabusDAO extends DBContext {
                     + "    `decision`.`isActive`,\n"
                     + "    `decision`.`FileName`\n"
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
-                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `swp391`.`decision`\n"
+                    + "ON `syllabus`.`SubjectCode` = `subjects`.`SubjectCode` INNER JOIN `decision`\n"
                     + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
                     + "WHERE `syllabus`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`SubjectNameVN` LIKE ?";
             if (role == 1) {

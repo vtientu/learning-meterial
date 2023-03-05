@@ -15,8 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
+import module.Question;
 import module.Role;
 import module.Subject;
+import module.Syllabus;
 
 /**
  *
@@ -70,6 +72,9 @@ public class AdminListServletController extends HttpServlet {
             case "subject":
                 getSubjectList(request, response, 2);
                 break;
+            case "syllabus":
+                getSyllabusList(request, response, 2);
+                break;
         }
     }
 
@@ -92,30 +97,115 @@ public class AdminListServletController extends HttpServlet {
             case "subject":
                 getSubjectList(request, response, 1);
                 break;
+            case "syllabus":
+                getSyllabusList(request, response, 1);
+                break;
         }
     }
 
-//    PrintWriter out = response.getWriter();
-//        String key = request.getParameter("keysearch");
-//        String aid = request.getParameter("aid");
-//
-//        
-//        String xpage = request.getParameter("page");
-//        out.println("page" + xpage);
-//        out.println("key" + key);
-//        out.println("aid" + aid);
+    public void getSyllabusList(HttpServletRequest request, HttpServletResponse response, int type)
+            throws ServletException, IOException {
+        String key = request.getParameter("keysearch");
+        SyllabusDAO ld = new SyllabusDAO();
+        ArrayList<Syllabus> list = ld.getAllSyllabus(1);
+        if (key != null) {
+            list = ld.getListSyllabusByKey(key, 0);
+        }
+        int page, numberPerPage = 10;
+        String xpage = request.getParameter("page");
+        int size;
+        if (list.isEmpty()) {
+            size = 0;
+        } else {
+            size = list.size();
+        }
+
+        int numberOfPage = ((size % numberPerPage == 0) ? (size / numberPerPage) : (size / numberPerPage + 1));
+        if (xpage == null) {
+            page = 1;
+        } else {
+            page = Integer.parseInt(xpage);
+        }
+        int start, end;
+        start = (page - 1) * numberPerPage;
+        end = Math.min(page * numberPerPage, size);
+        ArrayList<Syllabus> listByPage = ld.getListByPage(list, start, end);
+        if (type == 2) {
+            request.setAttribute("totalPage", numberOfPage);
+            request.setAttribute("page", page);
+            request.setAttribute("listSyllabus", listByPage);
+            request.getRequestDispatcher("../view/admin/syllabus/syllabus-list.jsp").forward(request, response);
+        } else {
+            processSyllabus(request, response, listByPage, page, numberOfPage, key);
+        }
+    }
+
+    public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Account a = (Account) session.getAttribute("account");
+        PrintWriter out = response.getWriter();
+        out.println("<table class=\"table text-center\">\n"
+                + "                                    <thead>\n"
+                + "                                    <th>Syllabus ID</th>\n"
+                + "                                    <th>Subject Code</th>\n"
+                + "                                    <th>Subject Name</th>\n"
+                + "                                    <th>Syllabus Name</th>\n"
+                + "                                    <th>IsActive</th>\n"
+                + "                                    <th>IsApproved</th>\n"
+                + "                                    <th>DecisionNo<br/>MM/dd/yyyy</th>\n"
+                + "                                    <th>Action</th>\n"
+                + "                                    </thead>\n"
+                + "                                    <tbody>");
+        for (Syllabus o : listByPage) {
+            out.println("               <tr>\n"
+                    + "                                            <td>" + o.getSyllabusID() + "</td>\n"
+                    + "                                            <td>" + o.getSubjectCode() + "</td>\n"
+                    + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
+                    + "                                            <td>" + o.getSyllabusNameEN() + "</td>\n"
+                    + "                                            <td><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
+                    + "                                            <td><i  style=\"color: " + (o.isIsApproved() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsApproved() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
+                    + "                                            <td>" + o.getDecisionNo() + "</td>\n");
+            if (a.getRoleID() >= 7) {
+                out.print("                                            <td>\n"
+                        + "                                                 <button class=\"btn bg-white\">\n"
+                        + "                                                    <a href=\"update-details?action=syllabus&sid=" + o.getSyllabusID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>\n"
+                        + "                                                 </button>\n"
+                        + "                                             </td>");
+            } else {
+                System.out.println("<td></td>");
+            }
+            out.print("                                    </tr>");
+        }
+        String str = "</tbody>\n"
+                + "                            </table>\n"
+                + "\n"
+                + "\n"
+                + "                            <div style=\"float: right\">\n"
+                + "                                    <ul class=\"pagination\">\n";
+        if (page == 1) {
+            str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">Previous</a></li>\n";
+        } else {
+            str += "<li class=\"page-item\"><a class=\"page-link\" onclick=\"processSyllabusList(" + (page - 1) + ")\">Previous</a></li>\n";
+        }
+
+        str += "<li class=\"page-item\"><a id=\"page\" class=\"page-link\">" + page + "</a></li>\n";
+        if (page == numberOfPage) {
+            str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">Next</a></li>\n";
+        } else if (page < numberOfPage) {
+            str += "<li class=\"page-item\"><a class=\"page-link\" onclick=\"processSyllabusList(" + (page + 1) + ")\">Next</a></li>\n";
+        }
+        str += "                                    </ul>\n"
+                + "                                </div>\n"
+                + "                        </div>";
+        out.println(str);
+    }
+
     public void getSubjectList(HttpServletRequest request, HttpServletResponse response, int type)
             throws ServletException, IOException {
         ArrayList<Subject> listSubject;
         SyllabusDAO sdao = new SyllabusDAO();
         String key = request.getParameter("keysearch");
-        String sid = request.getParameter("sid");
-        HttpSession session = request.getSession();
-        Account account = (Account) session.getAttribute("account");
-        if (sid != null && sid.length() > 0 && account.getRoleID() == 8) {
-            sdao.changeStatus(Integer.parseInt(sid));
-        }
-
         listSubject = sdao.getListSubject();
 
         if (key != null && key.length() > 0) {
@@ -156,16 +246,8 @@ public class AdminListServletController extends HttpServlet {
             throws ServletException, IOException {
         ArrayList<Account> listUser;
         AccountDAO adao = new AccountDAO();
-        PrintWriter out = response.getWriter();
         String key = request.getParameter("keysearch");
-        String aid = request.getParameter("aid");
-
-        if (aid != null && aid.length() > 0) {
-            adao.changeStatus(Integer.parseInt(aid));
-        }
-
         listUser = adao.getAllAccount();
-
         if (key != null && key.length() > 0) {
             listUser = adao.getListAccountByKey(key);
         }
@@ -313,7 +395,7 @@ public class AdminListServletController extends HttpServlet {
 
                 out.print("    </button>\n"
                         + "    <button class=\"btn bg-white\"\">\n"
-                        + "      <a href=\"update-details?action=user&aid="+a.getAccountID()+"\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>"
+                        + "      <a href=\"update-details?action=user&aid=" + a.getAccountID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>"
                         + "    </button>"
                         + "  </td>\n");
             } else {
