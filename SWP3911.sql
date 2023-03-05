@@ -298,18 +298,18 @@ ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (subjectCode
 
 
 
-INSERT INTO Roles(rolename) VALUES('GUEST'),('STUDENT'),('TEACHER'),('REVIEWER'),('DESIGNER'),('CRDD'),('ADMIN');
+INSERT INTO Roles(rolename) VALUES('GUEST'),('STUDENT'),('TEACHER'),('REVIEWER'),('DESIGNER'),('CRDD'),('HEAD-CRDD'),('ADMIN');
 
 
 INSERT INTO Account(username, password, firstname, lastname, email, roleID) 
-VALUES ('admin', '202CB962AC59075B964B07152D234B70', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 7),
-		('user1', '202CB962AC59075B964B07152D234B70', 'USER', '1', '1tuvthe160803@fpt.edu.vn', 1),
-        ('user2', '202CB962AC59075B964B07152D234B70', 'USER', '2', '2tuvthe160803@fpt.edu.vn', 2),
-        ('user3', '202CB962AC59075B964B07152D234B70', 'USER', '3', '3tuvthe160803@fpt.edu.vn', 3),
-        ('user4', '202CB962AC59075B964B07152D234B70', 'USER', '4', '4tuvthe160803@fpt.edu.vn', 4),
-        ('user5', '202CB962AC59075B964B07152D234B70', 'USER', '5', '5tuvthe160803@fpt.edu.vn', 5),
-        ('user6', '202CB962AC59075B964B07152D234B70', 'USER', '6', '6tuvthe160803@fpt.edu.vn', 6),
-        ('user7', '202CB962AC59075B964B07152D234B70', 'USER', '7', '7tuvthe160803@fpt.edu.vn', 1),
+VALUES ('admin', '202CB962AC59075B964B07152D234B70', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 8),
+		('user', '202CB962AC59075B964B07152D234B70', 'USER', '1', '1tuvthe160803@fpt.edu.vn', 1),
+        ('student', '202CB962AC59075B964B07152D234B70', 'USER', '2', '2tuvthe160803@fpt.edu.vn', 2),
+        ('teacher', '202CB962AC59075B964B07152D234B70', 'USER', '3', '3tuvthe160803@fpt.edu.vn', 3),
+        ('reviewer', '202CB962AC59075B964B07152D234B70', 'USER', '4', '4tuvthe160803@fpt.edu.vn', 4),
+        ('designer', '202CB962AC59075B964B07152D234B70', 'USER', '5', '5tuvthe160803@fpt.edu.vn', 5),
+        ('crdd', '202CB962AC59075B964B07152D234B70', 'USER', '6', '6tuvthe160803@fpt.edu.vn', 6),
+        ('headcrdd', '202CB962AC59075B964B07152D234B70', 'USER', '7', '7tuvthe160803@fpt.edu.vn', 7),
         ('user8', '202CB962AC59075B964B07152D234B70', 'USER', '8', '8tuvthe160803@fpt.edu.vn', 1),
         ('user9', '202CB962AC59075B964B07152D234B70', 'USER', '9', '9tuvthe160803@fpt.edu.vn', 1),
         ('user10', '202CB962AC59075B964B07152D234B70', 'USER', '10', '10tuvthe160803@fpt.edu.vn', 1),

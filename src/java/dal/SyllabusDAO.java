@@ -121,6 +121,109 @@ public class SyllabusDAO extends DBContext {
         return list;
     }
 
+    public void createSubject(Subject s) {
+        try {
+            String sql = "INSERT INTO `subjects`\n"
+                    + "(`SubjectCode`,\n"
+                    + "`subjectName`,\n"
+                    + "`Semester`,\n"
+                    + "`NoCredit`,\n"
+                    + "`isActive`)\n"
+                    + "VALUES\n"
+                    + "(?, ?, ?, ?, 0);";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, s.getSubjectCode());
+            st.setString(2, s.getSubjectName());
+            st.setInt(3, s.getSemester());
+            st.setInt(4, s.getNoCredit());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public Subject getSubject(int sid) {
+        try {
+            String sql = "SELECT `subjects`.`SubjectID`,\n"
+                    + "    `subjects`.`SubjectCode`,\n"
+                    + "    `subjects`.`subjectName`,\n"
+                    + "    `subjects`.`Semester`,\n"
+                    + "    `subjects`.`NoCredit`,\n"
+                    + "    `subjects`.`isActive`\n"
+                    + "FROM `subjects`\n"
+                    + "WHERE `subjects`.`SubjectID` = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, sid);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                Subject s = new Subject();
+                s.setSubjectID(rs.getInt(1));
+                s.setSubjectCode(rs.getString(2));
+                s.setSubjectName(rs.getString(3));
+                s.setSemester(rs.getInt(4));
+                s.setNoCredit(rs.getInt(5));
+                s.setIsActive(rs.getBoolean(6));
+                return s;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    public void updateSubject(Subject s) {
+        try {
+            String sql = "UPDATE `subjects`\n"
+                    + "SET\n"
+                    + "`SubjectCode` = ?,\n"
+                    + "`subjectName` = ?,\n"
+                    + "`Semester` = ?,\n"
+                    + "`NoCredit` = ?,\n"
+                    + "`isActive` = ?\n"
+                    + "WHERE `SubjectID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, s.getSubjectCode());
+            st.setString(2, s.getSubjectName());
+            st.setInt(3, s.getSemester());
+            st.setInt(4, s.getNoCredit());
+            st.setBoolean(5, s.isIsActive());
+            st.setInt(6, s.getSubjectID());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public boolean checkSubjectCode(String subjectCode) {
+        try {
+            String sql = "SELECT * FROM subjects WHERE subjectCode = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, subjectCode);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public boolean checkSubjectName(String subjectName) {
+        try {
+            String sql = "SELECT * FROM subjects WHERE subjectName = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, subjectName);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
     public void changeStatus(int sid) {
         try {
             String sql = "UPDATE `swp391`.`subjects`\n"
@@ -195,8 +298,7 @@ public class SyllabusDAO extends DBContext {
         }
         return list;
     }
-    
-    
+
     public ArrayList<Subject> getListByPageSubject(ArrayList<Subject> list,
             int start, int end) {
         ArrayList<Subject> arr = new ArrayList<>();
@@ -205,7 +307,6 @@ public class SyllabusDAO extends DBContext {
         }
         return arr;
     }
-    
 
     public Syllabus getSyllabus(String code, int role) {
         try {

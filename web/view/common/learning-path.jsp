@@ -24,18 +24,16 @@
             <div class="content-block">
                 <!-- About Us -->
                 <div class="section-area section-sp1">
-                    <div class="container">
+                    <div class="container" style="min-height: 500px">
                         <div class="row justify-content-between">
                             <div>
                                 <h3 style="border-bottom:10px solid #f7b205">Learning Path</h3>
                             </div>
                             <div class="col-sm-4 m-b30" style="float: right;">
-                                <div class="widget courses-search-bx placeani">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label><i class="fa fa-search"></i> Search</label>
-                                            <input oninput="searchLearningPath(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
-                                        </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button">Button</button>
                                     </div>
                                 </div>
                             </div>
@@ -44,25 +42,13 @@
                             <table class="table text-center">
                                 <thead class="thead-orange">
                                 <th>Syllabus ID</th>
-                                <th>Subject Name</th>
+                                <th>Subject Code</th>
                                 <th>Syllabus Name</th>
                                 <th>DecisionNo MM/dd/yyyy</th>
                                 <th>All subject need to learn before</th>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${listLearning}" var="list">
-                                        <tr>
-                                            <td>${list.syllabusID}</td>
-                                            <td>${list.subject.subjectName}</td>
-                                            <td><a style="color: blue;" href="syllabus-details?syID=${list.subjectCode}">${list.syllabusNameEN}</a></td>
-                                            <td>${list.decisionNo}</td>
-                                            <td>
-                                                <c:forEach items="${list.subject.prerequisite}" var="c">
-                                                    ${c.subjectCode}: ${c.subjectPre == null?'(No pre-requisite)':c.subjectPre}
-                                                </c:forEach>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+
                                 </tbody>
                             </table>
 

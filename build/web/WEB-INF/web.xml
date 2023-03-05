@@ -74,11 +74,19 @@
     </servlet>
     <servlet>
         <servlet-name>HomeAdminServletController</servlet-name>
-        <servlet-class>comtroller.admin.home.HomeAdminServletController</servlet-class>
+        <servlet-class>controller.admin.home.HomeAdminServletController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AdminListServletController</servlet-name>
-        <servlet-class>comtroller.admin.admin_list.AdminListServletController</servlet-class>
+        <servlet-class>controller.admin.admin_list.AdminListServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddServletController</servlet-name>
+        <servlet-class>controller.admin.admin_details.AddDetailServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateUserServletController</servlet-name>
+        <servlet-class>controller.admin.admin_details.UpdateDetailServletController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
@@ -131,6 +139,14 @@
     <servlet-mapping>
         <servlet-name>AdminListServletController</servlet-name>
         <url-pattern>/admin/admin-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddServletController</servlet-name>
+        <url-pattern>/admin/add-details</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateUserServletController</servlet-name>
+        <url-pattern>/admin/update-details</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

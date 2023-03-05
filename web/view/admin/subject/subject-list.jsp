@@ -40,7 +40,7 @@
                                         <div class="form-group m-0">
                                             <div class="input-group">
                                                 <label><i class="fa fa-search"></i> Search</label>
-                                                <input oninput="processSubjectList(${page}, false)" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                <input oninput="processSubjectList(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -66,11 +66,11 @@
                                                     <td>${list.subjectName}</td>
                                                     <td>${list.semester}</td>
                                                     <td>${list.noCredit}</td>
-                                                    <td>${list.isActive != false?'Active':'Non Active'}</td>
-                                                    <c:if test="${account.roleID == 7}">
+                                                    <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
+                                                    <c:if test="${account.roleID >= 7}">
                                                     <td>
-                                                        <button name="sid" class="btn bg-white" value="${list.subjectID}" onclick="processSubjectList(${page}, this.value)">
-                                                            <i class="ti ${list.isActive == false?'ti-close':'ti-check'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
+                                                        <button class="btn bg-white">
+                                                            <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
                                                         </button>
                                                     </td>
                                                     </c:if>
@@ -87,7 +87,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                                 <c:if test="${page > 1}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}, false) style ="pointer-events: none" class="page-link">Previous</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}) style ="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
 
 
@@ -97,7 +97,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Next</a></li>
                                                 </c:if>
                                                 <c:if test="${page < totalPage}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page + 1}, false)" class="page-link">Next</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page + 1})" class="page-link">Next</a></li>
                                                 </c:if>
                                         </ul>
                                     </div>
@@ -112,12 +112,9 @@
 
 
             let request;
-            function processSubjectList(page, sid) {
+            function processSubjectList(page) {
                 let key = document.getElementById("keyseach").value;
                 let url = './admin-list?adminpage=subject&page=' + page + '&keysearch=' + key;
-                if (sid != false) {
-                    url += '&sid=' + sid;
-                }
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

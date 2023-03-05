@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package comtroller.admin.admin_list;
+package controller.admin.admin_list;
 
 import dal.AccountDAO;
 import dal.SyllabusDAO;
@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
+import module.Role;
 import module.Subject;
 
 /**
@@ -111,7 +112,7 @@ public class AdminListServletController extends HttpServlet {
         String sid = request.getParameter("sid");
         HttpSession session = request.getSession();
         Account account = (Account) session.getAttribute("account");
-        if (sid != null && sid.length() > 0 && account.getRoleID() == 7) {
+        if (sid != null && sid.length() > 0 && account.getRoleID() == 8) {
             sdao.changeStatus(Integer.parseInt(sid));
         }
 
@@ -121,7 +122,7 @@ public class AdminListServletController extends HttpServlet {
             listSubject = sdao.getListSubjectByKey(key);
         }
 
-        int page, numberPerPage = 6;
+        int page, numberPerPage = 8;
         String xpage = request.getParameter("page");
         int size;
         if (listSubject.isEmpty()) {
@@ -195,6 +196,7 @@ public class AdminListServletController extends HttpServlet {
             request.setAttribute("page", page);
             request.setAttribute("totalPage", numberOfPage);
             request.setAttribute("listUser", listByPage);
+            request.setAttribute("listRole", adao.getRoleList());
             request.getRequestDispatcher("../view/admin/user/user-list.jsp").forward(request, response);
         }
     }
@@ -228,7 +230,7 @@ public class AdminListServletController extends HttpServlet {
             } else {
                 out.print("<td>Inactive</td>\n");
             }
-            if (account.getRoleID() == 7) {
+            if (account.getRoleID() == 8) {
                 out.print("<td>\n"
                         + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processSubjectList(" + page + ", this.value)\" value=\"" + s.getSubjectID() + "\">\n");
                 if (s.isIsActive()) {
@@ -271,49 +273,60 @@ public class AdminListServletController extends HttpServlet {
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
         Account account = (Account) session.getAttribute("account");
+        AccountDAO adao = new AccountDAO();
+        ArrayList<Role> listRole = adao.getRoleList();
         out.print("<table class=\"table text-center\">\n"
-                + "                                        <thead class=\"thead-orange\">\n"
-                + "                                        <th>#</th>\n"
-                + "                                        <th>Name</th>\n"
-                + "                                        <th>User Name</th>\n"
-                + "                                        <th>Email</th>\n"
-                + "                                        <th>Role</th>\n"
-                + "                                        <th>Status</th>\n"
-                + "                                        <th>Action</th>\n"
-                + "                                        </thead>\n"
-                + "                                        <tbody>");
+                + "  <thead class=\"thead-orange\">\n"
+                + "    <th>#</th>\n"
+                + "    <th>Name</th>\n"
+                + "    <th>User Name</th>\n"
+                + "    <th>Email</th>\n"
+                + "    <th>Role</th>\n"
+                + "    <th>Status</th>\n"
+                + "    <th>Action</th>\n"
+                + "  </thead>\n"
+                + "  <tbody>");
+
         for (Account a : listUser) {
             out.print("<tr>\n"
-                    + "                                                    <td>" + a.getAccountID() + "</td>\n"
-                    + "                                                    <td>" + a.getDisplayName() + "</td>\n"
-                    + "                                                    <td>" + a.getUserName() + "</td>\n"
-                    + "                                                    <td>" + a.getEmail() + "</td>\n"
-                    + "                                                    <td>" + a.getRole().getRoleName() + "</td>\n");
+                    + "  <td>" + a.getAccountID() + "</td>\n"
+                    + "  <td>" + a.getDisplayName() + "</td>\n"
+                    + "  <td>" + a.getUserName() + "</td>\n"
+                    + "  <td>" + a.getEmail() + "</td>\n"
+                    + "  <td>" + a.getRole().getRoleName() + "</td>\n");
+
             if (a.isIsActive()) {
-                out.print("<td>Active</td>\n");
+                out.print("  <td>Active</td>\n");
             } else {
-                out.print("<td>Block</td>\n");
+                out.print("  <td>Block</td>\n");
             }
-            if (account.getAccountID() != a.getAccountID() && account.getRoleID() == 7 && a.getRoleID() < 7) {
-                out.print("<td>\n"
-                        + "                                                        <button data-toggle=\"modal\" data-target=\"#confirmU"+a.getAccountID()+"\" class=\"btn bg-white\">\n");
+
+            if (account.getAccountID() != a.getAccountID() && account.getRoleID() == 8 && a.getRoleID() < 8) {
+                out.print("  <td>\n"
+                        + "    <button data-toggle=\"modal\" data-target=\"#confirmU" + a.getAccountID() + "\" class=\"btn bg-white\">\n");
 
                 if (a.isIsActive()) {
-                    out.print("<i class=\"ti ti-unlock font-weight-bold\" style=\"color: green\"></i>\n");
+                    out.print("      <i class=\"ti ti-unlock font-weight-bold\" style=\"color: green\"></i>\n");
                 } else {
-                    out.print("<i class=\"ti ti-lock font-weight-bold\" style=\"color: red\"></i>\n");
+                    out.print("      <i class=\"ti ti-lock font-weight-bold\" style=\"color: red\"></i>\n");
                 }
-                out.print("</button>\n"
-                        + "                                                    </td>\n");
+
+                out.print("    </button>\n"
+                        + "    <button class=\"btn bg-white\"\">\n"
+                        + "      <a href=\"update-details?action=user&aid="+a.getAccountID()+"\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>"
+                        + "    </button>"
+                        + "  </td>\n");
             } else {
-                out.print("<td></td>");
+                out.print("  <td></td>");
             }
-            out.print("                                                </tr>"
-                    + "<div class=\"modal page\" id=\"confirmU"+a.getAccountID()+"\">\n"
+
+            out.print("</tr>");
+
+            out.print("<div class=\"modal page\" id=\"confirmU" + a.getAccountID() + "\">\n"
                     + "                                                <div class=\"modal-dialog\" role=\"document\">\n"
                     + "                                                    <div class=\"modal-content\">\n"
                     + "                                                        <div class=\"modal-header\">\n"
-                    + "                                                            <h4 class=\"modal-title text-center\">Do you want to change status account "+a.getDisplayName()+"?</h4>\n"
+                    + "                                                            <h4 class=\"modal-title text-center\">Do you want to change status account " + a.getDisplayName() + "?</h4>\n"
                     + "                                                            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n"
                     + "                                                                <span aria-hidden=\"true\">&times;</span>\n"
                     + "                                                            </button>\n"
@@ -325,12 +338,12 @@ public class AdminListServletController extends HttpServlet {
                     + "                                                        </div>\n"
                     + "                                                        <div class=\"modal-footer\">\n"
                     + "                                                            <button id=\"aid\" onclick=\"processUserList(" + page + ", this.value)\" value=\"" + a.getAccountID() + "\"  data-dismiss=\"modal\" type=\"button\" class=\"btn btn-primary\" style=\"background-color: #007bff; color: white\">");
-            if(a.isIsActive()) {
+            if (a.isIsActive()) {
                 out.print("Block");
             } else {
                 out.print("Active");
             }
-                            out.print("</button>\n"
+            out.print("</button>\n"
                     + "                                                            <button type=\"button\" class=\"btn btn-secondary\" style=\"background-color: #6c757d; color: white\" data-dismiss=\"modal\">Close</button>\n"
                     + "                                                        </div>\n"
                     + "                                                    </div>\n"
@@ -355,6 +368,7 @@ public class AdminListServletController extends HttpServlet {
         } else {
             str += "<li class=\"page-item\"><a onclick=\"processUserList(" + (page + 1) + ", false)\" class=\"page-link\">Next</a></li>";
         }
+
         str += "</ul>\n"
                 + "                 </div>";
         out.print(str);

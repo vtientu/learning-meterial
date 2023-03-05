@@ -14,7 +14,6 @@
         <%@include file="../gui/header.jsp" %>
 
     </head>
-
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Left sidebar menu start -->
         <%@include file="../gui/sidebar.jsp" %>
@@ -23,14 +22,20 @@
         <!--Main container start -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div class="row">
+                <div class="db-breadcrumb">
+                    <h4 class="breadcrumb-title" style="border-right: none">User List</h4>
+                </div>
+                <div class="row">	
                     <!-- Your Profile Views Chart -->
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="row justify-content-between">
-                                <div class="wc-title">
-                                    <h4>User List</h4>
+                                <div class="wc-title" style="border: none">
+                                    <c:if test="${account.roleID == 8}">
+                                        <a class="btn mt-3" href="add-details?action=user">ADD</a>
+                                    </c:if>
                                 </div>
+
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">
                                         <div class="form-group m-0">
@@ -42,6 +47,7 @@
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="widget-inner">
                                 <div  id="list-items">
@@ -56,6 +62,7 @@
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
+
                                             <c:forEach items="${listUser}" var="list">
                                                 <tr>
                                                     <td>${list.accountID}</td>
@@ -64,19 +71,23 @@
                                                     <td>${list.email}</td>
                                                     <td>${list.role.roleName}</td>
                                                     <td>${list.isActive != false?'Active':'Block'}</td>
-                                                    <c:if test="${account.accountID != list.accountID && account.roleID == 7 && list.roleID < 7}">
+                                                    <c:if test="${account.accountID != list.accountID && account.roleID == 8 && list.roleID < 8}">
                                                         <td>
                                                             <button data-toggle="modal" data-target="#confirmU${list.accountID}" class="btn bg-white" >
                                                                 <i class="ti ${list.isActive == false?'ti-lock':'ti-unlock'} font-weight-bold" style="color: ${list.isActive == false?'red':'green'}"></i>
                                                             </button>
+                                                            <button class="btn bg-white">
+                                                                <a href="update-details?action=user&aid=${list.accountID}"><i class="ti ti-pencil-alt" style="color: black"></i></a>
+                                                            </button>
                                                         </td>
                                                     </c:if>
 
-                                                    <c:if test="${account.accountID == list.accountID || account.roleID < 7}">
+                                                    <c:if test="${account.accountID == list.accountID || account.roleID < 8}">
                                                         <td></td>
                                                     </c:if>
                                                 </tr>
-                                            <div class="modal page" id="confirmU${list.accountID}">
+
+                                            <div class="modal fade" id="confirmU${list.accountID}">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">

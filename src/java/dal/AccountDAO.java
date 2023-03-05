@@ -32,9 +32,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
-                    + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "FROM `account` inner join `roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "ORDER BY `accountID` ASC";
+                    + "ORDER BY `accountID` DESC";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -70,7 +70,7 @@ public class AccountDAO extends DBContext {
 
     public void changeStatus(int aid) {
         try {
-            String sql = "UPDATE `swp391`.`account`\n"
+            String sql = "UPDATE `account`\n"
                     + "SET\n"
                     + "`isActive` = NOT `isActive`\n"
                     + "WHERE `accountID` = ? AND account.roleID != 7;";
@@ -82,14 +82,24 @@ public class AccountDAO extends DBContext {
         }
     }
 
-    public static void main(String[] args) {
-        AccountDAO adao = new AccountDAO();
-        ArrayList<Account> list = adao.getListAccountByKey("c");
-        for(Account a : list){
-            System.out.println(a.getAccountID());
+    public ArrayList<Role> getRoleList() {
+        ArrayList<Role> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `roles`.`roleID`,\n"
+                    + "    `roles`.`rolename`\n"
+                    + "FROM `swp391`.`roles`;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role r = new Role(rs.getInt(1), rs.getString(2));
+                list.add(r);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
         }
+        return list;
     }
-    
+
     public ArrayList<Account> getListAccountByKey(String key) {
         ArrayList<Account> list = new ArrayList<>();
         try {
@@ -106,14 +116,14 @@ public class AccountDAO extends DBContext {
                     + "                        `account`.`typeAccount`,\n"
                     + "                        `account`.`isActive`,\n"
                     + "                         `roles`.`rolename`\n"
-                    + "                    FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "                    FROM `account` inner join `roles`\n"
                     + "                    ON `account`.`roleID` = `roles`.`roleID`\n"
                     + "                    WHERE `account`.`username` LIKE ?\n"
                     + "                    OR `account`.`firstname` LIKE ?\n"
                     + "                    OR `account`.`lastname` LIKE ?\n"
                     + "                    OR `account`.`email` LIKE ?\n"
                     + "                    OR `roles`.`rolename` LIKE ?"
-                    + "                     ORDER BY `accountID` ASC";
+                    + "                     ORDER BY `accountID` DESC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
             st.setString(2, "%" + key + "%");
@@ -147,7 +157,7 @@ public class AccountDAO extends DBContext {
 
     public void changeStatus(int aid, boolean status) {
         try {
-            String sql = "UPDATE `swp391`.`account`\n"
+            String sql = "UPDATE `account`\n"
                     + "SET\n"
                     + "`isActive` = ?\n"
                     + "WHERE `accountID` = ?;";
@@ -175,9 +185,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
-                    + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "FROM `account` inner join `roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE username = ? AND password = ? AND typeAccount = -1 AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
+                    + "  WHERE username = ? AND password = ? AND typeAccount = -1 AND `account`.`isActive` = 1";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, user);
             st.setString(2, password);
@@ -221,9 +231,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
-                    + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "FROM `account` inner join `roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE email = ? AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
+                    + "  WHERE email = ? AND `account`.`isActive` = 1";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, gb.getEmail());
             ResultSet rs = st.executeQuery();
@@ -266,9 +276,9 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
                     + "     `roles`.`rolename`\n"
-                    + "FROM `swp391`.`account` inner join `swp391`.`roles`\n"
+                    + "FROM `account` inner join `roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "  WHERE accountID = ? AND `account`.`isActive` = 1 ORDER BY `accountID` ASC";
+                    + "  WHERE accountID = ? AND `account`.`isActive` = 1";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, accountID);
             ResultSet rs = st.executeQuery();
@@ -294,6 +304,66 @@ public class AccountDAO extends DBContext {
             System.out.println(e);
         }
         return null;
+    }
+
+    public boolean checkUser(String user) {
+        try {
+            String sql = "SELECT * FROM account WHERE username = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, user);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public boolean checkEmail(String email) {
+        try {
+            String sql = "SELECT * FROM account WHERE email = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public void addUser(Account a) {
+        try {
+            String sql = "INSERT INTO `account`\n"
+                    + "(`username`,\n"
+                    + "`roleID`,\n"
+                    + "`password`,\n"
+                    + "`firstname`,\n"
+                    + "`lastname`,\n"
+                    + "`email`,\n"
+                    + "`typeAccount`)\n"
+                    + "VALUES\n"
+                    + "(?, ?, ?, ?, ?, ?, ?);";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, a.getUserName());
+            st.setInt(2, a.getRoleID());
+            st.setString(3, a.getPassword());
+            st.setString(4, a.getFirstName());
+            st.setString(5, a.getLastName());
+            st.setString(6, a.getEmail());
+            if (a.getEmail().endsWith("@fpt.edu.vn")) {
+                st.setInt(7, 2);
+            } else {
+                st.setInt(7, -1);
+            }
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 
     public boolean registerAccount(String user, String password, String email, String firstName, String lastName) {
@@ -352,7 +422,7 @@ public class AccountDAO extends DBContext {
             st.setString(1, user.getEmail());
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
-                String sql1 = "INSERT INTO `swp391`.`account`\n"
+                String sql1 = "INSERT INTO `account`\n"
                         + "(`username`,\n"
                         + "`roleID`,\n"
                         + "`password`,\n"
@@ -423,7 +493,7 @@ public class AccountDAO extends DBContext {
 
     public void forgetPassword(String email, String password) {
         try {
-            String sql = "UPDATE `swp391`.`account`\n"
+            String sql = "UPDATE `account`\n"
                     + "SET\n"
                     + "`password` = ?\n"
                     + "WHERE `email` = ?  AND `account`.`isActive` = 1;";
@@ -450,7 +520,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`address`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`\n"
-                    + "FROM `swp391`.`account`\n"
+                    + "FROM `account`\n"
                     + "WHERE `account`.`email` = ?  AND `account`.`isActive` = 1 AND typeAccount = -1;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, email);
@@ -462,5 +532,24 @@ public class AccountDAO extends DBContext {
             System.out.println(e);
         }
         return false;
+    }
+
+    public void updateUser(Account a) {
+        try {
+            String sql = "UPDATE `account`\n"
+                    + "SET\n"
+                    + "`roleID` = ?,\n"
+                    + "`firstname` = ?,\n"
+                    + "`lastname` = ?\n"
+                    + "WHERE `accountID` = ?;";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, a.getRoleID());
+            st.setString(2, a.getFirstName());
+            st.setString(3, a.getLastName());
+            st.setInt(4, a.getAccountID());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 }
