@@ -83,6 +83,7 @@
                                             </c:forEach>
                                         </tbody>
                                     </table>
+                                    <label style="color: red">${message}</label>
                                     <div style="float: right">
                                         <ul class="pagination">
                                             <c:if test="${page == 1}">

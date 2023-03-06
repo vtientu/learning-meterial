@@ -29,8 +29,7 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="widget-inner">
-                                <form class="edit-profile m-b30" action="update-details" method="post">
-                                    <input type="text" name="action" value="subject" hidden="">
+                                <form class="edit-profile m-b30" action="update-subject" method="post">
                                     <input type="text" name="sid" value="${subject.subjectID}" hidden="">
                                     <div class="row">
                                         <div class="col-12 mb-3">
@@ -74,8 +73,8 @@
                                             <label class="col-form-label">Approved</label>
                                             <div>
                                                 <select name="isActive" class="form-control">
-                                                    <option value="true">Approved</option>
-                                                    <option value="false">Disable</option>
+                                                    <option ${subject.isActive == true?'selected':''} value="true">Approved</option>
+                                                    <option ${subject.isActive == false?'selected':''} value="false">Disable</option>
                                                 </select>
                                             </div>
                                         </div>    

@@ -4,8 +4,6 @@
  */
 package controller.admin.admin_details;
 
-import dal.AccountDAO;
-import dal.DecisionDAO;
 import dal.SyllabusDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,18 +11,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import module.Account;
-import module.Decision;
-import module.Role;
 import module.Subject;
-import module.Syllabus;
 
 /**
  *
  * @author tient
  */
-public class UpdateDetailServletController extends HttpServlet {
+public class UpdateSubjectDetailServletController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +36,10 @@ public class UpdateDetailServletController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateUserServletController</title>");
+            out.println("<title>Servlet UpdateSubjectDetailServletController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateUserServletController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateSubjectDetailServletController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,36 +57,11 @@ public class UpdateDetailServletController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        AccountDAO adao = new AccountDAO();
+        int sid = Integer.parseInt(request.getParameter("sid"));
         SyllabusDAO sdao = new SyllabusDAO();
-        DecisionDAO ddao = new DecisionDAO();
-        switch (action) {
-            case "user":
-                int aid = Integer.parseInt(request.getParameter("aid"));
-                Account a = adao.getAccount(aid);
-                ArrayList<Role> listRole = adao.getRoleList();
-                request.setAttribute("user", a);
-                request.setAttribute("listRole", listRole);
-                request.getRequestDispatcher("../view/admin/user/update-user.jsp").forward(request, response);
-                break;
-            case "subject":
-                int sid = Integer.parseInt(request.getParameter("sid"));
-                Subject s = sdao.getSubject(sid);
-                request.setAttribute("subject", s);
-                request.getRequestDispatcher("../view/admin/subject/update-subject.jsp").forward(request, response);
-                break;
-            case "syllabus":
-                int syllabusID = Integer.parseInt(request.getParameter("sid"));
-                Syllabus syllabus = sdao.getSyllabusByID(syllabusID);
-                ArrayList<Subject> listSubject = sdao.getListSubject();
-                ArrayList<Decision> listDecision = (ArrayList<Decision>) ddao.getAllDecision();
-                request.setAttribute("listSubject", listSubject);
-                request.setAttribute("listDecision", listDecision);
-                request.setAttribute("syllabus", syllabus);
-                request.getRequestDispatcher("../view/admin/syllabus/update-syllabus.jsp").forward(request, response);
-                break;
-        }
+        Subject s = sdao.getSubject(sid);
+        request.setAttribute("subject", s);
+        request.getRequestDispatcher("../view/admin/subject/update-subject.jsp").forward(request, response);
     }
 
     /**
@@ -106,35 +74,6 @@ public class UpdateDetailServletController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String action = request.getParameter("action");
-        switch (action) {
-            case "user":
-                updateUser(request, response);
-                break;
-            case "subject":
-                updateSubject(request, response);
-                break;
-        }
-    }
-
-    public void updateUser(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        AccountDAO adao = new AccountDAO();
-        int aid = Integer.parseInt(request.getParameter("aid"));
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        int roleId = Integer.parseInt(request.getParameter("role"));
-        Account a = new Account();
-        a.setAccountID(aid);
-        a.setRoleID(roleId);
-        a.setFirstName(firstName);
-        a.setLastName(lastName);
-        adao.updateUser(a);
-        response.sendRedirect("update-details?action=user&aid=" + aid);
-    }
-
-    public void updateSubject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             SyllabusDAO sdao = new SyllabusDAO();
@@ -153,17 +92,12 @@ public class UpdateDetailServletController extends HttpServlet {
             s.setSemester(semester);
             s.setNoCredit(noCredit);
             s.setIsActive(isActive);
-            if (!sdao.updateSubject(s)) {
-                request.setAttribute("message", "Update Fail! Subject Code or Subject Name already exist");
-            } else {
-                request.setAttribute("message", "Update Subject successful!");
-            }
+            sdao.updateSubject(s);
+            response.sendRedirect("admin-list?adminpage=subject");
 
-            request.getRequestDispatcher("update-subject?sid=" + id).forward(request, response);
         } catch (IOException | NumberFormatException e) {
             System.out.println(e);
         }
-
     }
 
     /**

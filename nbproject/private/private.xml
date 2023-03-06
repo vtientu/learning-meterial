@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/module/Syllabus.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/syllabus/update-syllabus.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/syllabus/create-syllabus.jsp</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/controller/account/ProfileServletController.java</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/controller/admin/admin_details/UpdateSubjectDetailServletController.java</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/web/view/admin/gui/header.jsp</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/g5-main/src/java/controller/admin/admin_list/AdminListServletController.java</file>
         </group>
     </open-files>
 </project-private>

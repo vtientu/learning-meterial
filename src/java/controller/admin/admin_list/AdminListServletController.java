@@ -169,7 +169,7 @@ public class AdminListServletController extends HttpServlet {
             if (a.getRoleID() >= 7) {
                 out.print("                                            <td>\n"
                         + "                                                 <button class=\"btn bg-white\">\n"
-                        + "                                                    <a href=\"update-details?action=syllabus&sid=" + o.getSyllabusID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>\n"
+                        + "                                                    <a href=\"update-subject?sid=" + o.getSyllabusID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>\n"
                         + "                                                 </button>\n"
                         + "                                             </td>");
             } else {

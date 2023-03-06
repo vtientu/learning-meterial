@@ -238,8 +238,8 @@ public class SyllabusDAO extends DBContext {
                     + "FROM `question`\n"
                     + "WHERE `question`.`QuestionName` LIKE ? OR `question`.`Details` LIKE ?;";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, "'%" + key +"%'");
-            st.setString(2, "'%" + key +"%'");
+            st.setString(1, "'%" + key + "%'");
+            st.setString(2, "'%" + key + "%'");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Question q = new Question();
@@ -270,7 +270,7 @@ public class SyllabusDAO extends DBContext {
 
     public boolean updateSubject(Subject s) {
         try {
-            if (checkSubjectCode(s.getSubjectCode()) || checkSubjectName(s.getSubjectName())) {
+            if (s != null && (checkSubjectCode(s.getSubjectCode()) || checkSubjectName(s.getSubjectName()) )) {
                 return false;
             }
             String sql = "UPDATE `subjects`\n"
@@ -509,7 +509,7 @@ public class SyllabusDAO extends DBContext {
         }
         return null;
     }
-    
+
     public Syllabus getSyllabusByID(int code) {
         try {
             String sql = "SELECT `syllabus`.`SyllabusID`,\n"

@@ -75,7 +75,7 @@
                                                     <c:if test="${account.roleID >= 7}">
                                                     <td>
                                                         <button class="btn bg-white">
-                                                            <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
+                                                            <a href="update-subject?sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
                                                         </button>
                                                     </td>
                                                     </c:if>
