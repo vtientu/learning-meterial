@@ -135,28 +135,31 @@ public class UpdateDetailServletController extends HttpServlet {
 
     public void updateSubject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SyllabusDAO sdao = new SyllabusDAO();
-        int sid = Integer.parseInt(request.getParameter("sid"));
-        String subjectCode = request.getParameter("subjectCode");
-        String subjectName = request.getParameter("subjectName");
-        int semester = Integer.parseInt(request.getParameter("semester"));
-        int noCredit = Integer.parseInt(request.getParameter("noCredit"));
-        boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
+        try {
+            SyllabusDAO sdao = new SyllabusDAO();
+            int sid = Integer.parseInt(request.getParameter("sid"));
+            String subjectCode = request.getParameter("subjectCode");
+            String subjectName = request.getParameter("subjectName");
+            int semester = Integer.parseInt(request.getParameter("semester"));
+            int noCredit = Integer.parseInt(request.getParameter("noCredit"));
+            boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
 
-        Subject s = new Subject();
-        s.setSubjectCode(subjectCode);
-        s.setSubjectName(subjectName);
-        s.setSemester(semester);
-        s.setNoCredit(noCredit);
-        s.setIsActive(isActive);
-        if (!sdao.updateSubject(s)) {
-            request.setAttribute("message", "Update Fail! Subject Code or Subject Name already exist");
-            request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
-        } else {
-            request.setAttribute("message", "Add Subject successful!");
-            request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+            Subject s = new Subject();
+            s.setSubjectCode(subjectCode);
+            s.setSubjectName(subjectName);
+            s.setSemester(semester);
+            s.setNoCredit(noCredit);
+            s.setIsActive(isActive);
+            if (!sdao.updateSubject(s)) {
+                request.setAttribute("message", "Update Fail! Subject Code or Subject Name already exist");
+                request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+            } else {
+                request.setAttribute("message", "Add Subject successful!");
+                request.getRequestDispatcher("update-details?action=subject&sid=" + sid).forward(request, response);
+            }
+        } catch (ServletException | IOException | NumberFormatException e) {
+            System.out.println(e);
         }
-
     }
 
     /**

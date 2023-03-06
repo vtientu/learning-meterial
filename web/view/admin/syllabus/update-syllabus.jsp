@@ -25,7 +25,7 @@
                             <div class="widget-inner">
                                 <form class="edit-profile m-b30" action="update-details" method="post">
                                     <input type="text" name="action" value="syllabus" hidden="">
-                                    <input type="text" name="syllabusID" value="${syllabus.syllabusID}">
+                                    <input type="text" name="syllabusID" value="${syllabus.syllabusID}" hidden="">
                                     <div class="row">
                                         <div class="col-12 mb-3">
                                             <div class="ml-auto">
@@ -62,6 +62,20 @@
                                             <label class="col-form-label">Syllabus Name VN</label>
                                             <div>
                                                 <input class="form-control" type="text" value="${syllabus.syllabusNameVN}" required="" name="nameVN">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label class="col-form-label">Active</label>
+                                            <div>
+                                                <input type="radio" value="true" ${syllabus.isActive == true?'checked':''} name="active"> Active
+                                                <input class="ml-4" type="radio" value="false" ${syllabus.isActive == false?'checked':''} name="active"> Inactive
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label class="col-form-label">Approve</label>
+                                            <div>
+                                                <input type="radio" value="true" ${syllabus.isApproved == true?'checked':''} name="approve"> Approve
+                                                <input class="ml-4" type="radio" value="false" ${syllabus.isApproved == false?'checked':''} name="approve"> Disable
                                             </div>
                                         </div>
                                         <div class="form-group col-6">

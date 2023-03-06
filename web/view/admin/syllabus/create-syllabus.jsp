@@ -35,7 +35,9 @@
                                             <label class="col-form-label">Subject Code<i class="text-red">*</i></label>
                                             <div>
                                                 <select class="form-control" name="subjectCode">
-                                                    <option value="${lists.subjectCode}">${lists.subjectCode}</option>
+                                                    <c:forEach items="${listSubject}" var="lists">
+                                                        <option ${syllabus.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectCode}">${lists.subjectCode}</option>
+                                                    </c:forEach>
                                                 </select>
                                             </div>
                                         </div>
@@ -43,7 +45,9 @@
                                             <label class="col-form-label">Decision<i class="text-red">*</i></label>
                                             <div>
                                                 <select class="form-control" name="decision">
-                                                    <option value="${listd.decisionNo}">${listd.decisionNo}</option>
+                                                    <c:forEach items="${listDecision}" var="listd">
+                                                        <option ${syllabus.decisionNo == listd.decisionNo?'selected':''} value="${listd.decisionNo}">${listd.decisionNo}</option>
+                                                    </c:forEach>
                                                 </select>
                                             </div>
                                         </div>

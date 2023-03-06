@@ -5,6 +5,7 @@
 package controller.admin.admin_details;
 
 import dal.AccountDAO;
+import dal.DecisionDAO;
 import dal.SyllabusDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +13,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import module.Account;
+import module.Decision;
 import module.Subject;
 
 /**
@@ -61,6 +64,8 @@ public class AddDetailServletController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         AccountDAO adao = new AccountDAO();
+        SyllabusDAO sdao = new SyllabusDAO();
+        DecisionDAO ddao = new DecisionDAO();
         switch (action) {
             case "user":
                 request.setAttribute("listRole", adao.getRoleList());
@@ -70,6 +75,10 @@ public class AddDetailServletController extends HttpServlet {
                 request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
                 break;
             case "syllabus":
+                ArrayList<Subject> listSubject = sdao.getListSubject();
+                ArrayList<Decision> listDecision = (ArrayList<Decision>) ddao.getAllDecision();
+                request.setAttribute("listSubject", listSubject);
+                request.setAttribute("listDecision", listDecision);
                 request.getRequestDispatcher("../view/admin/syllabus/create-syllabus.jsp").forward(request, response);
                 break;
         }
