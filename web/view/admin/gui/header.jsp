@@ -15,8 +15,6 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-
-
         <!-- PAGE TITLE HERE ============================================= -->
         <title>Q5 - SWP391</title>
 
@@ -32,6 +30,7 @@
 
         <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="../assets/assets-admin/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="../assets/assets-admin/css/style.css">
@@ -74,6 +73,23 @@
                     </ul>
                     <!-- header right menu end -->
                 </div>
+                <div aria-live="polite" aria-atomic="true" style="position: relative;">
+                    <div style="position: absolute; right: 2.5rem; top:  5rem;">
+                        <div id="toasts" class="toast fade" data-delay="5000">
+                            <div class="toast-body" style="background-color: green; color: white">
+                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                    <span aria-hidden="true" style="color: white">&times;</span>
+                                </button>
+                                ${message}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="message" hidden="">${message}</div>
+                <%
+                    session.removeAttribute("message");
+                %>
             </div>
         </header>
     </body>

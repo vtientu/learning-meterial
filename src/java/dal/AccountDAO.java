@@ -534,7 +534,7 @@ public class AccountDAO extends DBContext {
         return false;
     }
 
-    public void updateUser(Account a) {
+    public boolean updateUser(Account a) {
         try {
             String sql = "UPDATE `account`\n"
                     + "SET\n"
@@ -548,8 +548,10 @@ public class AccountDAO extends DBContext {
             st.setString(3, a.getLastName());
             st.setInt(4, a.getAccountID());
             st.executeUpdate();
+            return true;
         } catch (SQLException e) {
             System.out.println(e);
         }
+        return false;
     }
 }

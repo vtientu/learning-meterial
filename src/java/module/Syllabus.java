@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
  */
 public class Syllabus {
     private int syllabusID;
-    private String subjectCode;
     private String syllabusNameEN;
     private String syllabusNameVN;
     private boolean isActive;
@@ -36,9 +35,8 @@ public class Syllabus {
     public Syllabus() {
     }
 
-    public Syllabus(int syllabusID, String subjectCode, String syllabusNameEN, String syllabusNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject, Decision decision) {
+    public Syllabus(int syllabusID, String syllabusNameEN, String syllabusNameVN, boolean isActive, boolean isApproved, String decisionNo, int noCredit, String degreeLevel, String timeAllocation, String description, String studentTasks, String tools, int scoringScale, String note, int MinAvgMarkToPass, Date approvedDate, String preRequisite, Subject subject, Decision decision) {
         this.syllabusID = syllabusID;
-        this.subjectCode = subjectCode;
         this.syllabusNameEN = syllabusNameEN;
         this.syllabusNameVN = syllabusNameVN;
         this.isActive = isActive;
@@ -95,16 +93,6 @@ public class Syllabus {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
-    }
-
-    
-
-    public String getSubjectCode() {
-        return subjectCode;
-    }
-
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
     }
 
     public String getSyllabusNameEN() {

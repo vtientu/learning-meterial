@@ -63,7 +63,7 @@
                                             <c:forEach items="${listSyllabus}" var="list">
                                                 <tr>
                                                     <td>${list.syllabusID}</td>
-                                                    <td>${list.subjectCode}</td>
+                                                    <td>${list.subject.subjectCode}</td>
                                                     <td>${list.subject.subjectName}</td>
                                                     <td>${list.syllabusNameEN}</td>
                                                     <td><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>

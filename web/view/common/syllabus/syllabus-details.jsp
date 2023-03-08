@@ -66,7 +66,7 @@
                 <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner.png);">
                     <div class="container">
                         <div class="page-banner-entry">
-                            <h1 class="text-white">Syllabus ${syllabus.subjectCode}</h1>
+                            <h1 class="text-white">Syllabus ${syllabus.subject.subjectCode}</h1>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                                                 <h4>Overview</h4>
                                                 <ul class="course-features">
                                                     <li><i class="ti-book"></i> <span class="label">Subject Code</span> <span
-                                                            class="value">${syllabus.subjectCode}</span></li>
+                                                            class="value">${syllabus.subject.subjectCode}</span></li>
                                                     <li><i class="ti-smallcap"></i> <span class="label">Syllabus Name</span>
                                                         <span class="value">${syllabus.syllabusNameEN}</span>
                                                     </li>

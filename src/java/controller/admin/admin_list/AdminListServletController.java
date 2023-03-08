@@ -107,7 +107,7 @@ public class AdminListServletController extends HttpServlet {
             throws ServletException, IOException {
         String key = request.getParameter("keysearch");
         SyllabusDAO ld = new SyllabusDAO();
-        ArrayList<Syllabus> list = ld.getAllSyllabus(1);
+        ArrayList<Syllabus> list = ld.getAllSyllabus(0);
         if (key != null) {
             list = ld.getListSyllabusByKey(key, 0);
         }
@@ -160,7 +160,7 @@ public class AdminListServletController extends HttpServlet {
         for (Syllabus o : listByPage) {
             out.println("               <tr>\n"
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
-                    + "                                            <td>" + o.getSubjectCode() + "</td>\n"
+                    + "                                            <td>" + o.getSubject().getSubjectCode() + "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
                     + "                                            <td>" + o.getSyllabusNameEN() + "</td>\n"
                     + "                                            <td><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
@@ -169,7 +169,7 @@ public class AdminListServletController extends HttpServlet {
             if (a.getRoleID() >= 7) {
                 out.print("                                            <td>\n"
                         + "                                                 <button class=\"btn bg-white\">\n"
-                        + "                                                    <a href=\"update-subject?sid=" + o.getSyllabusID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>\n"
+                        + "                                                    <a href=\"update-details?action=syllabus&sid=" + o.getSyllabusID() + "\"><i class=\"ti ti-pencil-alt\" style=\"color: black\"></i></a>\n"
                         + "                                                 </button>\n"
                         + "                                             </td>");
             } else {
@@ -308,20 +308,16 @@ public class AdminListServletController extends HttpServlet {
                     + "                                                    <td>" + s.getSemester() + "</td>\n"
                     + "                                                    <td>" + s.getNoCredit() + "</td>\n");
             if (s.isIsActive()) {
-                out.print("<td>Active</td>\n");
+                out.print("<td style=\"color: green\">Active</td>\n");
             } else {
-                out.print("<td>Inactive</td>\n");
+                out.print("<td style=\"color: red\">Inactive</td>\n");
             }
             if (account.getRoleID() == 8) {
-                out.print("<td>\n"
-                        + "                                                        <button id=\"aid\" class=\"btn bg-white\" onclick=\"processSubjectList(" + page + ", this.value)\" value=\"" + s.getSubjectID() + "\">\n");
-                if (s.isIsActive()) {
-                    out.print("<i class=\"ti ti-check font-weight-bold\" style=\"color: green\"></i>\n");
-                } else {
-                    out.print("<i class=\"ti ti-close font-weight-bold\" style=\"color: red\"></i>\n");
-                }
-                out.print("</button>\n"
-                        + "                                                    </td>\n");
+                out.print("<td>"
+                        + "<button class=\"btn bg-white\">\n" +
+"                                                                <a href=\"update-details?action=subject&sid="+s.getSubjectID()+"\"><i class=\"ti ti ti-pencil-alt font-weight-bold\" style=\"color: black; background-color: gainsboro\"></i></a>\n" +
+"                                                            </button>"
+                        + "</td>\n");
             } else {
                 out.print("<td></td>");
             }

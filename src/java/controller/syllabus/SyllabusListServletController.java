@@ -160,9 +160,9 @@ public class SyllabusListServletController extends HttpServlet {
         for (Syllabus o : listByPage) {
             out.println("               <tr>\n"
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
-                    + "                                            <td>" + o.getSubjectCode() + "</td>\n"
+                    + "                                            <td>" + o.getSubject().getSubjectCode()+ "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
-                    + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
+                    + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubject().getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
                     + "                                            <td><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
                     + "                                            <td><i  style=\"color: " + (o.isIsApproved() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsApproved() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
                     + "                                            <td><a style=\"cursor: pointer; color: blue\" data-target=\"#decision" + o.getSyllabusID() + "\" data-toggle=\"modal\" \">" + o.getDecisionNo() + "</a></td>\n"

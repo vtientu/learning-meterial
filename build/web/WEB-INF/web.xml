@@ -88,10 +88,6 @@
         <servlet-name>UpdateUserServletController</servlet-name>
         <servlet-class>controller.admin.admin_details.UpdateDetailServletController</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>UpdateSubjectDetailServletController</servlet-name>
-        <servlet-class>controller.admin.admin_details.UpdateSubjectDetailServletController</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -151,10 +147,6 @@
     <servlet-mapping>
         <servlet-name>UpdateUserServletController</servlet-name>
         <url-pattern>/admin/update-details</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateSubjectDetailServletController</servlet-name>
-        <url-pattern>/admin/update-subject</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -150,14 +150,14 @@ public class PreRequisiteServletController extends HttpServlet {
             out.println("<tr>\n"
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
-                    + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
+                    + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubject().getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
                     + "                                            <td>" + o.getDecisionNo() + "</td>\n"
                     + "                                            <td>\n");
             if (o.getSubject().getPrerequisite().isEmpty()) {
-                out.println(o.getSubjectCode() + ": (No pre-requisite)");
+                out.println(o.getSubject().getSubjectCode() + ": (No pre-requisite)");
             } else {
                 for (int i = 0; i < o.getSubject().getPrerequisite().size(); i++) {
-                    out.print(o.getSubject().getPrerequisite().get(i).getSubjectCode() + ": ");
+                    out.print(o.getSubject().getPrerequisite().get(i).getSubject().getSubjectCode() + ": ");
                     if (o.getSubject().getPrerequisite().get(i).getSubjectPre() == null || o.getSubject().getPrerequisite().get(i).getSubjectPre().trim().length() == 0) {
                         out.println("(No pre-requisite)");
                     } else {

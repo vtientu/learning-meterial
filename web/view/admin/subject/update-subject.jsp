@@ -29,8 +29,9 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="widget-inner">
-                                <form class="edit-profile m-b30" action="update-subject" method="post">
+                                <form class="edit-profile m-b30" action="update-details" method="post">
                                     <input type="text" name="sid" value="${subject.subjectID}" hidden="">
+                                    <input type="text" name="action" value="subject" hidden="">
                                     <div class="row">
                                         <div class="col-12 mb-3">
                                             <div class="ml-auto">
@@ -77,8 +78,7 @@
                                                     <option ${subject.isActive == false?'selected':''} value="false">Disable</option>
                                                 </select>
                                             </div>
-                                        </div>    
-                                        <label class="text-red">${message}</label>
+                                        </div>
                                         <div class="col-12 mt-5">
                                             <button type="submit" class="btn float-right">Update Subject</button>
                                         </div>
@@ -91,8 +91,10 @@
             </div>
         </main>
         <div class="ttr-overlay"></div>
+        
 
         <%@include file="../gui/footer.jsp" %>
     </body>
+
 
 </html>

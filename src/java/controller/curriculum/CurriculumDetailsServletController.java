@@ -60,9 +60,9 @@ public class CurriculumDetailsServletController extends HttpServlet {
         String curID = request.getParameter("curID");
         CurriculumDAO dao = new CurriculumDAO();
         Curriculum cur = dao.getCurriculum(curID);
-        ArrayList<Subject> subject = dao.getSubject(curID);
+//        ArrayList<Subject> subject = dao.getSubject(curID);
         request.setAttribute("curriculum", cur);
-        request.setAttribute("subject", subject);
+//        request.setAttribute("subject", subject);
         request.getRequestDispatcher("view/common/curriculum/curriculum-details.jsp").forward(request, response);
     } 
 

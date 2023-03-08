@@ -10,15 +10,15 @@ package module;
  */
 public class PreRequisite {
     private int preID;
-    private String subjectCode;
+    private Subject subject;
     private String subjectPre;
 
     public PreRequisite() {
     }
 
-    public PreRequisite(int preID, String subjectCode, String subjectPre) {
+    public PreRequisite(int preID, Subject subject, String subjectPre) {
         this.preID = preID;
-        this.subjectCode = subjectCode;
+        this.subject = subject;
         this.subjectPre = subjectPre;
     }
 
@@ -30,12 +30,12 @@ public class PreRequisite {
         this.preID = preID;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public String getSubjectPre() {
@@ -45,7 +45,4 @@ public class PreRequisite {
     public void setSubjectPre(String subjectPre) {
         this.subjectPre = subjectPre;
     }
-    
-    
-    
 }

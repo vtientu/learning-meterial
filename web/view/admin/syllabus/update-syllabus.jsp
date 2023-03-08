@@ -37,7 +37,7 @@
                                             <div>
                                                 <select class="form-control" name="subjectCode">
                                                     <c:forEach items="${listSubject}" var="lists">
-                                                        <option ${syllabus.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectCode}">${lists.subjectCode}</option>
+                                                        <option ${syllabus.subject.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectID}">${lists.subjectCode}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -61,7 +61,7 @@
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Syllabus Name VN</label>
                                             <div>
-                                                <input class="form-control" type="text" value="${syllabus.syllabusNameVN}" required="" name="nameVN">
+                                                <input class="form-control" type="text" value="${syllabus.syllabusNameVN}" name="nameVN">
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
@@ -78,6 +78,19 @@
                                                 <input class="ml-4" type="radio" value="false" ${syllabus.isApproved == false?'checked':''} name="approve"> Disable
                                             </div>
                                         </div>
+                                        <div class="form-group col-12">
+                                            <label class="col-form-label">Pre-Requisite</label>
+                                            <div>
+                                                <select name="preRequisite" multiple class="form-control">
+                                                    <c:forEach items="${listSubject}" var="lists">
+                                                        <c:if test="${syllabus.subject.subjectCode != lists.subjectCode}">
+                                                            <option value="${lists.subjectID}">${lists.subjectCode}</option>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Degree Level</label>
                                             <div>
@@ -94,19 +107,19 @@
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Tool</label>
                                             <div>
-                                                <input class="form-control" type="text" value="${syllabus.tools}" required="" name="tool">
+                                                <input class="form-control" type="text" value="${syllabus.tools}" name="tool">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-6">
                                             <label class="col-form-label">Scoring Scale</label>
                                             <div>
-                                                <input class="form-control" type="number" value="${syllabus.scoringScale}" required="" name="scoringScale">
+                                                <input class="form-control" type="number" value="${syllabus.scoringScale}" name="scoringScale">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-6">
                                             <label class="col-form-label">Min Avg Mark To Pass</label>
                                             <div>
-                                                <input class="form-control" type="number" value="${syllabus.minAvgMarkToPass}" required="" name="MinAvgMarkToPass">
+                                                <input class="form-control" type="number" value="${syllabus.minAvgMarkToPass}" name="MinAvgMarkToPass">
                                             </div>
                                         </div>
                                         <div class="form-group col-12">

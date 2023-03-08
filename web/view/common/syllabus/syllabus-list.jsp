@@ -105,9 +105,9 @@
                                         <c:forEach items="${listSyllabus}" var="list">
                                             <tr>
                                                 <td>${list.syllabusID}</td>
-                                                <td>${list.subjectCode}</td>
+                                                <td>${list.subject.subjectCode}</td>
                                                 <td>${list.subject.subjectName}</td>
-                                                <td><a style="color: blue;" href="syllabus-details?syID=${list.subjectCode}">${list.syllabusNameEN}</a></td>
+                                                <td><a style="color: blue;" href="syllabus-details?syID=${list.subject.subjectCode}">${list.syllabusNameEN}</a></td>
                                                 <td><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
                                                 <td><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
                                                 <td><a style="cursor: pointer; color: blue" data-target="#decision${list.syllabusID}" data-toggle="modal" ">${list.decisionNo}</a></td>
@@ -220,21 +220,6 @@
             <!-- Footer END ==== -->
             <button class="back-to-top fa fa-chevron-up"></button>
         </div>
-        <!-- External JavaScripts -->
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="assets/vendors/counter/waypoints-min.js"></script>
-        <script src="assets/vendors/counter/counterup.min.js"></script>
-        <script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="assets/vendors/masonry/masonry.js"></script>
-        <script src="assets/vendors/masonry/filter.js"></script>
-        <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src="assets/js/functions.js"></script>
-        <script src="assets/js/contact.js"></script>
     </body>
 
 </html>

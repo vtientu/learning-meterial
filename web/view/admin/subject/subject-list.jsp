@@ -73,11 +73,11 @@
                                                     <td>${list.noCredit}</td>
                                                     <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
                                                     <c:if test="${account.roleID >= 7}">
-                                                    <td>
-                                                        <button class="btn bg-white">
-                                                            <a href="update-subject?sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
-                                                        </button>
-                                                    </td>
+                                                        <td>
+                                                            <button class="btn bg-white">
+                                                                <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
+                                                            </button>
+                                                        </td>
                                                     </c:if>
                                                     <c:if test="${account.roleID != 7}">
                                                         <td></td>
@@ -141,7 +141,6 @@
                     document.getElementById("list-items").innerHTML = val;
                 }
             }
-
         </script>
         <%@include file="../gui/footer.jsp" %>
     </body>

@@ -36,7 +36,7 @@
                                             <div>
                                                 <select class="form-control" name="subjectCode">
                                                     <c:forEach items="${listSubject}" var="lists">
-                                                        <option ${syllabus.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectCode}">${lists.subjectCode}</option>
+                                                        <option ${syllabus.subject.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectID}">${lists.subjectCode}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -63,6 +63,18 @@
                                                 <input class="form-control" type="text" value="" required="" name="nameVN">
                                             </div>
                                         </div>
+                                        <div class="form-group col-12">
+                                            <label class="col-form-label">Pre-Requisite</label>
+                                            <div>
+                                                <select name="preRequisite" multiple class="form-control">
+                                                    <c:forEach items="${listSubject}" var="lists">
+                                                        <c:if test="${syllabus.subject.subjectCode != lists.subjectCode}">
+                                                            <option value="${lists.subjectID}">${lists.subjectCode}</option>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Degree Level</label>
                                             <div>
@@ -82,13 +94,13 @@
                                                 <input class="form-control" type="text" value="" required="" name="tool">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-6">
                                             <label class="col-form-label">Scoring Scale</label>
                                             <div>
                                                 <input class="form-control" type="number" value="" required="" name="scoringScale">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-6">
                                             <label class="col-form-label">Min Avg Mark To Pass</label>
                                             <div>
                                                 <input class="form-control" type="number" value="" required="" name="minAvgMarkToPass">

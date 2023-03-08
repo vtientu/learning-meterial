@@ -13,10 +13,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import module.Account;
 import module.Decision;
 import module.Subject;
+import module.Syllabus;
 
 /**
  *
@@ -104,21 +106,70 @@ public class AddDetailServletController extends HttpServlet {
                 addSubject(request, response);
                 break;
             case "syllabus":
+                addSyllabus(request, response);
                 break;
         }
     }
-    
+
     public void addSyllabus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String subjectCode = request.getParameter("subjectCode");
+        String subjectID_raw = request.getParameter("subjectCode");
         String decision = request.getParameter("decision");
         String nameEN = request.getParameter("nameEN");
         String nameVN = request.getParameter("nameVN");
         String degreeLevel = request.getParameter("degreeLevel");
         String tool = request.getParameter("tool");
-        String scoringScale = request.getParameter("scoringScale");
-        String minAvgMarkToPass = request.getParameter("minAvgMarkToPass");
-        
+        String scoringScale_raw = request.getParameter("scoringScale");
+        String MinAvgMarkToPass_raw = request.getParameter("MinAvgMarkToPass");
+        String timeAllocation = request.getParameter("timeAllocation");
+        String description = request.getParameter("description");
+        String studentTask = request.getParameter("studentTask");
+        String note = request.getParameter("note");
+        String[] prerequisite = request.getParameterValues("preRequisite");
+        int subjectID = Integer.parseInt(subjectID_raw);
+        int scoringScale = Integer.parseInt(scoringScale_raw);
+        int MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
+
+        HttpSession session = request.getSession();
+        SyllabusDAO sdao = new SyllabusDAO();
+
+        Syllabus s = new Syllabus();
+        s.getSubject().setSubjectID(subjectID);
+        if (decision != null) {
+            s.setDecisionNo(decision);
+        }
+
+        if (nameEN != null) {
+            s.setSyllabusNameEN(nameEN);
+        }
+
+        s.setSyllabusNameVN(nameVN);
+
+        if (degreeLevel != null) {
+            s.setDegreeLevel(degreeLevel);
+        }
+
+        s.setTools(tool);
+
+        s.setScoringScale(scoringScale);
+
+        s.setMinAvgMarkToPass(MinAvgMarkToPass);
+
+        s.setTimeAllocation(timeAllocation);
+
+        s.setDescription(description);
+
+        s.setStudentTasks(studentTask);
+
+        s.setNote(note);
+
+        if (sdao.updateSyllabus(s, prerequisite)) {
+            session.setAttribute("mesage", "Create syllabus successful!");
+
+        } else {
+            session.setAttribute("mesage", "Create syllabus fail!");
+        }
+        response.sendRedirect("add-details?action=syllabus");
     }
 
     public void addSubject(HttpServletRequest request, HttpServletResponse response)
@@ -127,15 +178,13 @@ public class AddDetailServletController extends HttpServlet {
         String subjectName = request.getParameter("subjectName");
         int semester = Integer.parseInt(request.getParameter("semester"));
         int noCredit = Integer.parseInt(request.getParameter("noCredit"));
-
+        HttpSession session = request.getSession();
         SyllabusDAO sdao = new SyllabusDAO();
         if (sdao.checkSubjectCode(subjectCode) || sdao.checkSubjectName(subjectName)) {
             if (sdao.checkSubjectCode(subjectCode)) {
-                request.setAttribute("message", "Subject Code already exists! Re-enter Subject Code");
-                request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
+                session.setAttribute("message", "Subject Code already exists! Re-enter Subject Code");
             } else if (sdao.checkSubjectName(subjectName)) {
-                request.setAttribute("message", "Subject Name already exists! Re-enter Subject Name");
-                request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
+                session.setAttribute("message", "Subject Name already exists! Re-enter Subject Name");
             }
         } else {
             Subject s = new Subject();
@@ -144,9 +193,9 @@ public class AddDetailServletController extends HttpServlet {
             s.setSemester(semester);
             s.setNoCredit(noCredit);
             sdao.createSubject(s);
-            request.setAttribute("message", "Add Subject successful!");
-            request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
+            session.setAttribute("message", "Add Subject successful!");
         }
+        response.sendRedirect("add-details?action=subject");
 
     }
 
@@ -159,13 +208,12 @@ public class AddDetailServletController extends HttpServlet {
         String password = request.getParameter("password");
         int roleID = Integer.parseInt(request.getParameter("role"));
         AccountDAO adao = new AccountDAO();
+        HttpSession session = request.getSession();
         if (adao.checkEmail(email) || adao.checkUser(user)) {
             if (adao.checkEmail(email)) {
-                request.setAttribute("message", "Email already exists!");
-                request.getRequestDispatcher("../view/admin/user/create-user.jsp").forward(request, response);
+                session.setAttribute("message", "Email already exists!");
             } else if (adao.checkUser(user)) {
-                request.setAttribute("message", "User Name already exists!");
-                request.getRequestDispatcher("../view/admin/user/create-user.jsp").forward(request, response);
+                session.setAttribute("message", "User Name already exists!");
             }
         } else {
             Account a = new Account();
@@ -176,9 +224,9 @@ public class AddDetailServletController extends HttpServlet {
             a.setPassword(password);
             a.setRoleID(roleID);
             adao.addUser(a);
-            request.setAttribute("message", "Add user successful!");
-            request.getRequestDispatcher("../view/admin/user/create-user.jsp").forward(request, response);
+            session.setAttribute("message", "Add user successful!");
         }
+        response.sendRedirect("add-details?action=user");
     }
 
     /**
