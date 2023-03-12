@@ -8,9 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import module.Curriculum;
-import module.Decision;
-import module.Major;
 import module.Major;
 
 /**
@@ -36,7 +33,7 @@ public class MajorDAO extends DBContext {
             }
             return list;
         } catch (SQLException e) {
-            System.out.println(e+"12");
+            System.out.println(e+"1234");
         }
         return null;
     }
