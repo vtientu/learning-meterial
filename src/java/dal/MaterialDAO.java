@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import module.Material;
-import module.Syllabus;
 
 /**
  *
@@ -37,11 +36,10 @@ public class MaterialDAO extends DBContext {
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Syllabus s = new Syllabus(rs.getInt(3), sql, sql, sql, true, true, sql, 0, sql, sql, sql, sql, sql, 0, sql, 0, null, sql, null, null);
                 Material mate = new Material(rs.getInt(1), rs.getString(2),
-                        s, rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getInt(9), rs.getInt(10),
-                        rs.getInt(11), rs.getString(12), rs.getInt(13));
+                        rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getBoolean(9), rs.getBoolean(10),
+                        rs.getBoolean(11), rs.getString(12), rs.getBoolean(13));
                 list.add(mate);
             }
             return list;
@@ -72,11 +70,10 @@ public class MaterialDAO extends DBContext {
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Syllabus s = new Syllabus(rs.getInt(3), sql, sql, sql, true, true, sql, 0, sql, sql, sql, sql, sql, 0, sql, 0, null, sql, null, null);
                 Material mate = new Material(rs.getInt(1), rs.getString(2),
-                        s, rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getInt(9), rs.getInt(10),
-                        rs.getInt(11), rs.getString(12), rs.getInt(13));
+                        rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getBoolean(9), rs.getBoolean(10),
+                        rs.getBoolean(11), rs.getString(12), rs.getBoolean(13));
                 return mate;
             }
         } catch (SQLException e) {
@@ -189,11 +186,10 @@ public class MaterialDAO extends DBContext {
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Syllabus s = new Syllabus(rs.getInt(3), sql, sql, sql, true, true, sql, 0, sql, sql, sql, sql, sql, 0, sql, 0, null, sql, null, null);
                 Material mate = new Material(rs.getInt(1), rs.getString(2),
-                        s, rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getInt(9), rs.getInt(10),
-                        rs.getInt(11), rs.getString(12), rs.getInt(13));
+                        rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getBoolean(9), rs.getBoolean(10),
+                        rs.getBoolean(11), rs.getString(12), rs.getBoolean(13));
                 list.add(mate);
             }
             return list;
@@ -202,6 +198,7 @@ public class MaterialDAO extends DBContext {
         }
         return null;
     }
+
     public ArrayList<Material> getListByPage(ArrayList<Material> list,
             int start, int end) {
         ArrayList<Material> arr = new ArrayList<>();

@@ -388,12 +388,12 @@
                                                 <div>
                                                     <div class="form-check-inline">
                                                         <label class="form-check-label" for="radio1" style="color: red">
-                                                            <input type="radio" class="form-check-input" name="active" value="1" ${mate.isActive==1?"checked":""}>Active
+                                                            <input type="radio" class="form-check-input" name="active" value="true" ${mate.isActive==true?"checked":""}>Active
                                                         </label>
                                                     </div>
                                                     <div class="form-check-inline">
                                                         <label class="form-check-label" for="radio2" style="color: red">
-                                                            <input type="radio" class="form-check-input" name="active" value="0" ${mate.isActive==0?"checked":""}>unactive
+                                                            <input type="radio" class="form-check-input" name="active" value="false" ${mate.isActive==false?"checked":""}>unactive
                                                         </label>
                                                     </div>
                                                 </div>
@@ -425,23 +425,23 @@
                                             <div class="form-group col-4">
                                                 <label class="col-form-label">IsMainMaterial</label>
                                                 <select class="form-control" name="IsMainMaterial">
-                                                    <option value="0">unactive</option>
-                                                    <option value="1">Active</option>
+                                                    <option value="false">unactive</option>
+                                                    <option value="true">Active</option>
                                                 </select>
                                             </div>
                                             <div class="form-group col-4">
                                                 <label class="col-form-label">IsHardCopy</label>
                                                 <select class="form-control" name="IsHardCopy">
-                                                    <option value="0">unactive</option>
-                                                    <option value="1">Active</option>
+                                                    <option value="false">unactive</option>
+                                                    <option value="true">Active</option>
                                                 </select>
                                             </div>
 
                                             <div class="form-group col-4">
                                                 <label class="col-form-label">IsOnline</label>
                                                 <select class="form-control" name="IsOnline">
-                                                    <option value="0">unactive</option>
-                                                    <option value="1">Active</option>
+                                                    <option value="false">unactive</option>
+                                                    <option value="true">Active</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 m-t20">
