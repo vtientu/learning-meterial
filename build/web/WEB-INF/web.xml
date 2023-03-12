@@ -45,14 +45,6 @@
         <servlet-class>controller.syllabus.SyllabusDetailsServletController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CurriculumListServletController</servlet-name>
-        <servlet-class>controller.curriculum.CurriculumListServletController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CurriculumDetailsServletController</servlet-name>
-        <servlet-class>controller.curriculum.CurriculumDetailsServletController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>LearningPartServletController</servlet-name>
         <servlet-class>controller.common.LearningPartServletController</servlet-class>
     </servlet>
@@ -88,6 +80,194 @@
         <servlet-name>UpdateUserServletController</servlet-name>
         <servlet-class>controller.admin.admin_details.UpdateDetailServletController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CurriculumListServletController</servlet-name>
+        <servlet-class>controller.curriculum.CurriculumListServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewElective</servlet-name>
+        <servlet-class>controller.admin.elective.ViewElective</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ElectiveList</servlet-name>
+        <servlet-class>controller.admin.elective.ElectiveList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteElective</servlet-name>
+        <servlet-class>controller.admin.elective.DeleteElective</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddElective</servlet-name>
+        <servlet-class>controller.admin.elective.AddElective</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditElective</servlet-name>
+        <servlet-class>controller.admin.elective.EditElective</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewElectiveDetail</servlet-name>
+        <servlet-class>controller.admin.elective.ViewElectiveDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>electiveview</servlet-name>
+        <servlet-class>controller.elective.electiveview</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Combolist</servlet-name>
+        <servlet-class>controller.combo.Combolist</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComboListController</servlet-name>
+        <servlet-class>controller.admin.combo.ComboList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComboDetail</servlet-name>
+        <servlet-class>controller.admin.combo.ComboDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteCombo</servlet-name>
+        <servlet-class>controller.admin.combo.DeleteCombo</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddCombo</servlet-name>
+        <servlet-class>controller.admin.combo.AddCombo</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditCombo</servlet-name>
+        <servlet-class>controller.admin.combo.EditCombo</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComboDetailController</servlet-name>
+        <servlet-class>controller.combo.ComboDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComboDetailcuradmin</servlet-name>
+        <servlet-class>controller.admin.combo.ComboDetailcuradmin</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SearchAjax</servlet-name>
+        <servlet-class>controller.admin.curriculum.SearchAjax</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Curriculumadminadd</servlet-name>
+        <servlet-class>controller.admin.curriculum.Curriculumadminadd</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteCurriculum</servlet-name>
+        <servlet-class>controller.admin.curriculum.DeleteCurriculum</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CurriculumDetailController</servlet-name>
+        <servlet-class>controller.admin.curriculum.CurriculumDetailController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CurriculumAdminController</servlet-name>
+        <servlet-class>controller.admin.curriculum.CurriculumAdminController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CurriculumDetailsServletController</servlet-name>
+        <servlet-class>controller.curriculum.CurriculumDetailsServletController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ControllerMaterialList</servlet-name>
+        <servlet-class>controller.admin.material.ControllerMaterialList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ControllerMaterialDetail</servlet-name>
+        <servlet-class>controller.admin.material.ControllerMaterialDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteMaterial</servlet-name>
+        <servlet-class>controller.admin.material.DeleteMaterial</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CurriculumAdminController</servlet-name>
+        <url-pattern>/admin/curriAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Curriculumadminadd</servlet-name>
+        <url-pattern>/admin/add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteCurriculum</servlet-name>
+        <url-pattern>/admin/deletecurriculum</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CurriculumDetailController</servlet-name>
+        <url-pattern>/admin/curriculumdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Combolist</servlet-name>
+        <url-pattern>/combolist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewElective</servlet-name>
+        <url-pattern>/admin/viewelective</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ElectiveList</servlet-name>
+        <url-pattern>/admin/electivelist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteElective</servlet-name>
+        <url-pattern>/admin/deleteelective</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddElective</servlet-name>
+        <url-pattern>/admin/addelective</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditElective</servlet-name>
+        <url-pattern>/admin/editelective</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewElectiveDetail</servlet-name>
+        <url-pattern>/admin/viewelectivedetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ControllerMaterialList</servlet-name>
+        <url-pattern>/admin/materiallist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ControllerMaterialDetail</servlet-name>
+        <url-pattern>/admin/materialdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMaterial</servlet-name>
+        <url-pattern>/admin/deletematerial</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComboListController</servlet-name>
+        <url-pattern>/admin/comboList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComboDetail</servlet-name>
+        <url-pattern>/admin/combodetailadmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteCombo</servlet-name>
+        <url-pattern>/admin/deletecombo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddCombo</servlet-name>
+        <url-pattern>/admin/addcombo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCombo</servlet-name>
+        <url-pattern>/admin/editcombo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComboDetailController</servlet-name>
+        <url-pattern>/combodetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComboDetailcuradmin</servlet-name>
+        <url-pattern>/admin/comboDetailcuradmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>electiveview</servlet-name>
+        <url-pattern>/electiveview</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HomeServletController</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -103,14 +283,6 @@
     <servlet-mapping>
         <servlet-name>SyllabusDetailsServletController</servlet-name>
         <url-pattern>/syllabus-details</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CurriculumListServletController</servlet-name>
-        <url-pattern>/curriculum</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CurriculumDetailsServletController</servlet-name>
-        <url-pattern>/curriculum-details</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LearningPartServletController</servlet-name>
@@ -147,6 +319,14 @@
     <servlet-mapping>
         <servlet-name>UpdateUserServletController</servlet-name>
         <url-pattern>/admin/update-details</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CurriculumListServletController</servlet-name>
+        <url-pattern>/curriculum</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CurriculumDetailsServletController</servlet-name>
+        <url-pattern>/curriculum-details</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

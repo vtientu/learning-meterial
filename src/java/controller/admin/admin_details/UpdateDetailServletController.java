@@ -202,9 +202,9 @@ public class UpdateDetailServletController extends HttpServlet {
                 s.setNote(note);
             }
             if (sdao.updateSyllabus(s, prerequisite)) {
-                session.setAttribute("mesage", "Update syllabus successful!");
+                session.setAttribute("message", "Update syllabus successful!");
             } else {
-                session.setAttribute("mesage", "Update syllabus fail!");
+                session.setAttribute("message", "Update syllabus fail!");
             }
             response.sendRedirect("admin-list?adminpage=syllabus");
         } catch (IOException | NumberFormatException e) {
@@ -226,9 +226,9 @@ public class UpdateDetailServletController extends HttpServlet {
         a.setLastName(lastName);
         HttpSession session = request.getSession();
         if (adao.updateUser(a)) {
-            session.setAttribute("mesage", "Update user successful!");
+            session.setAttribute("message", "Update user successful!");
         } else {
-            session.setAttribute("mesage", "Update user fail!");
+            session.setAttribute("message", "Update user fail!");
         }
         response.sendRedirect("update-details?action=user&aid=" + aid);
     }

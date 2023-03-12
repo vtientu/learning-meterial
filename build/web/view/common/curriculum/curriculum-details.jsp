@@ -67,347 +67,223 @@
                 <!-- inner page banner END -->
                 <div class="content-block">
                     <!-- About Us -->
-                    <div class="section-area section-sp1">
-                        <div class="container">
+                    <div class="section-area" >
+                        <div class="container p-5" style="box-shadow: 0px 4px 20px 4px rgb(0 0 0 / 15%)">
                             <div class="row d-flex flex-row-reverse">
-                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                    <div class="course-detail-bx">
-                                        
-                                        <div class="teacher-bx" style="border-top: none; margin: 0">
-                                            <div class="teacher-name text-center">
-                                                <h5>${curriculum.curriculumNameEN}</h5>
-                                                <span>${curriculum.curriculumNameVN}</span>
-                                            </div>
-                                        </div>
-                                        <div class="cours-more-info align-items-center">
-                                            <div class="review text-center">
-                                                <span>Curriculum code</span>
-                                                <h6>${curriculum.curriculumCode}</h6>
-                                            </div>
-                                            <div class="review categories text-center">
-                                                <span>Major</span>
-                                                <h5>${curriculum.major.keyword}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="course-info-list scroll-page">
-                                            <ul class="navbar">
-                                                <li><a class="nav-link" href="#overview"><i class="ti-zip"></i>Overview</a>
-                                                </li>
-                                                <li><a class="nav-link" href="#curriculum"><i
-                                                            class="ti-bookmark-alt"></i>Details</a></li>
-                                                <li><a class="nav-link" href="#instructor"><i
-                                                            class="ti-user"></i>Skills</a></li>
-                                                        <c:if test="${account.role.roleName == 'ADMIN' || account.role.roleName == 'REVIEWER'}">
-                                                    <li><a class="nav-link" href="#reviews"><i
-                                                                class="ti-comments"></i>Reviews</a></li>
-                                                        </c:if>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-lg-9 col-md-8 col-sm-12">
-                                    <div class="courses-post">
-                                        <div class="ttr-post-info">
-                                            <div class="ttr-post-title ">
-                                                <h2 class="post-title">${curriculum.curriculumNameEN}</h2>
-                                                <h2 class="post-title">${curriculum.major.majorNameEN}</h2>
-                                                <h5 class="mb-3">Description</h5>
-                                            </div>
-                                            <div class="ttr-post-text">
-                                                <p>${curriculum.description}</p>
-                                            </div>
+
+                                <div class="tab-content">
+
+                                    <div class="courese-overview" id="overview">
+
+                                        <div class="ttr-post-title ">
+                                            <h2 class="post-title">${Curriculum.curriculumNameEN}</h2>
                                         </div>
-                                    </div>
-                                    <div class="courese-overview mt-5 border-top pt-5" id="overview">
-                                        <h4>Overview</h4>
-                                        <div class="row">
-                                            <div class="col-md-12 col-lg-5">
+                                        <div class="row mt-5 border-top pt-5">
+                                            <div class="col-md-12 col-lg-4">
+
+                                                <h4>Overview</h4>
                                                 <ul class="course-features">
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View PO" class="btn btn-success">
+                                                    <li><i class="ti-book"></i> <span class="label">Curriculum Code</span> <span
+                                                            class="value">${curriculum.curriculumCode}</span></li>
+                                                    <li><i class="ti-smallcap"></i> <span class="label">Curriculum Name VN</span>
+                                                        <span class="value">${curriculum.curriculumNameEN}</span>
                                                     </li>
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Combo" class="btn btn-success">
+                                                    <li><i class="ti-info-alt"></i> <span class="label">NoCredit</span>
+                                                        <span class="value">${curriculum.curriculumNameVN}</span>
                                                     </li>
-                                                    <li><i class="fa fa-eye"></i> <input type="button" value="View Elective" class="btn btn-success">
+                                                    <li><i class="ti-receipt"></i> <span class="label">DecisionNo </span> <a data-target="#decision" data-toggle="modal"><span
+                                                                class="value">${curriculum.decision.decisionNo != null ? curriculum.decision.decisionNo:'None'}${curriculum.decision.approvedDate != null ? ' dated ':''}${curriculum.decision.approvedDate != null ? curriculum.decision.approvedDate:''}</span></a></li>
+                                                    <li>
+                                                        <a href=""><input type="button" class="btn btn-warning" name="name" value="View PO"></a>
+                                                        <a href="combolist?curID=${curriculum.curID}"><input type="button" class="btn btn-warning" name="name" value="View Combo"></a>
+                                                        <a href="electiveview?curID=${curriculum.curID}"><input type="button" class="btn btn-warning" name="name" value="View Elective"></a>
                                                     </li>
                                                 </ul>
                                             </div>
-                                            <div class="col-md-12 col-lg-7">
-                                                <h5 class="m-b5">Decision no</h5>
-                                                <p>${curriculum.getDecisionNo()}</p>
+                                            <div class="col-md-12 col-lg-8">
+                                                <h5 class="m-b5">Description</h5>
+                                                <p>${curriculum.description}</p>
                                                 </ul>
                                             </div>
+
                                         </div>
                                     </div>
-                                    <div class="m-b30 mt-5 border-top pt-5" id="curriculum">
-                                        <h4>Curriculum</h4>
-                                        <ul class="curriculum-list">
-                                            <li>
-                                                <h5 class="mb-3">Material</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                    <ul class="nav nav-fill nav-tabs mt-5 border-top pt-5" id="other">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#material">PLO(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#lo">Mapping(s)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#session">Subject(s)</a>
+                                        </li>
+                                    </ul>
 
-                                            </li>
-                                            <li>
-                                                <h5 class="mb-3">Sessions</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </li>
-                                            <li>
-                                                <h5 class="mb-3">Assessment</h5>
-                                                <table border="1" class="table table-striped">
-                                                    <thead class="thead-orange">
-                                                        <tr>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                            <th>a</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="mt-5 border-top pt-5" id="instructor">
-                                        <h4>LO(s)</h4>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                    <th>a</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                    <td>a</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-5 border-top pt-5" id="instructor">
-                                        <h6 style="color: green">Subject</h6>
-                                        <table border="1" class="table table-striped">
-                                            <thead class="thead-orange">
-                                                <tr>
-                                                    <th>SubjectCode</th>
-                                                    <th>SubjectName</th>
-                                                    <th>Semester</th>
-                                                    <th>NoCredit</th>
-                                                    <th>PreRequisite</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach items="${requestScope.subject}" var="s">
+                                    <div id="material" class="tab-pane fade show active">
+                                        <h3 class="mb-3 mt-5">PLO</h3>
+                                        <div class="table-responsive mt-5">
+                                            <table class="table table-hover table-bordered">
+                                                <thead class="thead-orange">
+                                                <th style="font-weight: bold" class=" text-light"></th>
+                                                <th style="font-weight: bold" class=" text-light">PLO Name</th>
+                                                <th style="font-weight: bold" class=" text-light">PLO Description</th>
+                                                </thead>
+                                                <tbody>
                                                     <tr>
-                                                        <td>${s.subjectCode}</td>
-                                                        <td><a href="syllabus-details?syID=${s.subjectCode}">${s.subjectName}</a></td>
-                                                        <td>${s.semester}</td>
-                                                        <td>${s.subjectCode}</td>
-                                                        <td>${s.subjectCode}</td>
-
+                                                        <td>1</td>
+                                                        <td>PLO1</td>
+                                                        <td>Demonstrate basic knowledge of social sciences, politics and law, national security and defense, contributing to the formation of worldview and scientific methodology</td>
                                                     </tr>
-                                                </c:forEach>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>PLO2</td>
+                                                        <td>Demonstrate an entrepreneurial, creative, critical, and problem-solving mindset</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>PLO3</td>
+                                                        <td>Communicate and work in groups effectively in academic and practical environments</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>4</td>
+                                                        <td>PLO4</td>
+                                                        <td>Utilize English in communication and learning (equivalent to level 4 according to the 6-level Foreign Language Proficiency Framework for Vietnam, equivalent to IELTS 6.0 or TOEFL (paper) 575-600 or TOEFL (iBT) 90 -100); and be able to communicate simply in Chinese</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>5</td>
+                                                        <td>PLO5</td>
+                                                        <td>Demonstrate professional behaviors, morality, social responsibilities and a sense of dedication to community</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>6</td>
+                                                        <td>PLO6</td>
+                                                        <td>Be mentally and physically strong, be capable of expressing national identity and integrating confidently into the world</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>7</td>
+                                                        <td>PLO7</td>
+                                                        <td>Develop self-study and lifelong learning spirit and capabilities to adapt to the constant change of technology and society</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>8</td>
+                                                        <td>PLO8</td>
+                                                        <td>Utilize English in communication and learning (equivalent to level 4 according to the 6-level Foreign Language Proficiency Framework for Vietnam, equivalent to IELTS 6.0 or TOEFL (paper) 575-600 or TOEFL (iBT) 90 -100); and be able to communicate simply in Chinese</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="lo" class="tab-pane fade">
+                                        <h5 class="mb-3">Mapping</h5>
+                                        <table border="1" class="table table-striped">
+                                            <h4>Mapping subjects of the Curriculum ${curriculum.curriculumCode} to program learning outcomes</h4>
+                                            <thead class="thead-orange">
+                                                <tr>
+                                                    <th>Subject Code</th>
+                                                    <th>PLO1</th>
+                                                    <th>PLO2</th>
+                                                    <th>PLO3</th>
+                                                    <th>PLO4</th>
+                                                    <th>PLO5</th>
+                                                    <th>PLO6</th>
+                                                    <th>PLO7</th>
+                                                    <th>PLO8</th>
+                                                    <th>PLO9</th>
+                                                    <th>PLO10</th>
+                                                    <th>PLO11</th>
+                                                    <th>PLO12</th>
+                                                    <th>PLO13</th>
+                                                    <th>PLO14</th>
+                                                    <th>PLO15</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                    <th>a</th>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
-                                    <c:if test="${account != null && account.role.roleName != 'GUEST' && account.role.roleName != 'STUDENT' && account.role.roleName != 'TEACHER'}">
-                                        <div class="mt-5 border-top pt-5" id="reviews">
-                                            <h4>Reviews</h4>
-                                            <c:if test="${account.role.roleName == 'REVIEWER' || account.role.roleName == 'ADMIN'}">
-                                                <form action="list-details" method="post">
-                                                    <input type="text" name="syID" value="${syllabus.subjectCode}" hidden="">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-12 col-md-6">
-                                                                <label for="nameReview">Full name *</label>
-                                                                <input name="displayName" type="text" class="form-control" id="nameReview" placeholder="Enter your name" required="">
-                                                            </div>
-                                                            <div class="col-12 col-md-6">
-                                                                <label for="emailReview">Email address *</label>
-                                                                <input name="email" type="email" class="form-control" id="emailReview" placeholder="Enter your name">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="titleReview">Title *</label>
-                                                        <input name="title" type="text" class="form-control" id="titleReview" placeholder="Title">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="descriptionReview">Description *</label>
-                                                        <textarea name="description" type="password" class="form-control" id="descriptionReview" placeholder="Description"></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                </form>
-                                            </c:if>
-                                            <div class="instructor-bx mt-5">
-                                                <div class="instructor-author">
-                                                    <img src="assets/images/testimonials/pic1.jpg" alt="">
-                                                </div>
-                                                <div class="instructor-info">
-                                                    <h6>Keny White </h6>
-                                                    <span>Professor</span>
-                                                    <ul class="list-inline m-tb10">
-                                                        <li><a href="#" class="btn sharp-sm facebook"><i class="fa fa-facebook"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm twitter"><i class="fa fa-twitter"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                                        <li><a href="#" class="btn sharp-sm google-plus"><i class="fa fa-google-plus"></i></a></li>
-                                                    </ul>
-                                                    <p class="m-b0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                                </div>
-                                            </div>
-                                            <div class="instructor-bx">
-                                                <div class="instructor-author">
-                                                    <img src="assets/images/testimonials/pic2.jpg" alt="">
-                                                </div>
-                                                <div class="instructor-info">
-                                                    <h6>Keny White </h6>
-                                                    <span>Professor</span>
-                                                    <p class="m-b0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </c:if>
+                                    <div id="session" class="tab-pane fade">
+                                        <h5 class="mb-3">Subject</h5>
+                                        <table border="1" class="table table-striped">
+                                            <table border="1" class="table table-striped">
+                                                <thead class="thead-orange">
+                                                    <tr>
+                                                        <th>SubjectCode</th>
+                                                        <th>SubjectName</th>
+                                                        <th>Semester</th>
+                                                        <th>NoCredit</th>
+                                                        <th>PreRequisite</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach items="${requestScope.subject}" var="s">
+                                                        <tr>
+                                                            <td>${s.subjectCode}</td>
+                                                            <td><a href="syllabus-details?syID=${s.subjectCode}">${s.subjectName}</a></td>
+                                                            <td>${s.semester}</td>
+                                                            <td>${s.noCredit}</td>
+                                                            <td>${s.prerequisite}</td>
+
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

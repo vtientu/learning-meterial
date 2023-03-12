@@ -89,22 +89,26 @@
                             <div class="col-sm-12">
                                 <div id="list-curriculum" class="row">
                                     <c:forEach items="${listcurriculum}" var="list">
-                                        <div class="col-md-4 col-lg-3 col-sm-6 m-b30">
+                                        <c:if test="${list.approve==1}">
+                                            <div class="col-md-4 col-lg-3 col-sm-6 m-b30">
                                             <div class="cours-bx">
                                                 <div class="action-box">
                                                     <img src="assets/images/banner.png" alt=""  style="height: 10rem">
-                                                    <a href="curriculum-details?curID=${list.getCurriculumCode()}" class="btn">View</a>
+                                                    <a href="curriculum-details?curID=${list.getCurID()}" class="btn">View</a>
                                                 </div>
                                                 <div class="info-bx text-center">
-                                                    <h5  style="min-height: 50px"><a href="curriculum-details?curID=${list.getCurriculumCode()}">${list.getCurriculumNameEN()}, ${list.major.majorNameEN}</a></h5>
+                                                    <h5  style="min-height: 50px"><a href="curriculum-details?curID=${list.getCurID()}">${list.getCurriculumNameEN()}, ${list.major.majorNameEN}</a></h5>
                                                     <h5>(${list.getCurriculumCode()})</h5>
-
+                                                    <h5>(${list.decision.decisionNo})</h5>
                                                 </div>
+                                                    
                                                 <div class="review text-center">
 
                                                 </div>
                                             </div>
                                         </div>
+                                        </c:if>
+                                        
                                     </c:forEach>
                                 </div>
                                 <div class="col-lg-12 m-b20">

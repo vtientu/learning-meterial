@@ -32,7 +32,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li>
                     <a class="ttr-material-button" href="#">
                         <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
@@ -75,12 +75,12 @@
                     </a>
                     <ul>
                         <li>
-                            <a class="ttr-material-button">
+                            <a class="ttr-material-button" href="curriAdmin">
                                 <span class="ttr-label">Curriculum List</span>
                             </a>
                         </li>
                         <li>
-                            <a class="ttr-material-button"><span class="ttr-label">Curriculum Subject</span></a>
+                            <a class="ttr-material-button" href="addelective?addtype=3"><span class="ttr-label">Add Curriculum</span></a>
                         </li>
                     </ul>
                 </li>
@@ -101,8 +101,57 @@
                         </li>
                     </ul>
                 </li>
-
-
+                <li>
+                    <a class="ttr-material-button" href="#">
+                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
+                        <span class="ttr-label">Combo Management</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="comboList" class="ttr-material-button">
+                                <span class="ttr-label">Combo List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ttr-material-button" href="addcombo?addtype=2"><span class="ttr-label">Add Combo</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="ttr-material-button" href="#">
+                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
+                        <span class="ttr-label">Elective Management</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="electivelist" class="ttr-material-button">
+                                <span class="ttr-label">Elective List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ttr-material-button" href="addelective?addtype=1"><span class="ttr-label">Add Combo</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="ttr-material-button" href="#">
+                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
+                        <span class="ttr-label">Material Management</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="materiallist" class="ttr-material-button">
+                                <span class="ttr-label">Material List</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ttr-material-button" href="addelective?addtype=4"><span class="ttr-label">Add Material</span></a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
             <!-- sidebar menu end -->
         </nav>

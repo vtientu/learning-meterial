@@ -1074,7 +1074,7 @@ public class SyllabusDAO extends DBContext {
                 Material m = new Material();
                 m.setMaterialID(rs.getInt("MaterialID"));
                 m.setMaterialDescription(rs.getString("MaterialDescription"));
-                m.setSyllabusID(rs.getInt("SyllabusID"));
+//                m.setSyllabusID(rs.getInt("SyllabusID"));
                 m.setAuthor(rs.getString("Author"));
                 m.setPublisher(rs.getString("Publisher"));
                 m.setPublishedDate(rs.getString("PublishedDate"));
