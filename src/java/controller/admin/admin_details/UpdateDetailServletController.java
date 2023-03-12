@@ -124,92 +124,92 @@ public class UpdateDetailServletController extends HttpServlet {
 
     public void updateSyllabus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String syllabusID_raw = request.getParameter("syllabusID");
-        String subjectID_raw = request.getParameter("subjectCode");
-        String decision = request.getParameter("decision");
-        String nameEN = request.getParameter("nameEN");
-        String nameVN = request.getParameter("nameVN");
-        String active_raw = request.getParameter("active");
-        String approve_raw = request.getParameter("approve");
-        String degreeLevel = request.getParameter("degreeLevel");
-        String tool = request.getParameter("tool");
-        String scoringScale_raw = request.getParameter("scoringScale");
-        String MinAvgMarkToPass_raw = request.getParameter("MinAvgMarkToPass");
-        String timeAllocation = request.getParameter("timeAllocation");
-        String description = request.getParameter("description");
-        String studentTask = request.getParameter("studentTask");
-        String note = request.getParameter("note");
-        String[] prerequisite = request.getParameterValues("preRequisite");
-        int syllabusID = Integer.parseInt(syllabusID_raw);
-        boolean active = Boolean.parseBoolean(active_raw);
-        boolean approve = Boolean.parseBoolean(approve_raw);
-        int subjectID = Integer.parseInt(subjectID_raw);
-        int scoringScale = Integer.parseInt(scoringScale_raw);
-        int MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
+        try {
+            String syllabusID_raw = request.getParameter("syllabusID");
+            String subjectID_raw = request.getParameter("subjectCode");
+            String nameEN = request.getParameter("nameEN");
+            String nameVN = request.getParameter("nameVN");
+            String active_raw = request.getParameter("active");
+            String approve_raw = request.getParameter("approve");
+            String degreeLevel = request.getParameter("degreeLevel");
+            String tool = request.getParameter("tool");
+            String scoringScale_raw = request.getParameter("scoringScale");
+            String MinAvgMarkToPass_raw = request.getParameter("MinAvgMarkToPass");
+            String timeAllocation = request.getParameter("timeAllocation");
+            String description = request.getParameter("description");
+            String studentTask = request.getParameter("studentTask");
+            String note = request.getParameter("note");
+            String[] prerequisite = request.getParameterValues("preRequisite");
+            int syllabusID = Integer.parseInt(syllabusID_raw);
+            boolean active = Boolean.parseBoolean(active_raw);
+            boolean approve = Boolean.parseBoolean(approve_raw);
+            int subjectID = Integer.parseInt(subjectID_raw);
+            int scoringScale = Integer.parseInt(scoringScale_raw);
+            int MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
 
-        HttpSession session = request.getSession();
-        SyllabusDAO sdao = new SyllabusDAO();
+            HttpSession session = request.getSession();
+            SyllabusDAO sdao = new SyllabusDAO();
 
-        Syllabus s = sdao.getSyllabusByID(syllabusID);
-        s.setSyllabusID(syllabusID);
-        s.getSubject().setSubjectID(subjectID);
-        if (decision != null) {
-            s.setDecisionNo(decision);
-        }
+            Syllabus s = sdao.getSyllabusByID(syllabusID);
+            s.setSyllabusID(syllabusID);
+            s.getSubject().setSubjectID(subjectID);
 
-        if (nameEN != null) {
-            s.setSyllabusNameEN(nameEN);
-        }
+            if (nameEN != null) {
+                s.setSyllabusNameEN(nameEN);
+            }
 
-        if (nameVN != null) {
-            s.setSyllabusNameVN(nameVN);
-        }
+            if (nameVN != null) {
+                s.setSyllabusNameVN(nameVN);
+            }
 
-        if (active_raw != null) {
-            s.setIsActive(active);
-        }
+            if (active_raw != null) {
+                s.setIsActive(active);
+            }
 
-        if (approve_raw != null) {
-            s.setIsApproved(approve);
-        }
+            if (approve_raw != null) {
+                s.setIsApproved(approve);
+            }
 
-        if (degreeLevel != null) {
-            s.setDegreeLevel(degreeLevel);
-        }
+            if (degreeLevel != null) {
+                s.setDegreeLevel(degreeLevel);
+            }
 
-        if (tool != null) {
-            s.setTools(tool);
-        }
+            if (tool != null) {
+                s.setTools(tool);
+            }
 
-        if (scoringScale_raw != null) {
-            s.setScoringScale(scoringScale);
-        }
+            if (scoringScale_raw != null) {
+                s.setScoringScale(scoringScale);
+            }
 
-        if (MinAvgMarkToPass_raw != null) {
-            s.setMinAvgMarkToPass(MinAvgMarkToPass);
-        }
+            if (MinAvgMarkToPass_raw != null) {
+                s.setMinAvgMarkToPass(MinAvgMarkToPass);
+            }
 
-        if (timeAllocation != null) {
-            s.setTimeAllocation(timeAllocation);
-        }
+            if (timeAllocation != null) {
+                s.setTimeAllocation(timeAllocation);
+            }
 
-        if (description != null) {
-            s.setDescription(description);
-        }
+            if (description != null) {
+                s.setDescription(description);
+            }
 
-        if (studentTask != null) {
-            s.setStudentTasks(studentTask);
-        }
+            if (studentTask != null) {
+                s.setStudentTasks(studentTask);
+            }
 
-        if (note != null) {
-            s.setNote(note);
+            if (note != null) {
+                s.setNote(note);
+            }
+            if (sdao.updateSyllabus(s, prerequisite)) {
+                session.setAttribute("mesage", "Update syllabus successful!");
+            } else {
+                session.setAttribute("mesage", "Update syllabus fail!");
+            }
+            response.sendRedirect("admin-list?adminpage=syllabus");
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(e);
         }
-        if (sdao.updateSyllabus(s, prerequisite)) {
-            session.setAttribute("mesage", "Update syllabus successful!");
-        } else {
-            session.setAttribute("mesage", "Update syllabus fail!");
-        }
-        response.sendRedirect("admin-list?adminpage=syllabus");
     }
 
     public void updateUser(HttpServletRequest request, HttpServletResponse response)

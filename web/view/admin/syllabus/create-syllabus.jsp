@@ -36,41 +36,7 @@
                                             <div>
                                                 <select class="form-control" name="subjectCode">
                                                     <c:forEach items="${listSubject}" var="lists">
-                                                        <option ${syllabus.subject.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectID}">${lists.subjectCode}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Decision<i class="text-red">*</i></label>
-                                            <div>
-                                                <select class="form-control" name="decision">
-                                                    <c:forEach items="${listDecision}" var="listd">
-                                                        <option ${syllabus.decisionNo == listd.decisionNo?'selected':''} value="${listd.decisionNo}">${listd.decisionNo}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Syllabus Name EN<i class="text-red">*</i></label>
-                                            <div>
-                                                <input class="form-control" type="text" value="" required="" name="nameEN">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Syllabus Name VN</label>
-                                            <div>
-                                                <input class="form-control" type="text" value="" required="" name="nameVN">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label class="col-form-label">Pre-Requisite</label>
-                                            <div>
-                                                <select name="preRequisite" multiple class="form-control">
-                                                    <c:forEach items="${listSubject}" var="lists">
-                                                        <c:if test="${syllabus.subject.subjectCode != lists.subjectCode}">
-                                                            <option value="${lists.subjectID}">${lists.subjectCode}</option>
-                                                        </c:if>
+                                                        <option value="${lists.subjectID}">${lists.subjectCode}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -89,21 +55,48 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
+                                            <label class="col-form-label">Syllabus Name EN<i class="text-red">*</i></label>
+                                            <div>
+                                                <input class="form-control" type="text" value="" required="" name="nameEN">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label class="col-form-label">Syllabus Name VN</label>
+                                            <div>
+                                                <input class="form-control" type="text" value="" name="nameVN">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-6">
+
+                                            <label class="col-form-label">Pre-Requisite</label>
+                                            <div class="container">
+                                                <div class="row">
+                                                    <button type="button" class="dropdown-toggle form-control" data-toggle="dropdown">Pre-Requisite<span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></button>
+                                                    <ul class="dropdown-menu" style="right: 0;">
+                                                        <c:forEach items="${listSubject}" var="lists">
+                                                            <li><a href="#" class="small" data-value="option1" tabIndex="-1"><input class="small" type="checkbox" name="preRequisite" value="${lists.subjectID}"/>&nbsp;${lists.subjectCode}</a></li>
+                                                                </c:forEach>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6">
                                             <label class="col-form-label">Tool</label>
                                             <div>
-                                                <input class="form-control" type="text" value="" required="" name="tool">
+                                                <input class="form-control" type="text" value="" name="tool">
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Scoring Scale</label>
                                             <div>
-                                                <input class="form-control" type="number" value="" required="" name="scoringScale">
+                                                <input class="form-control" type="number" value="" name="scoringScale">
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Min Avg Mark To Pass</label>
                                             <div>
-                                                <input class="form-control" type="number" value="" required="" name="minAvgMarkToPass">
+                                                <input class="form-control" type="number" value="" name="minAvgMarkToPass">
                                             </div>
                                         </div>
                                         <div class="form-group col-12">

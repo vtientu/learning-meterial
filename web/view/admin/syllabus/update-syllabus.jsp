@@ -34,21 +34,21 @@
                                         </div>
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Subject Code<i class="text-red">*</i></label>
-                                            <div>
-                                                <select class="form-control" name="subjectCode">
-                                                    <c:forEach items="${listSubject}" var="lists">
-                                                        <option ${syllabus.subject.subjectCode == lists.subjectCode?'selected':''} value="${lists.subjectID}">${lists.subjectCode}</option>
-                                                    </c:forEach>
-                                                </select>
+                                            <div >
+                                                <input type="text" name="subjectCode" value="${syllabus.subject.subjectID}" hidden="">
+                                                <input class="form-control" type="text" value="${syllabus.subject.subjectCode}" readonly="">
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
-                                            <label class="col-form-label">Decision<i class="text-red">*</i></label>
+                                            <label class="col-form-label">Degree Level</label>
                                             <div>
-                                                <select class="form-control" name="decision">
-                                                    <c:forEach items="${listDecision}" var="listd">
-                                                        <option ${syllabus.decisionNo == listd.decisionNo?'selected':''} value="${listd.decisionNo}">${listd.decisionNo}</option>
-                                                    </c:forEach>
+                                                <select name="degreeLevel" class="form-control">
+                                                    <option ${syllabus.degreeLevel == null || syllabus.degreeLevel == ''?'selected':''} value="None">Select</option>
+                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor">Bachelor</option>
+                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in Hotel Management">Bachelor in Hotel Management</option>
+                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in English Language">Bachelor in English Language</option>
+                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in Business Administration">Bachelor in Business Administration</option>
+                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Undergraduate">Undergraduate</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -65,43 +65,32 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
-                                            <label class="col-form-label">Active</label>
+                                            <label class="col-form-label">Active<i class="text-red">*</i></label>
                                             <div>
                                                 <input type="radio" value="true" ${syllabus.isActive == true?'checked':''} name="active"> Active
                                                 <input class="ml-4" type="radio" value="false" ${syllabus.isActive == false?'checked':''} name="active"> Inactive
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
-                                            <label class="col-form-label">Approve</label>
+                                            <label class="col-form-label">Approve<i class="text-red">*</i></label>
                                             <div>
                                                 <input type="radio" value="true" ${syllabus.isApproved == true?'checked':''} name="approve"> Approve
                                                 <input class="ml-4" type="radio" value="false" ${syllabus.isApproved == false?'checked':''} name="approve"> Disable
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label class="col-form-label">Pre-Requisite</label>
-                                            <div>
-                                                <select name="preRequisite" multiple class="form-control">
-                                                    <c:forEach items="${listSubject}" var="lists">
-                                                        <c:if test="${syllabus.subject.subjectCode != lists.subjectCode}">
-                                                            <option value="${lists.subjectID}">${lists.subjectCode}</option>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                        </div>
-
                                         <div class="form-group col-6">
-                                            <label class="col-form-label">Degree Level</label>
-                                            <div>
-                                                <select name="degreeLevel" class="form-control">
-                                                    <option ${syllabus.degreeLevel == null || syllabus.degreeLevel == ''?'selected':''} value="None">Select</option>
-                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor">Bachelor</option>
-                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in Hotel Management">Bachelor in Hotel Management</option>
-                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in English Language">Bachelor in English Language</option>
-                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Bachelor in Business Administration">Bachelor in Business Administration</option>
-                                                    <option ${syllabus.degreeLevel == 'Bachelor'?'selected':''} value="Undergraduate">Undergraduate</option>
-                                                </select>
+                                            <label class="col-form-label">Pre-Requisite</label>
+                                            <div class="container">
+                                                <div class="row">
+                                                    <button type="button" class="dropdown-toggle form-control" data-toggle="dropdown">Pre-Requisite<span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></button>
+                                                    <ul class="dropdown-menu" style="right: 0">
+                                                        <c:forEach items="${listSubject}" var="lists">
+                                                            <c:if test="${syllabus.subject.subjectCode != lists.subjectCode}">
+                                                                <li><a  href="#" class="small" data-value="option1" tabIndex="-1"><input type="checkbox" name="preRequisite" value="${lists.subjectID}"/>&nbsp;${lists.subjectCode}</a></li>
+                                                                    </c:if>
+                                                                </c:forEach>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
@@ -110,6 +99,8 @@
                                                 <input class="form-control" type="text" value="${syllabus.tools}" name="tool">
                                             </div>
                                         </div>
+
+
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Scoring Scale</label>
                                             <div>
@@ -122,6 +113,8 @@
                                                 <input class="form-control" type="number" value="${syllabus.minAvgMarkToPass}" name="MinAvgMarkToPass">
                                             </div>
                                         </div>
+
+
                                         <div class="form-group col-12">
                                             <label class="col-form-label">Time Allocation</label>
                                             <div>

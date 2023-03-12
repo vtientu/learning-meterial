@@ -221,6 +221,11 @@ public class Syllabus {
         SimpleDateFormat date = new SimpleDateFormat("dd-mm-yyyy");
         return date.format(this.approvedDate);
     }
+
+    @Override
+    public String toString() {
+        return "Syllabus{" + "syllabusID=" + syllabusID + ", syllabusNameEN=" + syllabusNameEN + ", syllabusNameVN=" + syllabusNameVN + ", isActive=" + isActive + ", isApproved=" + isApproved + ", decisionNo=" + decisionNo + ", noCredit=" + noCredit + ", degreeLevel=" + degreeLevel + ", timeAllocation=" + timeAllocation + ", description=" + description + ", studentTasks=" + studentTasks + ", tools=" + tools + ", scoringScale=" + scoringScale + ", note=" + note + ", MinAvgMarkToPass=" + MinAvgMarkToPass + ", approvedDate=" + approvedDate + ", preRequisite=" + preRequisite + ", subject=" + subject + ", decision=" + decision + '}';
+    }
     
           
     

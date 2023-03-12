@@ -27,13 +27,19 @@
         <!--Main container start -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
+                
+                <div class="db-breadcrumb">
+                    <h4 class="breadcrumb-title" style="border-right: none">Syllabus List</h4>
+                </div>
                 <div class="row">
                     <!-- Your Profile Views Chart -->
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="row justify-content-between">
                                 <div class="wc-title">
-                                    <h4>Subject List</h4>
+                                    <c:if test="${account.roleID >= 7}">
+                                        <a class="btn" href="add-details?action=syllabus">Add Syllabus</a>
+                                    </c:if>
                                 </div>
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">
@@ -48,10 +54,10 @@
                             </div>
                             <div class="widget-inner">
                                 <div  id="list-items">
-                                    <table class="table text-center">
+                                    <table class="table">
                                         <thead class="thead-orange">
-                                        <th>Syllabus ID</th>
-                                        <th>Subject Code</th>
+                                        <th>ID</th>
+                                        <th width="15%">Subject Code</th>
                                         <th>Subject Name</th>
                                         <th>Syllabus Name</th>
                                         <th>IsActive</th>
@@ -66,9 +72,9 @@
                                                     <td>${list.subject.subjectCode}</td>
                                                     <td>${list.subject.subjectName}</td>
                                                     <td>${list.syllabusNameEN}</td>
-                                                    <td><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
-                                                    <td><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
-                                                    <td>${list.decisionNo}</td>
+                                                    <td class="text-center"><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
+                                                    <td class="text-center"><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
+                                                    <td>${list.decisionNo == null?'':list.decisionNo}</td>
                                                     <c:if test="${account.roleID >= 7}">
                                                         <td>
                                                             <button class="btn bg-white">

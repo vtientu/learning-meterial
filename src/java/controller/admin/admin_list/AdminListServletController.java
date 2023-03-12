@@ -107,9 +107,9 @@ public class AdminListServletController extends HttpServlet {
             throws ServletException, IOException {
         String key = request.getParameter("keysearch");
         SyllabusDAO ld = new SyllabusDAO();
-        ArrayList<Syllabus> list = ld.getAllSyllabus(0);
+        ArrayList<Syllabus> list = ld.getAllSyllabus(2);
         if (key != null) {
-            list = ld.getListSyllabusByKey(key, 0);
+            list = ld.getListSyllabusByKey(key, 2);
         }
         int page, numberPerPage = 10;
         String xpage = request.getParameter("page");
@@ -145,10 +145,10 @@ public class AdminListServletController extends HttpServlet {
         HttpSession session = request.getSession();
         Account a = (Account) session.getAttribute("account");
         PrintWriter out = response.getWriter();
-        out.println("<table class=\"table text-center\">\n"
+        out.println("<table class=\"table\">\n"
                 + "                                    <thead>\n"
-                + "                                    <th>Syllabus ID</th>\n"
-                + "                                    <th>Subject Code</th>\n"
+                + "                                    <th>ID</th>\n"
+                + "                                    <th width=\"15%\">Subject Code</th>\n"
                 + "                                    <th>Subject Name</th>\n"
                 + "                                    <th>Syllabus Name</th>\n"
                 + "                                    <th>IsActive</th>\n"
@@ -163,9 +163,13 @@ public class AdminListServletController extends HttpServlet {
                     + "                                            <td>" + o.getSubject().getSubjectCode() + "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
                     + "                                            <td>" + o.getSyllabusNameEN() + "</td>\n"
-                    + "                                            <td><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
-                    + "                                            <td><i  style=\"color: " + (o.isIsApproved() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsApproved() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
-                    + "                                            <td>" + o.getDecisionNo() + "</td>\n");
+                    + "                                            <td class=\"text-center\"><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
+                    + "                                            <td class=\"text-center\"><i  style=\"color: " + (o.isIsApproved() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsApproved() == true ? "fa-check" : "fa-close") + "\"/></td>\n");
+            if (o.getDecisionNo() == null) {
+                out.print("                                            <td></td>\n");
+            } else {
+                out.print("                                            <td>" + o.getDecisionNo() + "</td>\n");
+            }
             if (a.getRoleID() >= 7) {
                 out.print("                                            <td>\n"
                         + "                                                 <button class=\"btn bg-white\">\n"
@@ -314,9 +318,9 @@ public class AdminListServletController extends HttpServlet {
             }
             if (account.getRoleID() == 8) {
                 out.print("<td>"
-                        + "<button class=\"btn bg-white\">\n" +
-"                                                                <a href=\"update-details?action=subject&sid="+s.getSubjectID()+"\"><i class=\"ti ti ti-pencil-alt font-weight-bold\" style=\"color: black; background-color: gainsboro\"></i></a>\n" +
-"                                                            </button>"
+                        + "<button class=\"btn bg-white\">\n"
+                        + "                                                                <a href=\"update-details?action=subject&sid=" + s.getSubjectID() + "\"><i class=\"ti ti ti-pencil-alt font-weight-bold\" style=\"color: black; background-color: gainsboro\"></i></a>\n"
+                        + "                                                            </button>"
                         + "</td>\n");
             } else {
                 out.print("<td></td>");
