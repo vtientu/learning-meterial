@@ -65,6 +65,11 @@ public class UpdateDetailServletController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Account acc = (Account) session.getAttribute("account");
+        if (acc.getRoleID() < 7) {
+            response.sendRedirect("home");
+        }
         String action = request.getParameter("action");
         AccountDAO adao = new AccountDAO();
         SyllabusDAO sdao = new SyllabusDAO();
@@ -203,8 +208,10 @@ public class UpdateDetailServletController extends HttpServlet {
             }
             if (sdao.updateSyllabus(s, prerequisite)) {
                 session.setAttribute("message", "Update syllabus successful!");
+                session.setAttribute("color", "green");
             } else {
                 session.setAttribute("message", "Update syllabus fail!");
+                session.setAttribute("color", "red");
             }
             response.sendRedirect("admin-list?adminpage=syllabus");
         } catch (IOException | NumberFormatException e) {
@@ -215,22 +222,24 @@ public class UpdateDetailServletController extends HttpServlet {
     public void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AccountDAO adao = new AccountDAO();
+        String username = request.getParameter("username");
         int aid = Integer.parseInt(request.getParameter("aid"));
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
+        String fullName = request.getParameter("fullName");
         int roleId = Integer.parseInt(request.getParameter("role"));
         Account a = new Account();
+        a.setUserName(username);
         a.setAccountID(aid);
         a.setRoleID(roleId);
-        a.setFirstName(firstName);
-        a.setLastName(lastName);
+        a.setFullName(fullName);
         HttpSession session = request.getSession();
         if (adao.updateUser(a)) {
             session.setAttribute("message", "Update user successful!");
+            session.setAttribute("color", "green");
         } else {
             session.setAttribute("message", "Update user fail!");
+            session.setAttribute("color", "red");
         }
-        response.sendRedirect("update-details?action=user&aid=" + aid);
+        response.sendRedirect("admin-list?adminpage=user");
     }
 
     public void updateSubject(HttpServletRequest request, HttpServletResponse response)
@@ -250,10 +259,12 @@ public class UpdateDetailServletController extends HttpServlet {
             HttpSession session = request.getSession();
 
             session.setAttribute("message", "Update Subject successful!");
+            session.setAttribute("color", "green");
 
             if (!s.getSubjectCode().equals(subjectCode)) {
                 if (sdao.checkSubjectCode(subjectCode)) {
                     session.setAttribute("message", "Update Fail! Subject Code already exist");
+                    session.setAttribute("color", "red");
                     response.sendRedirect("admin-list?adminpage=subject");
                 }
             }
@@ -261,6 +272,7 @@ public class UpdateDetailServletController extends HttpServlet {
             if (!s.getSubjectName().equals(subjectName)) {
                 if (sdao.checkSubjectName(subjectName)) {
                     session.setAttribute("message", "Update Fail! Subject Name already exist");
+                    session.setAttribute("color", "red");
                     response.sendRedirect("admin-list?adminpage=subject");
                 }
             }
@@ -268,6 +280,7 @@ public class UpdateDetailServletController extends HttpServlet {
             if (!s.getSubjectCode().equals(subjectCode) && !s.getSubjectName().equals(subjectName)) {
                 if (sdao.checkSubjectCode(subjectCode) && sdao.checkSubjectName(subjectName)) {
                     session.setAttribute("message", "Update Fail! Subject Code and Subject Name already exist");
+                    session.setAttribute("color", "red");
                     response.sendRedirect("admin-list?adminpage=subject");
                 }
             }

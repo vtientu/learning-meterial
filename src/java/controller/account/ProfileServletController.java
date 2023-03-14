@@ -80,8 +80,7 @@ public class ProfileServletController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action.equalsIgnoreCase("profile")) {
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
+            String fullName = request.getParameter("fullName");
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
             HttpSession session = request.getSession();
@@ -96,12 +95,8 @@ public class ProfileServletController extends HttpServlet {
             filePart.write(realPart + "/" + fileName);
             a.setAvatar(fileName);
 
-            if (!a.getFirstName().equals(firstName) && firstName != null) {
-                a.setFirstName(firstName);
-            }
-
-            if (!a.getLastName().equals(lastName) && lastName != null) {
-                a.setLastName(lastName);
+            if (!a.getFullName().equals(fullName) && fullName != null) {
+                a.setFullName(fullName);
             }
 
             if (phone != null) {

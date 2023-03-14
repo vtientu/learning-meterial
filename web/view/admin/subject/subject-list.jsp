@@ -45,7 +45,7 @@
                                         <div class="form-group m-0">
                                             <div class="input-group">
                                                 <label><i class="fa fa-search"></i> Search</label>
-                                                <input oninput="processSubjectList(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                <input oninput="processSubjectList(${page}, '${sort}', true)" name="keysearch" id="keyseach" type="text" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -53,13 +53,13 @@
                             </div>
                             <div class="widget-inner">
                                 <div  id="list-items">
-                                    <table class="table text-center">
+                                    <table class="table">
                                         <thead class="thead-orange">
-                                        <th>#</th>
-                                        <th>Subject Code</th>
-                                        <th>Subject Name</th>
-                                        <th>Semester</th>
-                                        <th>NoCredit</th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'id_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th width="15%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'scode_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'name_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'semester_up' ? 'semester_up' : 'semester_down' : 'semester_down'}', false)">Semester<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'semester_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th width="10%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'credit_up' ? 'credit_up' : 'credit_down' : 'credit_down'}', false)">No Credit<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'credit_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         </thead>
@@ -69,8 +69,8 @@
                                                     <td>${list.subjectID}</td>
                                                     <td>${list.subjectCode}</td>
                                                     <td>${list.subjectName}</td>
-                                                    <td>${list.semester}</td>
-                                                    <td>${list.noCredit}</td>
+                                                    <td class="text-center">${list.semester}</td>
+                                                    <td class="text-center">${list.noCredit}</td>
                                                     <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
                                                     <c:if test="${account.roleID >= 7}">
                                                         <td>
@@ -92,7 +92,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                                 <c:if test="${page > 1}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}) style ="pointer-events: none" class="page-link">Previous</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page - 1}, '${sort}', true) style ="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
 
 
@@ -102,7 +102,7 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Next</a></li>
                                                 </c:if>
                                                 <c:if test="${page < totalPage}">
-                                                <li class="page-item"><a onclick="processSubjectList(${page + 1})" class="page-link">Next</a></li>
+                                                <li class="page-item"><a onclick="processSubjectList(${page + 1}, '${sort}', true)" class="page-link">Next</a></li>
                                                 </c:if>
                                         </ul>
                                     </div>
@@ -115,11 +115,11 @@
         </main>
         <script>
 
-
+        
             let request;
-            function processSubjectList(page) {
+            function processSubjectList(page, sort, pageType) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=subject&page=' + page + '&keysearch=' + key;
+                let url = './admin-list?adminpage=subject&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' +sort;
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

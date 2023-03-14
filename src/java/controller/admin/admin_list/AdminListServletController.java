@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import module.Account;
 import module.Question;
 import module.Role;
@@ -113,6 +115,110 @@ public class AdminListServletController extends HttpServlet {
         }
         int page, numberPerPage = 10;
         String xpage = request.getParameter("page");
+
+        String sort = request.getParameter("sort");
+
+        String sortType = "";
+        if (sort != null) {
+            String pageType = request.getParameter("pageType");
+            switch (sort) {
+                case "id_down":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSyllabusID() < o2.getSyllabusID()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "id_up");
+                    break;
+                case "id_up":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSyllabusID() > o2.getSyllabusID()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "id_down");
+                    break;
+                case "scode_down":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSubject().getSubjectCode().compareTo(o2.getSubject().getSubjectCode()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "scode_up");
+                    break;
+                case "scode_up":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSubject().getSubjectCode().compareTo(o2.getSubject().getSubjectCode()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "scode_down");
+                    break;
+                case "name_down":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSubject().getSubjectName().compareTo(o2.getSubject().getSubjectName()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "name_up");
+                    break;
+                case "name_up":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSubject().getSubjectName().compareTo(o2.getSubject().getSubjectName()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "name_down");
+                    break;
+                case "syname_down":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSyllabusNameEN().compareTo(o2.getSyllabusNameEN()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "syname_up");
+                    break;
+                case "syname_up":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getSyllabusNameEN().compareTo(o2.getSyllabusNameEN()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "syname_down");
+                    break;
+                case "decision_down":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getDecisionNo() != null && o2.getDecisionNo() != null) {
+                            if (o1.getDecisionNo().compareTo(o2.getDecisionNo()) > 0) {
+                                return 1;
+                            }
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "decision_up");
+                    break;
+                case "decision_up":
+                    Collections.sort(list, (Syllabus o1, Syllabus o2) -> {
+                        if (o1.getDecisionNo() != null && o2.getDecisionNo() != null) {
+                            if (o1.getDecisionNo().compareTo(o2.getDecisionNo()) < 0) {
+                                return 1;
+                            }
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "decision_down");
+                    break;
+            }
+        }
+        request.setAttribute("sort", sortType);
         int size;
         if (list.isEmpty()) {
             size = 0;
@@ -136,27 +242,27 @@ public class AdminListServletController extends HttpServlet {
             request.setAttribute("listSyllabus", listByPage);
             request.getRequestDispatcher("../view/admin/syllabus/syllabus-list.jsp").forward(request, response);
         } else {
-            processSyllabus(request, response, listByPage, page, numberOfPage, key);
+            processSyllabus(request, response, listByPage, page, numberOfPage, key, sortType);
         }
     }
 
-    public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key)
+    public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key, String sort)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account a = (Account) session.getAttribute("account");
         PrintWriter out = response.getWriter();
-        out.println("<table class=\"table\">\n"
-                + "                                    <thead>\n"
-                + "                                    <th>ID</th>\n"
-                + "                                    <th width=\"15%\">Subject Code</th>\n"
-                + "                                    <th>Subject Name</th>\n"
-                + "                                    <th>Syllabus Name</th>\n"
-                + "                                    <th>IsActive</th>\n"
-                + "                                    <th>IsApproved</th>\n"
-                + "                                    <th>DecisionNo<br/>MM/dd/yyyy</th>\n"
-                + "                                    <th>Action</th>\n"
-                + "                                    </thead>\n"
-                + "                                    <tbody>");
+        out.println("<table class=\"table\">\n");
+        out.print("<thead class=\"thead-orange\">");
+        out.print("<th width=\"5%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("id_up") ? "id_up" : "id_down" : "id_down") + "', false)\">ID<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("id_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th width=\"15%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("scode_up") ? "scode_up" : "scode_down" : "scode_down") + "', false)\">Subject Code<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("scode_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("name_up") ? "name_up" : "name_down" : "name_down") + "', false)\">Subject Name<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("name_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("syname_up") ? "syname_up" : "syname_down" : "syname_down") + "', false)\">Syllabus Name<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("syname_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th>IsActive</th>");
+        out.print("<th>IsApproved</th>");
+        out.print("<th width=\"10%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("decision_up") ? "decision_up" : "decision_down" : "decision_down") + "', false)\">DecisionNo<br/>MM/dd/yyyy<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("decision_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th>Action</th>");
+        out.print("</thead>");
+        out.print("                                    <tbody>");
         for (Syllabus o : listByPage) {
             out.println("               <tr>\n"
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
@@ -181,28 +287,28 @@ public class AdminListServletController extends HttpServlet {
             }
             out.print("                                    </tr>");
         }
-        String str = "</tbody>\n"
-                + "                            </table>\n"
-                + "\n"
-                + "\n"
-                + "                            <div style=\"float: right\">\n"
-                + "                                    <ul class=\"pagination\">\n";
+        out.print("</tbody>\n"
+                + "                            </table>\n");
+        out.print("<div style=\"float: right\">");
+        out.print("<ul class=\"pagination\">");
+
         if (page == 1) {
-            str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">Previous</a></li>\n";
+            out.print("<li class=\"page-item\"><a style=\"pointer-events: none\" class=\"page-link\">Previous</a></li>");
         } else {
-            str += "<li class=\"page-item\"><a class=\"page-link\" onclick=\"processSyllabusList(" + (page - 1) + ")\">Previous</a></li>\n";
+            out.print("<li class=\"page-item\"><a onclick=\"processSyllabusList(" + (page - 1) + ", '" + request.getAttribute("sort") + "', true)\" class=\"page-link\">Previous</a></li>");
         }
 
-        str += "<li class=\"page-item\"><a id=\"page\" class=\"page-link\">" + page + "</a></li>\n";
+        out.print("<li class=\"page-item\"><a id=\"page\" class=\"page-link\">" + page + "</a></li>");
+
         if (page == numberOfPage) {
-            str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">Next</a></li>\n";
-        } else if (page < numberOfPage) {
-            str += "<li class=\"page-item\"><a class=\"page-link\" onclick=\"processSyllabusList(" + (page + 1) + ")\">Next</a></li>\n";
+            out.print("<li class=\"page-item\"><a style=\"pointer-events: none\" class=\"page-link\">Next</a></li>");
+        } else {
+            out.print("<li class=\"page-item\"><a onclick=\"processSyllabusList(" + (page + 1) + ", '" + sort + "', true)\" class=\"page-link\">Next</a></li>");
         }
-        str += "                                    </ul>\n"
-                + "                                </div>\n"
-                + "                        </div>";
-        out.println(str);
+
+        out.print("</ul>");
+        out.print("</div>");
+
     }
 
     public void getSubjectList(HttpServletRequest request, HttpServletResponse response, int type)
@@ -215,6 +321,106 @@ public class AdminListServletController extends HttpServlet {
         if (key != null && key.length() > 0) {
             listSubject = sdao.getListSubjectByKey(key);
         }
+
+        String sort = request.getParameter("sort");
+
+        String sortType = "";
+        if (sort != null) {
+            String pageType = request.getParameter("pageType");
+            switch (sort) {
+                case "id_down":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectID() < o2.getSubjectID()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "id_up");
+                    break;
+                case "id_up":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectID() > o2.getSubjectID()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "id_down");
+                    break;
+                case "scode_down":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectCode().compareTo(o2.getSubjectCode()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "scode_up");
+                    break;
+                case "scode_up":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectCode().compareTo(o2.getSubjectCode()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "scode_down");
+                    break;
+                case "name_down":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectName().compareTo(o2.getSubjectName()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "name_up");
+                    break;
+                case "name_up":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSubjectName().compareTo(o2.getSubjectName()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "name_down");
+                    break;
+                case "semester_down":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSemester() < o2.getSemester()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "semester_up");
+                    break;
+                case "semester_up":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getSemester() > o2.getSemester()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "semester_down");
+                    break;
+                case "credit_down":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getNoCredit() < o2.getNoCredit()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "credit_up");
+                    break;
+                case "credit_up":
+                    Collections.sort(listSubject, (Subject o1, Subject o2) -> {
+                        if (o1.getNoCredit() > o2.getNoCredit()) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (pageType.equals("true") ? sort : "credit_down");
+                    break;
+            }
+        }
+        request.setAttribute("sort", sortType);
 
         int page, numberPerPage = 8;
         String xpage = request.getParameter("page");
@@ -237,7 +443,7 @@ public class AdminListServletController extends HttpServlet {
 
         ArrayList<Subject> listByPage = sdao.getListByPageSubject(listSubject, start, end);
         if (type == 1) {
-            showSubjectList(request, response, listByPage, page, numberOfPage);
+            showSubjectList(request, response, listByPage, page, numberOfPage, sortType);
         } else if (type == 2) {
             request.setAttribute("page", page);
             request.setAttribute("totalPage", numberOfPage);
@@ -287,30 +493,30 @@ public class AdminListServletController extends HttpServlet {
         }
     }
 
-    public void showSubjectList(HttpServletRequest request, HttpServletResponse response, ArrayList<Subject> listSubject, int page, int totalPage)
+    public void showSubjectList(HttpServletRequest request, HttpServletResponse response, ArrayList<Subject> listSubject, int page, int totalPage, String sort)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
 
         HttpSession session = request.getSession();
         Account account = (Account) session.getAttribute("account");
-        out.print("<table class=\"table text-center\">\n"
-                + "                                        <thead class=\"thead-orange\">\n"
-                + "                                        <th>#</th>\n"
-                + "                                        <th>Subject Code</th>\n"
-                + "                                        <th>Subject Name</th>\n"
-                + "                                        <th>Semester</th>\n"
-                + "                                        <th>NoCredit</th>\n"
-                + "                                        <th>Status</th>\n"
-                + "                                        <th>Action</th>\n"
-                + "                                        </thead>\n"
-                + "                                        <tbody>");
+        out.println("<table class=\"table\">\n");
+        out.print("<thead class=\"thead-orange\">");
+        out.print("<th onclick=\"processSubjectList(" + page + ", '" + (sort != null ? sort.equals("id_up") ? "id_up" : "id_down" : "id_down") + "', false)\">ID<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("id_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th width=\"15%\" onclick=\"processSubjectList(" + page + ", '" + (sort != null ? sort.equals("scode_up") ? "scode_up" : "scode_down" : "scode_down") + "', false)\">Subject Code<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("scode_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th onclick=\"processSubjectList(" + page + ", '" + (sort != null ? sort.equals("name_up") ? "name_up" : "name_down" : "name_down") + "', false)\">Subject Name<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("name_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th onclick=\"processSubjectList(" + page + ", '" + (sort != null ? sort.equals("semester_up") ? "semester_up" : "semester_down" : "semester_down") + "', false)\">Semester<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("semester_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th width=\"10%\" onclick=\"processSubjectList(" + page + ", '" + (sort != null ? sort.equals("credit_up") ? "credit_up" : "credit_down" : "credit_down") + "', false)\">No Credit<i style=\"font-weight: bold\" class=\"ti " + (sort == "" ? "ti-arrow-up" : sort.equals("credit_up") ? "ti-arrow-down" : "ti-arrow-up") + "\"></i></th>");
+        out.print("<th>Status</th>");
+        out.print("<th>Action</th>");
+        out.print("</thead>");
+        out.print("                                    <tbody>");
         for (Subject s : listSubject) {
             out.print("<tr>\n"
                     + "                                                    <td>" + s.getSubjectID() + "</td>\n"
                     + "                                                    <td>" + s.getSubjectCode() + "</td>\n"
                     + "                                                    <td>" + s.getSubjectName() + "</td>\n"
-                    + "                                                    <td>" + s.getSemester() + "</td>\n"
-                    + "                                                    <td>" + s.getNoCredit() + "</td>\n");
+                    + "                                                    <td class=\"text-center\">" + s.getSemester() + "</td>\n"
+                    + "                                                    <td class=\"text-center\">" + s.getNoCredit() + "</td>\n");
             if (s.isIsActive()) {
                 out.print("<td style=\"color: green\">Active</td>\n");
             } else {
@@ -335,7 +541,7 @@ public class AdminListServletController extends HttpServlet {
         if (page == 1) {
             str += "<li class=\"page-item\"><a style=\"pointer-events: none\" class=\"page-link\">Previous</a></li>";
         } else {
-            str += "<li class=\"page-item\"><a onclick=\"processSubjectList(" + (page - 1) + ", false)\" class=\"page-link\">Previous</a></li>";
+            str += "<li class=\"page-item\"><a onclick=\"processSubjectList(" + (page - 1) + ",'" +sort+"', true)\" class=\"page-link\">Previous</a></li>";
         }
 
         str += "<li class=\"page-item\"><a id=\"page\" class=\"page-link\">" + page + "</a></li>";
@@ -343,7 +549,7 @@ public class AdminListServletController extends HttpServlet {
         if (page == totalPage) {
             str += "<li class=\"page-item\"><a style=\"pointer-events: none\" class=\"page-link\">Next</a></li>";
         } else {
-            str += "<li class=\"page-item\"><a onclick=\"processSubjectList(" + (page + 1) + ", false)\" class=\"page-link\">Next</a></li>";
+            str += "<li class=\"page-item\"><a onclick=\"processSubjectList(" + (page + 1) + ",'" +sort+"', true)\" class=\"page-link\">Next</a></li>";
         }
         str += "</ul>\n"
                 + "                 </div>";
@@ -356,7 +562,6 @@ public class AdminListServletController extends HttpServlet {
         HttpSession session = request.getSession();
         Account account = (Account) session.getAttribute("account");
         AccountDAO adao = new AccountDAO();
-        ArrayList<Role> listRole = adao.getRoleList();
         out.print("<table class=\"table text-center\">\n"
                 + "  <thead class=\"thead-orange\">\n"
                 + "    <th>#</th>\n"
@@ -372,7 +577,7 @@ public class AdminListServletController extends HttpServlet {
         for (Account a : listUser) {
             out.print("<tr>\n"
                     + "  <td>" + a.getAccountID() + "</td>\n"
-                    + "  <td>" + a.getDisplayName() + "</td>\n"
+                    + "  <td>" + a.getFullName()+ "</td>\n"
                     + "  <td>" + a.getUserName() + "</td>\n"
                     + "  <td>" + a.getEmail() + "</td>\n"
                     + "  <td>" + a.getRole().getRoleName() + "</td>\n");
@@ -408,7 +613,7 @@ public class AdminListServletController extends HttpServlet {
                     + "                                                <div class=\"modal-dialog\" role=\"document\">\n"
                     + "                                                    <div class=\"modal-content\">\n"
                     + "                                                        <div class=\"modal-header\">\n"
-                    + "                                                            <h4 class=\"modal-title text-center\">Do you want to change status account " + a.getDisplayName() + "?</h4>\n"
+                    + "                                                            <h4 class=\"modal-title text-center\">Do you want to change status account " + a.getFullName()+ "?</h4>\n"
                     + "                                                            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n"
                     + "                                                                <span aria-hidden=\"true\">&times;</span>\n"
                     + "                                                            </button>\n"

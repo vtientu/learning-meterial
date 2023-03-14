@@ -117,6 +117,8 @@ public class AddDetailServletController extends HttpServlet {
             String subjectID_raw = request.getParameter("subjectCode");
             String nameEN = request.getParameter("nameEN");
             String nameVN = request.getParameter("nameVN");
+            String active_raw = request.getParameter("active");
+            String approve_raw = request.getParameter("approve");
             String degreeLevel = request.getParameter("degreeLevel");
             String tool = request.getParameter("tool");
             String scoringScale_raw = request.getParameter("scoringScale");
@@ -127,6 +129,8 @@ public class AddDetailServletController extends HttpServlet {
             String note = request.getParameter("note");
             String[] prerequisite = request.getParameterValues("preRequisite");
             int subjectID = Integer.parseInt(subjectID_raw);
+            boolean active = Boolean.parseBoolean(active_raw);
+            boolean approve = Boolean.parseBoolean(approve_raw);
             int scoringScale = Integer.parseInt(scoringScale_raw);
             int MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
 
@@ -160,13 +164,18 @@ public class AddDetailServletController extends HttpServlet {
             s.setDescription(description);
 
             s.setStudentTasks(studentTask);
-
+            
+            s.setIsActive(active);
+            s.setIsApproved(approve);
+            
             s.setNote(note);
 //            PrintWriter out = response.getWriter();
             if (sdao.createSyllabus(s, prerequisite)) {
                 session.setAttribute("message", "Create syllabus successful!");
+                session.setAttribute("color", "green");
             } else {
                 session.setAttribute("message", "Create syllabus fail!");
+                session.setAttribute("color", "red");
             }
         } catch (NumberFormatException e) {
             System.out.println(e);
@@ -187,8 +196,10 @@ public class AddDetailServletController extends HttpServlet {
         if (sdao.checkSubjectCode(subjectCode) || sdao.checkSubjectName(subjectName)) {
             if (sdao.checkSubjectCode(subjectCode)) {
                 session.setAttribute("message", "Subject Code already exists! Re-enter Subject Code");
+                session.setAttribute("color", "red");
             } else if (sdao.checkSubjectName(subjectName)) {
                 session.setAttribute("message", "Subject Name already exists! Re-enter Subject Name");
+                session.setAttribute("color", "red");
             }
         } else {
             Subject s = new Subject();
@@ -198,6 +209,7 @@ public class AddDetailServletController extends HttpServlet {
             s.setNoCredit(noCredit);
             sdao.createSubject(s);
             session.setAttribute("message", "Add Subject successful!");
+            session.setAttribute("color", "green");
         }
         response.sendRedirect("admin-list?adminpage=subject");
 
@@ -205,30 +217,32 @@ public class AddDetailServletController extends HttpServlet {
 
     public void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
+        String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String user = request.getParameter("userName");
-        String password = request.getParameter("password");
         int roleID = Integer.parseInt(request.getParameter("role"));
         AccountDAO adao = new AccountDAO();
         HttpSession session = request.getSession();
         if (adao.checkEmail(email) || adao.checkUser(user)) {
             if (adao.checkEmail(email)) {
                 session.setAttribute("message", "Email already exists!");
+                session.setAttribute("color", "red");
             } else if (adao.checkUser(user)) {
                 session.setAttribute("message", "User Name already exists!");
+                session.setAttribute("color", "red");
             }
         } else {
+            String password = adao.getVerifyCode();
+            adao.send(email, password);
             Account a = new Account();
             a.setUserName(user);
-            a.setFirstName(firstName);
-            a.setLastName(lastName);
+            a.setFullName(fullName);
+            a.setPassword(adao.convertPassToMD5(password));
             a.setEmail(email);
-            a.setPassword(password);
             a.setRoleID(roleID);
             adao.addUser(a);
             session.setAttribute("message", "Add user successful!");
+            session.setAttribute("color", "green");
         }
         response.sendRedirect("admin-list?adminpage=user");
     }

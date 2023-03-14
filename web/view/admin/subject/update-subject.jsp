@@ -41,7 +41,7 @@
                                         <div class="form-group col-6">
                                             <label class="col-form-label">Subject Code <i class="text-red">*</i></label>
                                             <div>
-                                                <input class="form-control" type="text" value="${subject.subjectCode}" required="" name="subjectCode">
+                                                <input class="form-control" type="text" value="${subject.subjectCode}" name="subjectCode" readonly>
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
@@ -50,33 +50,23 @@
                                                 <input class="form-control" type="text" value="${subject.subjectName}" required="" name="subjectName">
                                             </div>
                                         </div>
+                                        <div class="form-group col-12 my-3">
+                                            <label class="col-form-label">Approved</label>
+                                            <div class="ml-3">
+                                                <input type="radio" name="isActive" checked="" value="true"/>Approved &nbsp;
+                                                <input type="radio" name="isActive" value="false"/>Disable
+                                            </div>
+                                        </div>
                                         <div class="form-group col-6 my-3">
                                             <label class="col-form-label">Semester <i class="text-red">*</i></label>
                                             <div>
-                                                <select name="semester" class="form-control">
-                                                    <c:forEach begin="0" end="9" var="i">
-                                                        <option ${subject.semester == i ? 'selected':''} value="${i}">${i}</option>
-                                                    </c:forEach>
-                                                </select>
+                                                <input type="number" name="semester" required="" class="form-control" value="${subject.semester}">
                                             </div>
                                         </div>
                                         <div class="form-group col-6 my-3">
                                             <label class="col-form-label">No Credit <i class="text-red">*</i></label>
                                             <div>
-                                                <select name="noCredit" class="form-control">
-                                                    <c:forEach begin="0" end="10" var="i">
-                                                        <option ${subject.noCredit == i?'selected':''} value="${i}">${i}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-12 my-3">
-                                            <label class="col-form-label">Approved</label>
-                                            <div>
-                                                <select name="isActive" class="form-control">
-                                                    <option ${subject.isActive == true?'selected':''} value="true">Approved</option>
-                                                    <option ${subject.isActive == false?'selected':''} value="false">Disable</option>
-                                                </select>
+                                                <input type="number" name="noCredit" required="" class="form-control" value="${subject.noCredit}">
                                             </div>
                                         </div>
                                         <div class="col-12 mt-5">
@@ -91,7 +81,7 @@
             </div>
         </main>
         <div class="ttr-overlay"></div>
-        
+
 
         <%@include file="../gui/footer.jsp" %>
     </body>

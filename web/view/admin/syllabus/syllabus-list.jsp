@@ -46,7 +46,7 @@
                                         <div class="form-group m-0">
                                             <div class="input-group">
                                                 <label><i class="fa fa-search"></i> Search</label>
-                                                <input oninput="processSyllabusList(${page})" name="keysearch" id="keyseach" type="text" class="form-control">
+                                                <input oninput="processSyllabusList(${page}, '${sort}', true)" name="keysearch" id="keyseach" type="text" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -56,13 +56,13 @@
                                 <div  id="list-items">
                                     <table class="table">
                                         <thead class="thead-orange">
-                                        <th>ID</th>
-                                        <th width="15%">Subject Code</th>
-                                        <th>Subject Name</th>
-                                        <th>Syllabus Name</th>
+                                        <th width="5%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'id_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th width="15%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'scode_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
+                                        <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'name_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
+                                        <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'syname_up' ? 'syname_up' : 'syname_down' : 'syname_down'}', false)">Syllabus Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'syname_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
                                         <th>IsActive</th>
                                         <th>IsApproved</th>
-                                        <th>DecisionNo<br/>MM/dd/yyyy</th>
+                                        <th width="10%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'decision_up' ? 'decision_up' : 'decision_down' : 'decision_down'}', false)">DecisionNo<br/>MM/dd/yyyy<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'decision_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
@@ -96,14 +96,14 @@
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                                 <c:if test="${page > 1}">
-                                                <li class="page-item"><a onclick="processSyllabusList(${page - 1}) style ="pointer-events: none" class="page-link">Previous</a></li>
+                                                <li class="page-item"><a onclick="processSyllabusList(${page - 1}, '${requestScope.sort}', true) style ="pointer-events: none" class="page-link">Previous</a></li>
                                                 </c:if>
                                             <li class="page-item"><a id="page" class="page-link">${page}</a></li>
                                                 <c:if test="${page == totalPage}">
                                                 <li class="page-item"><a style="pointer-events: none" class="page-link">Next</a></li>
                                                 </c:if>
                                                 <c:if test="${page < totalPage}">
-                                                <li class="page-item"><a onclick="processSyllabusList(${page + 1})" class="page-link">Next</a></li>
+                                                <li class="page-item"><a onclick="processSyllabusList(${page + 1}, '${sort}', true)" class="page-link">Next</a></li>
                                                 </c:if>
                                         </ul>
                                     </div>
@@ -116,9 +116,9 @@
         </main>
         <script>
             let request;
-            function processSyllabusList(page) {
+            function processSyllabusList(page, sort, pageType) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=syllabus&page=' + page + '&keysearch=' + key;
+                let url = './admin-list?adminpage=syllabus&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' +sort;
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

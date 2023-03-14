@@ -16,8 +16,7 @@ public class Account {
     private int roleID;
     private String password;
     private String avatar;
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String email;
     private String phone;
     private String address;
@@ -28,14 +27,13 @@ public class Account {
     public Account() {
     }
 
-    public Account(int accountID, String userName, int roleID, String password, String avatar, String firstName, String lastName, String email, String phone, String address, Role role, int typeAccount, boolean isActive) {
+    public Account(int accountID, String userName, int roleID, String password, String avatar, String fullName, String email, String phone, String address, Role role, int typeAccount, boolean isActive) {
         this.accountID = accountID;
         this.userName = userName;
         this.roleID = roleID;
         this.password = password;
         this.avatar = avatar;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.address = address;
@@ -43,6 +41,8 @@ public class Account {
         this.typeAccount = typeAccount;
         this.isActive = isActive;
     }
+
+    
 
 
     public boolean isIsActive() {
@@ -97,22 +97,13 @@ public class Account {
         this.avatar = avatar;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
 
     public String getEmail() {
         return email;
@@ -136,11 +127,6 @@ public class Account {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    
-    public String getDisplayName(){
-        return firstName + " " + lastName;
     }
 
     public int getAccountID() {

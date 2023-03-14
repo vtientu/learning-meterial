@@ -76,7 +76,7 @@
                 <div aria-live="polite" aria-atomic="true" style="position: relative;">
                     <div style="position: absolute; right: 2.5rem; top:  5rem;">
                         <div id="toasts" class="toast fade" data-delay="5000">
-                            <div class="toast-body" style="background-color: green; color: white">
+                            <div class="toast-body" style="background-color: ${sessionScope.color}; color: white">
                                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
                                     <span aria-hidden="true" style="color: white">&times;</span>
                                 </button>
@@ -89,6 +89,7 @@
                 <div id="message" hidden="">${message}</div>
                 <%
                     session.removeAttribute("message");
+                    session.removeAttribute("color");
                 %>
             </div>
         </header>
