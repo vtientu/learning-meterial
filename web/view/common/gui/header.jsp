@@ -114,7 +114,7 @@
                                         <div class="dropdown">
                                             <div class="dropbtn p-0">
                                                 <img class="rounded-circle shadow-4" style="width: 50px" src="${account.typeAccount == -1?'./assets/images/':''}${account.avatar == null?'profile/pic1.png': account.avatar}" alt="alt"/>
-                                                <label>${account.displayName == null ? '':account.displayName}</label>
+                                                <label>${account.fullName == null ? '':account.fullName}</label>
                                             </div>
                                             <div class="dropdown-content">
                                                 <c:if test="${account.role.roleID > 3}"><a href="admin/home">Manager System</a></c:if>

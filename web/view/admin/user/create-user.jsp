@@ -38,16 +38,10 @@
                                                 <h3>Profile User</h3>
                                             </div>
                                         </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">First Name <i class="text-red">*</i></label>
+                                        <div class="form-group col-12">
+                                            <label class="col-form-label">Full Name <i class="text-red">*</i></label>
                                             <div>
-                                                <input class="form-control" type="text" value="" required="" name="firstName">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Last Name <i class="text-red">*</i></label>
-                                            <div>
-                                                <input class="form-control" type="text" value="" required="" name="lastName">
+                                                <input class="form-control" type="text" value="" required="" name="fullName">
                                             </div>
                                         </div>
                                         <div class="form-group col-12">
@@ -72,21 +66,9 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label class="col-form-label">Password <i class="text-red">*</i></label>
-                                            <div>
-                                                <input class="form-control" type="password" value="" required="" name="password">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label class="col-form-label">Confirm Password <i class="text-red">*</i></label>
-                                            <div>
-                                                <input class="form-control" type="password" value="" required="">
-                                            </div>
-                                        </div>
-                                        <label class="text-red font-weight-bold ml-3">${message}</label>
+                                        <label id="message" class="text-red font-weight-bold ml-3">${message}</label>
                                         <div class="col-12 mt-3">
-                                            <button type="submit" class="btn float-right">Create Account</button>
+                                            <button id="submit" type="submit" class="btn float-right" >Create Account</button>
                                         </div>
                                     </div>
                                 </form>
@@ -98,7 +80,6 @@
             </div>
         </main>
         <div class="ttr-overlay"></div>
-
         <!-- External JavaScripts -->
         <%@include file="../gui/footer.jsp" %>
     </body>

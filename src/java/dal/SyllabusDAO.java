@@ -61,7 +61,7 @@ public class SyllabusDAO extends DBContext {
             if (role == 1) {
                 sql += " WHERE `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
             }
-            sql += " ORDER BY `SyllabusID` DESC";
+            sql += " ORDER BY `SyllabusID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -208,20 +208,22 @@ public class SyllabusDAO extends DBContext {
                     + "`ApprovedDate`,\n"
                     + "`PreRequisite`)\n"
                     + "VALUES\n"
-                    + "(?,?,?,0,0,null,?,?,?,?,?,?,?,?,?,CURDATE(),null);";
+                    + "(?,?,?,?,?,null,?,?,?,?,?,?,?,?,?,CURDATE(),null);";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, s.getSubject().getSubjectID());
             st.setString(2, s.getSyllabusNameEN());
             st.setString(3, s.getSyllabusNameVN());
-            st.setInt(4, s.getNoCredit());
-            st.setString(5, s.getDegreeLevel());
-            st.setString(6, s.getTimeAllocation());
-            st.setString(7, s.getDescription());
-            st.setString(8, s.getStudentTasks());
-            st.setString(9, s.getTools());
-            st.setInt(10, s.getScoringScale());
-            st.setString(11, s.getNote());
-            st.setInt(12, s.getMinAvgMarkToPass());
+            st.setBoolean(4, s.isIsActive());
+            st.setBoolean(5, s.isIsApproved());
+            st.setInt(6, s.getNoCredit());
+            st.setString(7, s.getDegreeLevel());
+            st.setString(8, s.getTimeAllocation());
+            st.setString(9, s.getDescription());
+            st.setString(10, s.getStudentTasks());
+            st.setString(11, s.getTools());
+            st.setInt(12, s.getScoringScale());
+            st.setString(13, s.getNote());
+            st.setInt(14, s.getMinAvgMarkToPass());
             st.executeUpdate();
             if (prerequisite != null) {
                 createPreRequisite(prerequisite, s.getSubject().getSubjectID());
@@ -345,7 +347,7 @@ public class SyllabusDAO extends DBContext {
                     + "    `question`.`QuestionName`,\n"
                     + "    `question`.`Details`\n"
                     + "FROM `question`\n"
-                    + "WHERE `question`.`SyllabusID` = ? ORDER BY `QuestionID` DESC;";
+                    + "WHERE `question`.`SyllabusID` = ? ORDER BY `QuestionID` ASC;";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, sid);
             ResultSet rs = st.executeQuery();
@@ -509,7 +511,7 @@ public class SyllabusDAO extends DBContext {
                     + "    `subjects`.`Semester`,\n"
                     + "    `subjects`.`NoCredit`,\n"
                     + "    `subjects`.`isActive`\n"
-                    + "FROM `swp391`.`subjects` ORDER BY `subjects`.`SubjectID` Desc;";
+                    + "FROM `swp391`.`subjects` ORDER BY `subjects`.`SubjectID` ASC;";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -540,7 +542,7 @@ public class SyllabusDAO extends DBContext {
                     + "                    FROM `swp391`.`subjects`\n"
                     + "                    WHERE `subjects`.`SubjectCode` LIKE ?\n"
                     + "                    OR `subjects`.`subjectName` LIKE ?\n"
-                    + "                    ORDER BY `subjects`.`SubjectID` DESC";
+                    + "                    ORDER BY `subjects`.`SubjectID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
             st.setString(2, "%" + key + "%");
@@ -850,7 +852,7 @@ public class SyllabusDAO extends DBContext {
             if (role == 1) {
                 sql += " AND `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
             }
-            sql += "  ORDER BY `SyllabusID` DESC";
+            sql += "  ORDER BY `SyllabusID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
             st.setString(2, "%" + key + "%");
@@ -970,7 +972,7 @@ public class SyllabusDAO extends DBContext {
             if (role == 1) {
                 sql += "WHERE `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
             }
-            sql += "  ORDER BY `SyllabusID` DESC";
+            sql += "  ORDER BY `SyllabusID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {

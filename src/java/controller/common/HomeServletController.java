@@ -221,15 +221,16 @@ public class HomeServletController extends HttpServlet {
 
     public void forgetPassword(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String emailForget = request.getParameter("email");
-        HttpSession session = request.getSession();
         AccountDAO ad = new AccountDAO();
         if (emailForget != null) {
             if (ad.checkEmailForget(emailForget)) {
                 String code = getVerifyCode();
                 send(emailForget, code);
-                session.setAttribute("verifyCode", code);
-                session.setMaxInactiveInterval(300);
-                request.setAttribute("messageLogin", "Check your verification mail in email!");
+                Account a = new Account();
+                a.setEmail(emailForget);
+                a.setPassword(convertPassToMD5(code));
+                ad.changePassword(a);
+                request.setAttribute("messageLogin", "Check your new password in email!");
                 request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
             } else {
                 request.setAttribute("messageRegister", "Email is not registered");
@@ -282,7 +283,7 @@ public class HomeServletController extends HttpServlet {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(to));
             message.setSubject("Verification Mail");
-            String htmlEmail = "<button><a href=\"http://localhost:9999/Project-SWP391/home?action=forget-password&code=" + code + "&email=" + to + "\">Verify Mail</a></button>";
+            String htmlEmail = "Your new password: " + code;
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
             mimeBodyPart.setContent(htmlEmail, "text/html");

@@ -66,7 +66,7 @@
                                             <c:forEach items="${listUser}" var="list">
                                                 <tr>
                                                     <td>${list.accountID}</td>
-                                                    <td>${list.displayName}</td>
+                                                    <td>${list.fullName}</td>
                                                     <td>${list.userName}</td>
                                                     <td>${list.email}</td>
                                                     <td>${list.role.roleName}</td>
@@ -91,7 +91,7 @@
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title text-center">Do you want to change status account ${list.displayName}?</h4>
+                                                            <h4 class="modal-title text-center">Do you want to change status account ${list.fullName}?</h4>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>

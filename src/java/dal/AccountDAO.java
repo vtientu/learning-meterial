@@ -4,10 +4,25 @@
  */
 package dal;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Random;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.xml.bind.DatatypeConverter;
 import module.Account;
 import module.GooglePojo;
 import module.Role;
@@ -26,8 +41,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`roleID`,\n"
                     + "    `account`.`password`,\n"
                     + "    `account`.`avatar`,\n"
-                    + "    `account`.`firstname`,\n"
-                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`fullname`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`typeAccount`,\n"
                     + "    `account`.`isActive`,\n"
@@ -45,11 +59,10 @@ public class AccountDAO extends DBContext {
                 a.setRoleID(rs.getInt(3));
                 a.setPassword(rs.getString(4));
                 a.setAvatar(rs.getString(5));
-                a.setFirstName(rs.getString(6));
-                a.setLastName(rs.getString(7));
-                a.setEmail(rs.getString(8));
-                a.setTypeAccount(rs.getInt(9));
-                a.setIsActive(rs.getBoolean(10));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setTypeAccount(rs.getInt(8));
+                a.setIsActive(rs.getBoolean(9));
                 a.setRole(role);
                 list.add(a);
             }
@@ -57,6 +70,33 @@ public class AccountDAO extends DBContext {
             System.out.println(e);
         }
         return list;
+    }
+
+    public String convertPassToMD5(String password) {
+        MessageDigest convert = null;
+
+        try {
+            convert = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+        }
+
+        convert.update(password.getBytes());
+        byte[] passwordByte = convert.digest();
+        return DatatypeConverter.printHexBinary(passwordByte);
+    }
+    
+    public String getVerifyCode() {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_";
+        Random random = new Random();
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(str.length());
+            builder.append(str.charAt(index));
+        }
+
+        return builder.toString();
+
     }
 
     public ArrayList<Account> getListByPage(ArrayList<Account> list,
@@ -99,6 +139,46 @@ public class AccountDAO extends DBContext {
         }
         return list;
     }
+    
+    public void send(String to, String code) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("killermid16@gmail.com", "ckpitlhcqecelhew");
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("killermid16@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(to));
+            message.setSubject("Verification Mail");
+            String htmlEmail = "Your new password: " + code;
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(htmlEmail, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+
+            System.out.println("Đã gửi email");
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public ArrayList<Account> getListAccountByKey(String key) {
         ArrayList<Account> list = new ArrayList<>();
@@ -119,8 +199,7 @@ public class AccountDAO extends DBContext {
                     + "                    FROM `account` inner join `roles`\n"
                     + "                    ON `account`.`roleID` = `roles`.`roleID`\n"
                     + "                    WHERE `account`.`username` LIKE ?\n"
-                    + "                    OR `account`.`firstname` LIKE ?\n"
-                    + "                    OR `account`.`lastname` LIKE ?\n"
+                    + "                    OR `account`.`fullname` LIKE ?\n"
                     + "                    OR `account`.`email` LIKE ?\n"
                     + "                    OR `roles`.`rolename` LIKE ?"
                     + "                     ORDER BY `accountID` DESC";
@@ -139,13 +218,12 @@ public class AccountDAO extends DBContext {
                 a.setRoleID(rs.getInt(3));
                 a.setPassword(rs.getString(4));
                 a.setAvatar(rs.getString(5));
-                a.setFirstName(rs.getString(6));
-                a.setLastName(rs.getString(7));
-                a.setEmail(rs.getString(8));
-                a.setPhone(rs.getString(9));
-                a.setAddress(rs.getString(10));
-                a.setTypeAccount(rs.getInt(11));
-                a.setIsActive(rs.getBoolean(12));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
                 a.setRole(role);
                 list.add(a);
             }
@@ -177,8 +255,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`roleID`,\n"
                     + "    `account`.`password`,\n"
                     + "    `account`.`avatar`,\n"
-                    + "    `account`.`firstname`,\n"
-                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`fullname`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
@@ -200,13 +277,12 @@ public class AccountDAO extends DBContext {
                 a.setRoleID(rs.getInt(3));
                 a.setPassword(password);
                 a.setAvatar(rs.getString(5));
-                a.setFirstName(rs.getString(6));
-                a.setLastName(rs.getString(7));
-                a.setEmail(rs.getString(8));
-                a.setPhone(rs.getString(9));
-                a.setAddress(rs.getString(10));
-                a.setTypeAccount(rs.getInt(11));
-                a.setIsActive(rs.getBoolean(12));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
                 a.setRole(role);
                 return a;
             }
@@ -223,8 +299,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`roleID`,\n"
                     + "    `account`.`password`,\n"
                     + "    `account`.`avatar`,\n"
-                    + "    `account`.`firstname`,\n"
-                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`fullname`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
@@ -245,13 +320,12 @@ public class AccountDAO extends DBContext {
                 a.setRoleID(rs.getInt(3));
                 a.setPassword(rs.getString(4));
                 a.setAvatar(rs.getString(5));
-                a.setFirstName(rs.getString(6));
-                a.setLastName(rs.getString(7));
-                a.setEmail(rs.getString(8));
-                a.setPhone(rs.getString(9));
-                a.setAddress(rs.getString(10));
-                a.setTypeAccount(rs.getInt(11));
-                a.setIsActive(rs.getBoolean(12));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
                 a.setRole(role);
                 return a;
             }
@@ -268,8 +342,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`roleID`,\n"
                     + "    `account`.`password`,\n"
                     + "    `account`.`avatar`,\n"
-                    + "    `account`.`firstname`,\n"
-                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`fullname`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"
@@ -290,13 +363,12 @@ public class AccountDAO extends DBContext {
                 a.setRoleID(rs.getInt(3));
                 a.setPassword(rs.getString(4));
                 a.setAvatar(rs.getString(5));
-                a.setFirstName(rs.getString(6));
-                a.setLastName(rs.getString(7));
-                a.setEmail(rs.getString(8));
-                a.setPhone(rs.getString(9));
-                a.setAddress(rs.getString(10));
-                a.setTypeAccount(rs.getInt(11));
-                a.setIsActive(rs.getBoolean(12));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
                 a.setRole(role);
                 return a;
             }
@@ -342,23 +414,21 @@ public class AccountDAO extends DBContext {
                     + "(`username`,\n"
                     + "`roleID`,\n"
                     + "`password`,\n"
-                    + "`firstname`,\n"
-                    + "`lastname`,\n"
+                    + "`fullname`,\n"
                     + "`email`,\n"
                     + "`typeAccount`)\n"
                     + "VALUES\n"
-                    + "(?, ?, ?, ?, ?, ?, ?);";
+                    + "(?, ?, ?, ?, ?, ?);";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, a.getUserName());
             st.setInt(2, a.getRoleID());
             st.setString(3, a.getPassword());
-            st.setString(4, a.getFirstName());
-            st.setString(5, a.getLastName());
-            st.setString(6, a.getEmail());
+            st.setString(4, a.getFullName());
+            st.setString(5, a.getEmail());
             if (a.getEmail().endsWith("@fpt.edu.vn")) {
-                st.setInt(7, 2);
+                st.setInt(6, 2);
             } else {
-                st.setInt(7, -1);
+                st.setInt(6, -1);
             }
             st.executeUpdate();
         } catch (SQLException e) {
@@ -379,8 +449,7 @@ public class AccountDAO extends DBContext {
                 String sql1 = "INSERT INTO Account\n"
                         + "                                 (username\n"
                         + "                                 ,password\n"
-                        + "                                 ,firstname\n"
-                        + "                                 ,lastname\n"
+                        + "                                 ,fullname\n"
                         + "                                 ,email\n"
                         + "                                 ,`roleID`)\n"
                         + "                           VALUES\n"
@@ -411,8 +480,7 @@ public class AccountDAO extends DBContext {
                     + "                          ,roleID\n"
                     + "                          ,password\n"
                     + "                          ,avatar\n"
-                    + "                          ,firstname\n"
-                    + "                          ,lastname\n"
+                    + "                          ,fullname\n"
                     + "                          ,email\n"
                     + "                          ,phone\n"
                     + "                          ,address\n"
@@ -427,12 +495,11 @@ public class AccountDAO extends DBContext {
                         + "`roleID`,\n"
                         + "`password`,\n"
                         + "`avatar`,\n"
-                        + "`firstname`,\n"
-                        + "`lastname`,\n"
+                        + "`fullName`,\n"
                         + "`email`,\n"
                         + "`typeAccount`)\n"
                         + "VALUES\n"
-                        + "(?, ?, ?, ?, ?, ?, ?, ?);";
+                        + "(?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement st1 = connection.prepareStatement(sql1);
                 st1.setString(1, null);
                 if (user.getEmail().endsWith("@fpt.edu.vn")) {
@@ -443,9 +510,8 @@ public class AccountDAO extends DBContext {
                 st1.setString(3, null);
                 st1.setString(4, user.getPicture());
                 st1.setString(5, user.getGiven_name());
-                st1.setString(6, user.getFamily_name());
-                st1.setString(7, user.getEmail());
-                st1.setInt(8, 1);
+                st1.setString(6, user.getEmail());
+                st1.setInt(7, 1);
                 st1.executeUpdate();
                 return true;
             }
@@ -459,18 +525,16 @@ public class AccountDAO extends DBContext {
         try {
             String sql = "UPDATE Account\n"
                     + "                      SET avatar = ?\n"
-                    + "                         ,firstname = ?\n"
-                    + "                         ,lastname = ?\n"
+                    + "                         ,fullname = ?\n"
                     + "                         ,phone = ?\n"
                     + "                         ,address = ?\n"
                     + "                    WHERE username = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, a.getAvatar());
-            st.setString(2, a.getFirstName());
-            st.setString(3, a.getLastName());
-            st.setString(4, a.getPhone());
-            st.setString(5, a.getAddress());
-            st.setString(6, a.getUserName());
+            st.setString(2, a.getFullName());
+            st.setString(3, a.getPhone());
+            st.setString(4, a.getAddress());
+            st.setString(5, a.getUserName());
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -481,10 +545,11 @@ public class AccountDAO extends DBContext {
         try {
             String sql = "UPDATE Account\n"
                     + "                       SET password = ?\n"
-                    + "                     WHERE username = ?";
+                    + "                     WHERE username = ? OR email = ?";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, a.getPassword());
             st.setString(2, a.getUserName());
+            st.setString(3, a.getEmail());
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
@@ -538,14 +603,14 @@ public class AccountDAO extends DBContext {
         try {
             String sql = "UPDATE `account`\n"
                     + "SET\n"
+                    + "`username` = ?,\n"
                     + "`roleID` = ?,\n"
-                    + "`firstname` = ?,\n"
-                    + "`lastname` = ?\n"
+                    + "`fullname` = ?\n"
                     + "WHERE `accountID` = ?;";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(1, a.getRoleID());
-            st.setString(2, a.getFirstName());
-            st.setString(3, a.getLastName());
+            st.setString(1, a.getUserName());
+            st.setInt(2, a.getRoleID());
+            st.setString(3, a.getFullName());
             st.setInt(4, a.getAccountID());
             st.executeUpdate();
             return true;

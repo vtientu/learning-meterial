@@ -41,15 +41,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-6">
-                                            <label class="col-form-label">First Name <i class="text-red">*</i></label>
+                                            <label class="col-form-label">Full Name <i class="text-red">*</i></label>
                                             <div>
-                                                <input class="form-control" type="text" value="${user.firstName}" required="" name="firstName">
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Last Name <i class="text-red">*</i></label>
-                                            <div>
-                                                <input class="form-control" type="text" value="${user.lastName}" required="" name="lastName">
+                                                <input class="form-control" type="text" value="${user.fullName}" required="" name="fullName">
                                             </div>
                                         </div>
                                         <div class="form-group col-12">
@@ -61,7 +55,7 @@
                                         <div class="form-group col-12">
                                             <label class="col-form-label">User Name <i class="text-red">*</i></label>
                                             <div>
-                                                <input class="form-control" type="text" value="${user.userName}" disabled="" name="userName">
+                                                <input class="form-control" type="text" value="${user.userName}" required="" name="username">
                                             </div>
                                         </div>
                                         <div class="form-group col-12">

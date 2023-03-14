@@ -11,8 +11,7 @@ CREATE TABLE Account(
 	roleID int DEFAULT 1,
 	password VARCHAR(255),
 	avatar NVARCHAR(255),
-	firstname NVARCHAR(50) NOT NULL,
-	lastname NVARCHAR(50) NOT NULL,
+	fullname NVARCHAR(100) NOT NULL,
 	email NVARCHAR(120) NOT NULL UNIQUE,
 	phone NVARCHAR(20),
 	address NVARCHAR(255),
@@ -50,13 +49,15 @@ CREATE TABLE Majors(
 
 
 CREATE TABLE Curriculum(
-	CurriculumCode NVARCHAR(20),
+	CurID int AUTO_INCREMENT,
+	CurriculumCode NVARCHAR(40),
 	majorID int,
 	CurriculumNameEN NVARCHAR(255) not null,
 	CurriculumNameVN NVARCHAR(255) not null,
     DecisionNo NVARCHAR(30),
 	Description TEXT not null,
-	primary key (CurriculumCode)
+    isApprove bit default 1,
+	primary key (CurID)
 );
 
 
@@ -66,14 +67,15 @@ CREATE TABLE Subjects(
 	subjectName NVARCHAR(255),
 	Semester int,
 	NoCredit int,
-    isActive bit DEFAULT 1
+    isActive bit DEFAULT 1,
+    ComboID int
 );
 
 
 
 CREATE TABLE Syllabus(
 	SyllabusID int auto_increment,
-    SubjectID INT,
+	SubjectID int,
 	SubjectNameEN NVARCHAR(255),
 	SubjectNameVN NVARCHAR(255),
 	IsActive bit DEFAULT 1,
@@ -135,7 +137,6 @@ CREATE TABLE Material(
 CREATE TABLE Session(
 	SessionID int AUTO_INCREMENT,
 	SyllabusID int,
-    SessionNo NVARCHAR(100),
 	Topic NVARCHAR(255),
 	LearningTeachingType NVARCHAR(255),
 	StudentMaterials NVARCHAR(255),
@@ -172,9 +173,9 @@ CREATE TABLE ConstructiveQuestion(
 
 
 CREATE TABLE CurriculumSubject(
-	CurriculumCode NVARCHAR(20),
+	CurID int,
 	SubjectID int,
-	primary key(CurriculumCode, SubjectID)
+	primary key(CurID, SubjectID)
 );
 
 
@@ -215,8 +216,8 @@ CREATE TABLE CLO(
 
 CREATE TABLE ComboSubject(
 	ComboID int,
-    SubjectCode NVARCHAR(20),
-    primary key(ComboID,SubjectCode)
+    SubjectID int,
+    primary key(ComboID,SubjectID)
 );
 
 
@@ -231,32 +232,21 @@ CREATE TABLE Elective(
 
 CREATE TABLE ElectiveSubject(
 ElectiveID int,
-SubjectCode NVARCHAR(20),
-primary key(ElectiveID, SubjectCode)
+SubjectID int,
+primary key(ElectiveID, SubjectID)
 );
 
 CREATE TABLE CurriculumElective(
 ElectiveID int,
-CurriculumCode NVARCHAR(20),
-primary key(ElectiveID, CurriculumCode)
+CurID int,
+primary key(ElectiveID, CurID)
 );
 
 CREATE TABLE ComboCurriculum(
 ComboID int,
-CurriculumCode NVARCHAR(20),
-primary key(ComboID, CurriculumCode)
+CurID int,
+primary key(ComboID, CurID)
 );
-
-CREATE TABLE Question (
-	QuestionID INT auto_increment PRIMARY KEY,
-    SyllabusID INT,
-    SessionID INT,
-    QuestionName INT,
-    Details TEXT,
-    foreign key(SyllabusID) REFERENCES Syllabus(SyllabusID),
-    foreign key(SessionID) REFERENCES Session(SessionID)
-);
-
 
 ALTER TABLE CLO add constraint fk_clo_syllabus foreign key(syID) references Syllabus(SyllabusID);
 
@@ -270,20 +260,18 @@ ADD CONSTRAINT fk_syllabus foreign key(syllabusID) references syllabus(SyllabusI
 ALTER TABLE Account add constraint fk_accountRole foreign key (roleID) references Roles(roleID);
 
 ALTER TABLE CurriculumElective
-add constraint fk_curriculum_Elective foreign key (CurriculumCode) references Curriculum(CurriculumCode),
+add constraint fk_curriculum_Elective foreign key (CurID) references Curriculum(CurID),
 add constraint fk_Elective_curriculum foreign key (ElectiveID) references Elective(ElectiveID);
 
 ALTER TABLE ElectiveSubject add constraint fk_elective_subject foreign key (ElectiveID) references Elective(ElectiveID),
-add constraint fk_subject_elective foreign key (SubjectCode) references Subjects(SubjectCode);
+add constraint fk_subject_elective foreign key (SubjectID) references Subjects(SubjectID);
 
 ALTER TABLE ComboCurriculum add constraint fk_combo_curriculum foreign key (ComboID) references Combo(ComboID),
-add constraint fk_curriculum_combo foreign key (CurriculumCode) references Curriculum(CurriculumCode);
+add constraint fk_curriculum_combo foreign key (CurID) references Curriculum(CurID);
 
 ALTER TABLE Curriculum add constraint fk_majorCurriculum foreign key (majorID) references Majors(majorID),
 						add constraint fk_decisionCurriculum foreign key (DecisionNo) references Decision(DecisionNo);
                         
-
-ALTER TABLE Syllabus add constraint fk_decisionSyllabus foreign key(DecisionNo) references Decision(DecisionNo); 
 
 
 ALTER TABLE ConstructiveQuestion add constraint fk_questionsession foreign key (SessionID) references Session(SessionID);
@@ -300,11 +288,10 @@ ALTER TABLE Assessment add constraint fk_syllabusassessment foreign key (Syllabu
 
 
 ALTER TABLE CurriculumSubject
-add constraint fk_Subject_curriculum foreign key (CurriculumCode) references Curriculum(CurriculumCode),
+add constraint fk_Subject_curriculum foreign key (CurID) references Curriculum(CurID),
 add constraint fk_curriculum_Subject foreign key (SubjectID) references Subjects(SubjectID);
     
-ALTER TABLE ComboSubject add constraint fk_combo_subject foreign key (ComboID) references Combo(ComboID),
-add constraint fk_subject_combo foreign key (SubjectCode) references Subjects(SubjectCode);
+ALTER TABLE Subjects add constraint fk_subjectcombo foreign key (ComboID) references Combo(ComboID);
 
 ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (SubjectID) references Subjects(SubjectID);
 
@@ -313,25 +300,25 @@ ALTER TABLE Syllabus add constraint fk_Syllabus_Subject foreign key (SubjectID) 
 INSERT INTO Roles(rolename) VALUES('GUEST'),('STUDENT'),('TEACHER'),('REVIEWER'),('DESIGNER'),('CRDD'),('HEAD-CRDD'),('ADMIN');
 
 
-INSERT INTO Account(username, password, firstname, lastname, email, roleID) 
-VALUES ('admin', '202CB962AC59075B964B07152D234B70', 'Van', 'Tien Tu', 'tuvthe160803@fpt.edu.vn', 8),
-		('user', '202CB962AC59075B964B07152D234B70', 'USER', '1', '1tuvthe160803@fpt.edu.vn', 1),
-        ('student', '202CB962AC59075B964B07152D234B70', 'USER', '2', '2tuvthe160803@fpt.edu.vn', 2),
-        ('teacher', '202CB962AC59075B964B07152D234B70', 'USER', '3', '3tuvthe160803@fpt.edu.vn', 3),
-        ('reviewer', '202CB962AC59075B964B07152D234B70', 'USER', '4', '4tuvthe160803@fpt.edu.vn', 4),
-        ('designer', '202CB962AC59075B964B07152D234B70', 'USER', '5', '5tuvthe160803@fpt.edu.vn', 5),
-        ('crdd', '202CB962AC59075B964B07152D234B70', 'USER', '6', '6tuvthe160803@fpt.edu.vn', 6),
-        ('headcrdd', '202CB962AC59075B964B07152D234B70', 'USER', '7', '7tuvthe160803@fpt.edu.vn', 7),
-        ('user8', '202CB962AC59075B964B07152D234B70', 'USER', '8', '8tuvthe160803@fpt.edu.vn', 1),
-        ('user9', '202CB962AC59075B964B07152D234B70', 'USER', '9', '9tuvthe160803@fpt.edu.vn', 1),
-        ('user10', '202CB962AC59075B964B07152D234B70', 'USER', '10', '10tuvthe160803@fpt.edu.vn', 1),
-        ('user11', '202CB962AC59075B964B07152D234B70', 'USER', '11', '11tuvthe160803@fpt.edu.vn', 1),
-        ('user12', '202CB962AC59075B964B07152D234B70', 'USER', '12', '12tuvthe160803@fpt.edu.vn', 1),
-        ('user13', '202CB962AC59075B964B07152D234B70', 'USER', '13', '13tuvthe160803@fpt.edu.vn', 1),
-        ('user14', '202CB962AC59075B964B07152D234B70', 'USER', '14', '14tuvthe160803@fpt.edu.vn', 1),
-        ('user15', '202CB962AC59075B964B07152D234B70', 'USER', '15', '15tuvthe160803@fpt.edu.vn', 1),
-        ('user16', '202CB962AC59075B964B07152D234B70', 'USER', '16', '16tuvthe160803@fpt.edu.vn', 1),
-        ('user17', '202CB962AC59075B964B07152D234B70', 'USER', '17', '17tuvthe160803@fpt.edu.vn', 1);
+INSERT INTO Account(username, password, fullname, email, roleID) 
+VALUES ('admin', '202CB962AC59075B964B07152D234B70', 'Van Tien Tu', 'tuvthe160803@fpt.edu.vn', 8),
+		('user', '202CB962AC59075B964B07152D234B70', 'USER 1', '1tuvthe160803@fpt.edu.vn', 1),
+        ('student', '202CB962AC59075B964B07152D234B70', 'USER 2', '2tuvthe160803@fpt.edu.vn', 2),
+        ('teacher', '202CB962AC59075B964B07152D234B70', 'USER 3', '3tuvthe160803@fpt.edu.vn', 3),
+        ('reviewer', '202CB962AC59075B964B07152D234B70', 'USER 4', '4tuvthe160803@fpt.edu.vn', 4),
+        ('designer', '202CB962AC59075B964B07152D234B70', 'USER 5', '5tuvthe160803@fpt.edu.vn', 5),
+        ('crdd', '202CB962AC59075B964B07152D234B70', 'USER 6', '6tuvthe160803@fpt.edu.vn', 6),
+        ('headcrdd', '202CB962AC59075B964B07152D234B70', 'USER 7', '7tuvthe160803@fpt.edu.vn', 7),
+        ('user8', '202CB962AC59075B964B07152D234B70', 'USER 8', '8tuvthe160803@fpt.edu.vn', 1),
+        ('user9', '202CB962AC59075B964B07152D234B70', 'USER 9', '9tuvthe160803@fpt.edu.vn', 1),
+        ('user10', '202CB962AC59075B964B07152D234B70', 'USER 10', '10tuvthe160803@fpt.edu.vn', 1),
+        ('user11', '202CB962AC59075B964B07152D234B70', 'USER 11', '11tuvthe160803@fpt.edu.vn', 1),
+        ('user12', '202CB962AC59075B964B07152D234B70', 'USER 12', '12tuvthe160803@fpt.edu.vn', 1),
+        ('user13', '202CB962AC59075B964B07152D234B70', 'USER 13', '13tuvthe160803@fpt.edu.vn', 1),
+        ('user14', '202CB962AC59075B964B07152D234B70', 'USER 14', '14tuvthe160803@fpt.edu.vn', 1),
+        ('user15', '202CB962AC59075B964B07152D234B70', 'USER 15', '15tuvthe160803@fpt.edu.vn', 1),
+        ('user16', '202CB962AC59075B964B07152D234B70', 'USER 16', '16tuvthe160803@fpt.edu.vn', 1),
+        ('user17', '202CB962AC59075B964B07152D234B70', 'USER 17', '17tuvthe160803@fpt.edu.vn', 1);
 
 
 INSERT INTO `swp391`.`decision`(decisionNo, decisionName, approvedDate, note, createDate, isActive, fileName)
@@ -360,7 +347,16 @@ VALUES 	(N'1095/QĐ-ĐHFPT', N'QĐ Về việc bổ sung các học phần Trả
         (N'703/QĐ-ĐH-FPT', N'Ban hành điều chỉnh đề cương kì Fall 2022', '2022-08-17', null, '2022-08-19', 1, ''),
         (N'1077/QĐ-ĐHFPT', N'Ban hành đề cương chi tiết học kì Spring 2022', '2022-11-24', null, '2022-11-25', 1, '');
 
-
+INSERT INTO `swp391`.`combo`
+(`ComboName`,
+`note`)
+VALUES
+('Default',''),
+('PHE_COM1: Vovinam BBA_MC_K16B',''),
+('PHE_COM2: Cờ Vua BBA_MC_K16B',''),
+('MC_COM1: Creative Content Production_Sản xuất nội dung truyền thông BBA_MC_K16B',''),
+('MC_COM2: Public Relations_Quan hệ công chúng BBA_MC_K16B',''),
+('MC_COM3: Digital marketing_Marketing số BBA_MC_K16B','');
 
 
 
@@ -369,30 +365,40 @@ INSERT INTO `swp391`.`subjects`
 (`SubjectCode`,
 `subjectName`,
 `Semester`,
-`NoCredit`)
+`NoCredit`,
+`ComboID`)
 VALUES
-('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','6','0'),
-('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3'),
-('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3'),
-('VDP201','Video Production_Sản xuất Video','4','3'),
-('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3'),
-('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3'),
-('MGT103','Introduction to Management_Nhập môn quản lý','1','3'),
-('MKT101','Marketing Principles_Nguyên lý Marketing','1','3'),
-('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3'),
-('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3'),
-('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3'),
-('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3'),
-('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3'),
-('MMP201','Media Psychology_Tâm lý học truyền thông','2','3'),
-('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3'),
-('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3'),
-('MKT208c','Social media marketing_Marketing mạng xã hội','3','3'),
-('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3');
-
-
-
-
+('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','6','0',1),
+('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3',1),
+('VDP201','Video Production_Sản xuất Video','4','3',1),
+('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3',1),
+('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3',1),
+('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3',1),
+('MGT103','Introduction to Management_Nhập môn quản lý','1','3',1),
+('MKT101','Marketing Principles_Nguyên lý Marketing','1','3',1),
+('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3',1),
+('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3',1),
+('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3',1),
+('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3',1),
+('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3',1),
+('MMP201','Media Psychology_Tâm lý học truyền thông','2','3',1),
+('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3',1),
+('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3',1),
+('MKT208c','Social media marketing_Marketing mạng xã hội','3','3',1),
+('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3',1),
+('VOV114','Vovinam 1','0','3',2),
+('VOV124','Vovinam 2','1','3',2),
+('VOV134','Vovinam 3','2','3',2),
+('COV111','Cờ Vua 1','0','3',3),
+('COV121','Cờ Vua 2','1','3',3),
+('COV131','Cờ Vua 3','2','3',3),
+('ĐTR102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tranh','0','3',4),
+('ĐTB102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tỳ bà','0','3',4),
+('ĐNH102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nhị','0','3',4),
+('ĐNG102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nguyệt','0','3',4),
+('ĐBA102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Bầu','0','3',4),
+('ĐSA102','Traditional musical instrument_Nhạc cụ truyền thống-Sáo trúc','0','3',4),
+('TRG102','Traditional musical instrument_Nhạc cụ truyền thống-Trống dân tộc','0','3',4);
 
 INSERT INTO `swp391`.`syllabus`
 (`SubjectID`,
@@ -447,7 +453,7 @@ Objectives of orientation and training program are:<br/>
 6) Train team spirit, disciplines, shape good attitude and behaviors towards friends, teachers and educational environment.<br/>
 7) Enhance student experiences with extra-curricular activities. Strengthen the sense of community through community and volunteering activities and the ones towards the sustainable development.',
 'Attend enough activities of the university.','',10,'Min to pass: Students must pass the examination and achieve the Military training certificate',0,'2022-12-22'),
-(2,'Communication and In-group working skills','',1,1,'378/QĐ-ĐHFPT',3,'','30 sessions, 1 session = 90 minutes','This course will cover both working in groups and communication skills.
+(4,'Communication and In-group working skills','',1,1,'378/QĐ-ĐHFPT',3,'','30 sessions, 1 session = 90 minutes','This course will cover both working in groups and communication skills.
 Assessment structure:<br/>
 * On-going Assessment:<br/>
 - Activity: 10%<br/>
@@ -462,7 +468,7 @@ Assessment structure:<br/>
 - Read the textbook in advance<br/>
 - Access the course website (www.cms.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','- Internet
 - PDF reader',10,'',5,'2021-2-4'),
-(3,'English Academic Writing 1','Viết học thuật tiếng Anh 1',1,1,'1189/QĐ-ĐHFPT',3,'Advanced','Study hour (150h) = 45 contact hours (60 sessions) + 1 hour final exam + 104 hours self-study','Advance in Academic Writing helps students write assignments in academic English. Advance integrates active and critical reading, critical thinking, academic vocabulary building, academic writing style, and effective sentence structure and grammar around authentic academic texts. As students respond to these texts, they are taken through the research and writing processes they will need to master to succeed in their respective fields of study.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
+(2,'English Academic Writing 1','Viết học thuật tiếng Anh 1',1,1,'1189/QĐ-ĐHFPT',3,'Advanced','Study hour (150h) = 45 contact hours (60 sessions) + 1 hour final exam + 104 hours self-study','Advance in Academic Writing helps students write assignments in academic English. Advance integrates active and critical reading, critical thinking, academic vocabulary building, academic writing style, and effective sentence structure and grammar around authentic academic texts. As students respond to these texts, they are taken through the research and writing processes they will need to master to succeed in their respective fields of study.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
 - Actively participate in class activities<br/>
 - Fulfil tasks given by instructor after class<br/>
 - Use their own laptop in class only for learning purpose<br/>
@@ -473,7 +479,7 @@ Internet access',10,'1) On-going assessment<br/>
 3) Final Result 100%<br/>
 4) Completion Criteria:<br/>
 On-going assessment >0, Final Exam Score >=4/10 & Final Result >=5/10',5,'2022-12-22'),
-(4,'Video Production','Sản xuất video',1,1,'295/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h)
+(3,'Video Production','Sản xuất video',1,1,'295/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h)
 = 45h contact hours + 105h self-study','This practicum course is designed to give students the opportunity to apply theoretical knowledge learned before to actual multimedia production situations. This course incorporates in its approach a combination of applied media aesthetics theory and hands-on production experience in Video production. Students will gain a foundation for understanding media production theory, facilitating video production processes as well as creating and evaluating media products relating to a particular issue set by the course lecturer. A component of the course will permit the introduction of current topics such as media issues, professional video production techniques, changing media technology, and job market information.','-Attend more than 80% of contact hours in order to be accepted to the final examination','',10,'',5,'2022-12-22'),
 (5,'Visual Design Tools 2D','Công cụ thiết kế trực quan 1',1,1,'703/QĐ-ĐH-FPT',3,'Bachelor','Study hour (150h)
 = 45h contact hours + 105h self-study','The course empowerC14ommon Adobe 2D tools for Multimedia designers, which are Illustrator, Photoshop, InDesign and Xd, so that they can finalize their 2D designs better and able to deliver completed professional product to customers
@@ -857,10 +863,10 @@ INSERT INTO `swp391`.`prerequisite`
 `subjectPre`)
 VALUES
 (1, 1, null),
-(3, 3, 'EAS202'),
-(3, 3, 'ASG203'),
-(4, 4, 'CDP391'),
-(2, 2, null),
+(3, 2, 'EAS202'),
+(3, 2, 'ASG203'),
+(4, 3, 'CDP391'),
+(2, 4, null),
 (5, 5, null),
 (6, 6, 'MAD211'),
 (7, 7, null),
@@ -873,7 +879,7 @@ VALUES
 (14, 14, null),
 (15, 15, null),
 (16, 16, null),
-(17, 17, 'MKT101'),
+(17, 17, 8),
 (18, 18, null);
 
 INSERT INTO `swp391`.`assessment`
@@ -932,55 +938,55 @@ INSERT INTO `swp391`.`curriculum`
 `DecisionNo`)
 VALUES
 ('BBA_MC_K16B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
-General objectives:<br/>
-The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.<br/>
-Specific objectives:<br/>
-PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.<br/>
-PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.<br/>
-PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.<br/>
-PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.<br/>
-PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.<br/>
-PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.<br/>
-PO7: Help students use English fluently and a second language at a basic level.<br/>
-Job positions after graduation:<br/>
-Graduates of the Multimedia communication specialty have diverse job opportunities such as:<br/>
-• Content creation specialist/director;<br/>
-• Communication specialist/director;<br/>
-• Advertising and public relations specialist;<br/>
-• Reporters, editors for television, radio, print newspapers, magazines;<br/>
-• Multimedia research analyst;<br/>
-• Take charge of media startups/agency, media product production;<br/>
-• Startup CEO in the field of multimedia communication.<br/>
-• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.<br/>
-Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.<br/>
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
 
-1. Mục tiêu của chương trình<br/>
-Mục tiêu chung:<br/>
-Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.<br/>
-Mục tiêu cụ thể:<br/>
-PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.<br/>
-PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.<br/>
-PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.<br/>
-PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...<br/>
-PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.<br/>
-PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.<br/>
-PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.<br/>
-Vị trí việc làm sau khi tốt nghiệp:<br/>
-Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:<br/>
-• Chuyên viên/giám đốc sáng tạo nội dung;<br/>
-• Chuyên viên/giám đốc truyền thông;<br/>
-• Chuyên viên quảng cáo và quan hệ công chúng;<br/>
-• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;<br/>
-• Chuyên gia nghiên cứu truyền thông đa phương tiện;<br/>
-• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;<br/>
-• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.<br/>
-• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.<br/>
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
 Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','1095/QĐ-ĐHFPT'),
-('BBA_MC_K16C',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+('BIT_IA_K16B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
 The training program aims to:
-a ) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
 b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
 c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
 1.2 Specific objectives:
@@ -1057,7 +1063,7 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 
 Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
 The training program aims to:
-a ) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
 b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
 c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
 
@@ -1420,7 +1426,7 @@ Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực 
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
 The training program aims to:
-a ) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
 b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
 c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
 1.2 Specific objectives:
@@ -1495,7 +1501,7 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 1.1 General objective:
 Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
 The training program aims to:
-a ) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
 b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
 c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
 1.2 Specific objectives:
@@ -2099,7 +2105,420 @@ Chương trình bao gồm bốn khối kiến thức lớn:
 • Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
 • Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
 
-Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'), 
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BIT_IA_K16B',10,'Bachelor Program of Information Technology, Information Assurance','','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_IoT_K16B',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_IoT_K16C',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BBA_TM_K16C',4,'Bachelor Program of Business Adminstration','CTĐT ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','1095/QĐ-ĐHFPT'),
+('BBA_HM_K16C',9,'Bachelor Program of Business Adminstration','CTĐT ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Accommodation management; Restaurant management; Event organization.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BBA_HM_K16D,K17A',9,'Bachelor Program of Business Adminstration','CTĐT ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Lodging management; Restaurant management; Event organization; Lodging-Restaurant management.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant & bars, and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện; Quản trị Lưu trú-Nhà hàng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','1095/QĐ-ĐHFPT'),
+('BIT_IA_K16C',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
 ('BBA_MC_K16D,K17A',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
 General objectives:
 The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
@@ -3054,211 +3473,3242 @@ Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể l�
 ✔ Theo quy chế đào tạo của trường Đại học FPT.
 
 6. Cách thức đánh giá
-✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT');
--- INSERT INTO `swp391`.`curriculumsubject`
--- (`CurriculumCode`,
--- `SubjectCode`)
--- VALUES
--- ('BBA_MC_K16C',1),
--- ('BBA_MC_K16C',2),
--- ('BBA_MC_K16C',3),
--- ('BBA_MC_K16C',4),
--- ('BBA_MC_K16C',5),
--- ('BBA_MC_K16C',6),
--- ('BBA_MC_K16C',7),
--- ('BBA_MC_K16C',8),
--- ('BBA_MC_K16C',9),
--- ('BBA_MC_K16C',10),
--- ('BBA_MC_K16C',11),
--- ('BBA_MC_K16C',12),
--- ('BIT_SE_K16B',13),
--- ('BIT_SE_K16B',14),
--- ('BIT_SE_K16B',15),
--- ('BIT_SE_K16B','CCO201'),
--- ('BIT_SE_K16B','MED201'),
--- ('BIT_SE_K16B','MKT304'),
--- ('BIT_SE_K16B','MKT208c'),
--- ('BIT_SE_K16B','MKT101'),
--- ('BIT_SE_K16B','VDP201'),
--- ('BIT_SE_K16B','DTG111'),
--- ('BIT_SE_K16B','WDU203c'),
--- ('BIT_SE_K16B','DTG121'),
--- ('BIT_SE_K16C','OTP101'),
--- ('BIT_SE_K16C','ACC101'),
--- ('BIT_SE_K16C','SSG104'),
--- ('BIT_SE_K16C','CCO201'),
--- ('BIT_SE_K16C','MED201'),
--- ('BIT_SE_K16C','MKT304'),
--- ('BIT_SE_K16C','MKT208c'),
--- ('BIT_SE_K16C','MKT101'),
--- ('BIT_SE_K16C','VDP201'),
--- ('BIT_SE_K16C','DTG111'),
--- ('BIT_SE_K16C','WDU203c'),
--- ('BIT_SE_K16C','DTG121'),
--- ('BBA_MKT_K16C','OTP101'),
--- ('BBA_MKT_K16C','ACC101'),
--- ('BBA_MKT_K16C','SSG104'),
--- ('BBA_MKT_K16C','CCO201'),
--- ('BBA_MKT_K16C','MED201'),
--- ('BBA_MKT_K16C','MKT304'),
--- ('BBA_MKT_K16C','MKT208c'),
--- ('BBA_MKT_K16C','MKT101'),
--- ('BBA_MKT_K16C','VDP201'),
--- ('BBA_MKT_K16C','DTG111'),
--- ('BBA_MKT_K16C','WDU203c'),
--- ('BBA_MKT_K16C','DTG121'),
--- ('BBA_MC_K16B','OTP101'),
--- ('BBA_MC_K16B','ACC101'),
--- ('BBA_MC_K16B','SSG104'),
--- ('BBA_MC_K16B','CCO201'),
--- ('BBA_MC_K16B','MED201'),
--- ('BBA_MC_K16B','MKT304'),
--- ('BBA_MC_K16B','MKT208c'),
--- ('BBA_MC_K16B','MKT101'),
--- ('BBA_MC_K16B','VDP201'),
--- ('BBA_MC_K16B','DTG111'),
--- ('BBA_MC_K16B','WDU203c'),
--- ('BBA_TM_K16B','OTP101'),
--- ('BBA_TM_K16B','ACC101'),
--- ('BBA_TM_K16B','SSG104'),
--- ('BBA_TM_K16B','CCO201'),
--- ('BBA_TM_K16B','MED201'),
--- ('BBA_TM_K16B','MKT304'),
--- ('BBA_TM_K16B','MKT208c'),
--- ('BBA_TM_K16B','MKT101'),
--- ('BBA_TM_K16B','VDP201'),
--- ('BBA_TM_K16B','DTG111'),
--- ('BBA_TM_K16B','WDU203c'),
--- ('BBA_TM_K16C','OTP101'),
--- ('BBA_TM_K16C','ACC101'),
--- ('BBA_TM_K16C','SSG104'),
--- ('BBA_TM_K16C','CCO201'),
--- ('BBA_TM_K16C','MED201'),
--- ('BBA_TM_K16C','MKT304'),
--- ('BBA_TM_K16C','MKT208c'),
--- ('BBA_TM_K16C','MKT101'),
--- ('BBA_TM_K16C','VDP201'),
--- ('BBA_TM_K16C','DTG111'),
--- ('BBA_TM_K16C','WDU203c'),
--- ('BIT_GD_K16B','OTP101'),
--- ('BIT_GD_K16B','ACC101'),
--- ('BIT_GD_K16B','SSG104'),
--- ('BIT_GD_K16B','CCO201'),
--- ('BIT_GD_K16B','MED201'),
--- ('BIT_GD_K16B','MKT304'),
--- ('BIT_GD_K16B','MKT208c'),
--- ('BIT_GD_K16B','MKT101'),
--- ('BIT_GD_K16B','VDP201'),
--- ('BIT_GD_K16B','DTG111'),
--- ('BIT_GD_K16B','WDU203c'),
--- ('BIT_GD_K16C','OTP101'),
--- ('BIT_GD_K16C','ACC101'),
--- ('BIT_GD_K16C','SSG104'),
--- ('BIT_GD_K16C','CCO201'),
--- ('BIT_GD_K16C','MED201'),
--- ('BIT_GD_K16C','MKT304'),
--- ('BIT_GD_K16C','MKT208c'),
--- ('BIT_GD_K16C','MKT101'),
--- ('BIT_GD_K16C','VDP201'),
--- ('BIT_GD_K16C','DTG111'),
--- ('BIT_GD_K16C','WDU203c'),
--- ('BBA_FIN_K16B','OTP101'),
--- ('BBA_FIN_K16B','ACC101'),
--- ('BBA_FIN_K16B','SSG104'),
--- ('BBA_FIN_K16B','CCO201'),
--- ('BBA_FIN_K16B','MED201'),
--- ('BBA_FIN_K16B','MKT304'),
--- ('BBA_FIN_K16B','MKT208c'),
--- ('BBA_FIN_K16B','MKT101'),
--- ('BBA_FIN_K16B','VDP201'),
--- ('BBA_FIN_K16B','DTG111'),
--- ('BBA_FIN_K16B','WDU203c'),
--- ('BBA_FIN_K16C','OTP101'),
--- ('BBA_FIN_K16C','ACC101'),
--- ('BBA_FIN_K16C','SSG104'),
--- ('BBA_FIN_K16C','CCO201'),
--- ('BBA_FIN_K16C','MED201'),
--- ('BBA_FIN_K16C','MKT304'),
--- ('BBA_FIN_K16C','MKT208c'),
--- ('BBA_FIN_K16C','MKT101'),
--- ('BBA_FIN_K16C','VDP201'),
--- ('BBA_FIN_K16C','DTG111'),
--- ('BBA_FIN_K16C','WDU203c');
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','1095/QĐ-ĐHFPT'),
+('BIT_GD_K15A',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','973/QĐ-ĐHFPT'),
+('BIT_SE_K15A',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
 
-INSERT INTO `swp391`.`combo`
-(`ComboName`,
-`note`)
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_SE_K15B',1,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IS_K15A',7,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of IS specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/IS specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Information Systems have diverse employment opportunities with some typical job positions such as:
+✔ Administrators of the database systems
+✔ Information system designers, analysts, consultants
+✔ Specialists developing applications for information systems
+✔ Experts specializing in deploying and operating ERP and CRM systems
+✔ Managers of information/knowledge systems
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Hệ thống thông tin (IS) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội việc làm rất đa dạng với một số vị trí công việc điển hình như:
+✔ Quản trị viên các hệ cơ sở dữ liệu;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin;
+✔ Chuyên viên phát triển ứng dụng cho hệ thống thông tin;
+✔ Chuyên viên triển khai, vận hành các hệ thống ERP, CRM;
+✔ Quản trị hệ thống thông tin và tri thức.
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IS_K15B',7,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of IS specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/IS specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Information Systems have diverse employment opportunities with some typical job positions such as:
+✔ Administrators of the database systems
+✔ Information system designers, analysts, consultants
+✔ Specialists developing applications for information systems
+✔ Experts specializing in deploying and operating ERP and CRM systems
+✔ Managers of information/knowledge systems
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Hệ thống thông tin (IS) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội việc làm rất đa dạng với một số vị trí công việc điển hình như:
+✔ Quản trị viên các hệ cơ sở dữ liệu;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin;
+✔ Chuyên viên phát triển ứng dụng cho hệ thống thông tin;
+✔ Chuyên viên triển khai, vận hành các hệ thống ERP, CRM;
+✔ Quản trị hệ thống thông tin và tri thức.
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IS_K15C',7,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of IS specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/IS specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Information Systems have diverse employment opportunities with some typical job positions such as:
+✔ Administrators of the database systems
+✔ Information system designers, analysts, consultants
+✔ Specialists developing applications for information systems
+✔ Experts specializing in deploying and operating ERP and CRM systems
+✔ Managers of information/knowledge systems
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Hệ thống thông tin (IS) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội việc làm rất đa dạng với một số vị trí công việc điển hình như:
+✔ Quản trị viên các hệ cơ sở dữ liệu;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin;
+✔ Chuyên viên phát triển ứng dụng cho hệ thống thông tin;
+✔ Chuyên viên triển khai, vận hành các hệ thống ERP, CRM;
+✔ Quản trị hệ thống thông tin và tri thức.
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IS_K15D, K16A',7,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of IS specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/IS specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Information Systems have diverse employment opportunities with some typical job positions such as:
+✔ Administrators of the database systems
+✔ Information system designers, analysts, consultants
+✔ Specialists developing applications for information systems
+✔ Experts specializing in deploying and operating ERP and CRM systems
+✔ Managers of information/knowledge systems
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Hệ thống thông tin (IS) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội việc làm rất đa dạng với một số vị trí công việc điển hình như:
+✔ Quản trị viên các hệ cơ sở dữ liệu;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin;
+✔ Chuyên viên phát triển ứng dụng cho hệ thống thông tin;
+✔ Chuyên viên triển khai, vận hành các hệ thống ERP, CRM;
+✔ Quản trị hệ thống thông tin và tri thức.
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_AI_K15C',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of AI specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Engineers graduating AI specialty have diverse employment opportunities with a number of typical positions such as:
+✔ AI application development engineers
+✔ Automation system and robot developer
+✔ Data architects
+✔ Researchers in the Artificial Intelligence field
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Trí tuệ nhân tạo (TTNT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Kỹ sư phát triển ứng dụng AI
+✔ Kỹ sư phát triển hệ thống tự động hóa, robot
+✔ Kiến trúc sư dữ liệu
+✔ Chuyên gia nghiên cứu chuyên sâu về trí tuệ nhân tạo
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_AI_K15D, K16A',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of AI specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Engineers graduating AI specialty have diverse employment opportunities with a number of typical positions such as:
+✔ AI application development engineers
+✔ Automation system and robot developer
+✔ Data architects
+✔ Researchers in the Artificial Intelligence field
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Trí tuệ nhân tạo (TTNT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Kỹ sư phát triển ứng dụng AI
+✔ Kỹ sư phát triển hệ thống tự động hóa, robot
+✔ Kiến trúc sư dữ liệu
+✔ Chuyên gia nghiên cứu chuyên sâu về trí tuệ nhân tạo
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_AI_K15B',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IA_K15A',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IA_K15B',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IA_K15C',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IA_K15D,K16A',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IA_K16B(FNO)',10,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/ Information Assurance (IA) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IA specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IA specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Network and database security administrators;
+✔ Engineers in testing and evaluating information assurance for networks and systems;
+✔ Engineers in reviewing vulnerabilities, weaknesses and handling information assurance incidents;
+✔ Developer in programming and developing applications to ensure information assurance;
+✔ Counselor in analyzing, consulting, designing safety information systems.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành An toàn thông tin (ATTT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành ATTT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên quản trị an ninh mạng, cơ sở dữ liệu;
+✔ Chuyên viên kiểm tra, đánh giá an toàn thông tin cho mạng và hệ thống;
+✔ Chuyên gia rà soát lỗ hổng, điểm yếu và xử lý sự cố an toàn thông tin;
+✔ Chuyên gia lập trình và phát triển ứng dụng đảm bảo an toàn thông tin;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin đảm bảo an toàn.
+
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IoT_K15A',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IoT_K15B',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IoT_K15C',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IoT_K15D,K16A',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_IoT_K16C(FNO)',11,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','973/QĐ-ĐHFPT'),
+('BIT_GD_K18B',5,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+General objective: Training Bachelor of Information Technology, Digital Art & Design specialty with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in Digital Art & Design.
+Specific objectives:
+PO1: Develop physically, mentally, intellectually, morally and deepen national pride by equipping students with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with fundamental knowledge of the IT industry as well as methodologies and in-depth technologies of the Digital Art & Design major.
+PO3: Help students use modern digital-oriented tools, equipment and softwares proficiently. Train students to flexibly apply knowledge and skills in the visual arts and come up with effective and appropriate visual communication solutions.
+PO4: Shape the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to digital art and design effectively, and be capable of lifelong learning for personal and professional development.
+PO5: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Digital Art & Design major can take charge of the following position:
+- Designer of the company, the design dew, advertising agencies, marketing, television, games (games).
+- Expert 2D, 3D, visual effects, sound effects.
+- User experience design experts.
+- Design team leader.
+- Creative director.
+- Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of digital art and design.
+1. Mục tiêu đào tạo
+Mục tiêu chung: Đào tạo cử nhân ngành Công nghệ thông tin (CNTT), chuyên ngành Thiết kế mỹ thuật số có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành TKMTS.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản của ngành cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành Thiết kế mỹ thuật số.
+PO3: Giúp người học sử dụng thành thạo các công cụ, thiết bị, phần mềm hiện đại theo định hướng kỹ thuật số. Đồng thời, ứng dụng linh hoạt kiến thức, kỹ năng về nghệ thuật thị giác, đưa ra giải pháp truyền thông thị giác hiệu quả và phù hợp với thời đại.
+PO4: Hình thành cho người học thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới thiết kế mỹ thuật số một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc,
+PO5: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Thiết kế Mỹ thuật số có thể đảm nhiệm một số công việc sau:
+- Họa sĩ thiết kế trong các công ty, các xưởng thiết kế, công ty quảng cáo, marketing, truyền hình, trò chơi (game).
+- Chuyên gia 2D, 3D, hiệu ứng hình ảnh, âm thanh.
+- Chuyên gia thiết kế trải nghiệm người dùng (UX).
+- Trưởng nhóm thiết kế.
+- Giám đốc sáng tạo.
+- Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực TKMTS.','973/QĐ-ĐHFPT'),
+('BIT_IS_từ K16C',7,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Information System (IS) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of IS specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/IS specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Information Systems have diverse employment opportunities with some typical job positions such as:
+✔ Administrators of the database systems
+✔ Information system designers, analysts, consultants
+✔ Specialists developing applications for information systems
+✔ Experts specializing in deploying and operating ERP and CRM systems
+✔ Managers of information/knowledge systems
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Hệ thống thông tin (IS) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Hệ thống thông tin có cơ hội việc làm rất đa dạng với một số vị trí công việc điển hình như:
+✔ Quản trị viên các hệ cơ sở dữ liệu;
+✔ Chuyên viên phân tích, tư vấn, thiết kế hệ thống thông tin;
+✔ Chuyên viên phát triển ứng dụng cho hệ thống thông tin;
+✔ Chuyên viên triển khai, vận hành các hệ thống ERP, CRM;
+✔ Quản trị hệ thống thông tin và tri thức.
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','669/QĐ-ĐH-FPT'),
+('BIT_AI_K15C, K15D, K16A',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of AI specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Engineers graduating AI specialty have diverse employment opportunities with a number of typical positions such as:
+✔ AI application development engineers
+✔ Automation system and robot developer
+✔ Data architects
+✔ Researchers in the Artificial Intelligence field
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Trí tuệ nhân tạo (TTNT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Kỹ sư phát triển ứng dụng AI
+✔ Kỹ sư phát triển hệ thống tự động hóa, robot
+✔ Kiến trúc sư dữ liệu
+✔ Chuyên gia nghiên cứu chuyên sâu về trí tuệ nhân tạo
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','669/QĐ-ĐH-FPT'),
+('BIT_AI_K16B, K16C',8,'Bachelor Program of Information Technology','CTĐT ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Artificial Intelligence (AI) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of AI specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/AI specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Engineers graduating AI specialty have diverse employment opportunities with a number of typical positions such as:
+✔ AI application development engineers
+✔ Automation system and robot developer
+✔ Data architects
+✔ Researchers in the Artificial Intelligence field
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Trí tuệ nhân tạo (TTNT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Trí tuệ nhân tạo có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Kỹ sư phát triển ứng dụng AI
+✔ Kỹ sư phát triển hệ thống tự động hóa, robot
+✔ Kiến trúc sư dữ liệu
+✔ Chuyên gia nghiên cứu chuyên sâu về trí tuệ nhân tạo
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','669/QĐ-ĐH-FPT'),
+('BBA_HM_K15B',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','""The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Accommodation management; Restaurant management; Event organization.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.""','336/QĐ-DHFPT'),
+('BBA_HM_K15C',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','""The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Accommodation management; Restaurant management; Event organization.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.""','336/QĐ-DHFPT'),
+('BBA_HM_K15D,K16A',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Accommodation management; Restaurant management; Event organization.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','336/QĐ-DHFPT'),
+('BBA_HM_K15A',9,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Hotel management program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of hotel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (15 subjects – 52 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (11 subjects – 40 credits): Provide the general and in-depth knowledge of Hotel operation and management; Sales and marketing in hotel business; Hotel revenue management, Event organization. Equip students with management skills in hotel services and working skills in a multicultural environment.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and practical skills in the areas of: Accommodation management; Restaurant management; Event organization.
+
+Upon graduation, students can build their career in the fields of tourism, accommodation management, restaurant&bars , and event management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị khách sạn của Trường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị khách sạn, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực quản trị khách sạn và trong môi trường quốc tế hoặc có tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (15 môn – 52 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (11 môn – 40 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về quản trị và vận hành lưu trú, bán hàng và marketing trong kinh doanh khách sạn, quản trị doạnh thu khách sạn, tổ chức sự kiện. Trang bị cho người học các kỹ năng tổ chức, quản lý vận hành các dịch vụ khách sạn và các kỹ năng làm việc trong môi trường đa văn hóa.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức chuyên sâu và nghiệp vụ thực tế về các lĩnh vực: Quản trị lưu trú; Quản trị nhà hàng; và Tổ chức sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về du lịch, quản lý khách sạn, quản lý lưu trú và ẩm thực, quản lý và kinh doanh nhà hàng, quán bar, cafe, và tổ chức sự kiện.','336/QĐ-DHFPT'),
+('BBA_IB_K16D,K17A',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BBA_IB_K17B',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BBA_IB_K17D 18A',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BBA_IB_K18B',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BBA_IB_K18C',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BBA_IB_K17C',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','336/QĐ-DHFPT'),
+('BIT_SE_từ K16B',1,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. Training Objectives
+1.1 General objective:
+Training Information Technology (IT)/Software Engineering (SE) specialty engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty as well as pursue further education and research.
+The training program aims to:
+a) To equip students with fundamental knowledge of mathematics and the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialty ;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply specialized knowledge of SE specialty into practical work
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in study, work and life
+1.2 Specific objectives:
+Graduates of the IT training program/SE specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+PO3. Mastering professional skills and soft skills of 21st century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+1.3. Job positions after graduation:
+Graduates of Software Engineering can choose for themselves the following jobs:
+✔ Application development programmers
+✔ Business analysts
+✔ Software quality assurance engineers
+✔ Software process engineers
+✔ Software project administrators
+
+2. Program Learning Outcomes
+
+3. Volume of learning of the course: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. Enrollment object
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT university.
+
+5. Training process, graduating conditions
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on training of FPT University.
+
+6. Evaluation method
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. Mục tiêu đào tạo
+1.1 Mục tiêu chung:
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT)/chuyên ngành Kỹ thuật phần mềm (KTPM) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo phải thể hiện được những điều sau đây:
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu);
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+1.3. Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm có thể lựa chọn cho mình những công việc như:
+✔ Lập trình viên phát triển ứng dụng
+✔ Chuyên viên phân tích nghiệp vụ
+✔ Kỹ sư đảm bảo chất lượng phần mềm
+✔ Kỹ sư quy trình sản xuất phần mềm
+✔ Quản trị viên dự án phần mềm
+
+2. Chuẩn đầu ra
+
+3. Khối lượng kiến thức toàn khóa
+
+4. Đối tượng tuyển sinh
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. Quy trình đào tạo, điều kiện tốt nghiệp
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. Cách thức đánh giá
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','201/QĐ-ĐHFPT'),
+('BIT_IoT_K16B(FNO)',11,'Bachelor Program of Information Technology','Chương trình cử nhân ngành CNTT','1. TRAINING OBJECTIVES
+
+1.1. General objectives:
+
+Training Information Technology (IT)/Internet of Things (IoT) engineers with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialties.
+The training program aims to:
+a) To equip students with fundamental knowledge of the IT industry together with fundamental and specialized methodologies, technologies related to the trained specialties;
+b) Train students the necessary virtues and skills in the professional working environment, know how to apply fundamental knowledge and specialized knowledge into practical work;
+c) Provide students with a strong foundation in foreign languages, science, culture and society, promoting their autonomy and creativity in the study, work and life.
+
+1.2 Specific objectives:
+Graduates of the IT training program/IoT specialty must demonstrate the following:
+PO1. Having basic knowledge of social sciences, politics, and law, security and defense, foundational knowledge of the IT industry & in-depth knowledge of the specialized training: techniques, methods, technologies, in-depth application areas; development trends in the world; at the same time understand the overall market, context, functions and tasks of the professions in the specialized training.
+
+PO2. Be able to work as a full member of a professional team in the field of training: participate in designing, selecting techniques and technologies in line with development trends, solving technical problems; understand technology trends and user requirements; can do the complete solution development plan; performance management and change management in his or her part of the job; understand state policies in specialized fields.
+
+PO3. Mastering professional skills and soft skills of 21st-century citizens (thinking skills, work skills, skills in using work tools, life skills in a global society);
+
+PO4. Can use English well in study and work and a second foreign language in normal communication.
+
+PO5. Honesty, high discipline in study and work, know how to work effectively in groups; know how to behave culturally at work and in society; dynamic, creative, and willing to learn constantly. Demonstrate professional attitude and behavior with the ability to conceive of ideas, design, implement and operate systems in the context of corporation and society.
+
+- Job placement after graduation:
+Engineers graduating IoT specialty have diverse employment opportunities with a number of typical positions such as:
+✔ Developer for IoT application;
+✔ Specialist for software development and embedded systems;
+✔ Integrated system architect.
+
+2. PROGRAM LEARNING OUTCOMES
+
+3. VOLUME OF LEARNING OF THE COURSE: 145 credits, excluding Preparation English, Military Training, compulsory and elective training activities.
+
+4. ENROLLMENT OBJECT
+✔ In accordance with regulations on formal university enrollment; college enrollment of the Ministry of Education and Training.
+✔ In accordance with regulations on enrollment of FPT University.
+
+5. TRAINING PROCESS, GRADUATING CONDITIONS
+✔ In accordance with regulations on formal university and college training of the Ministry of Education and Training.
+✔ In accordance with regulations on the training of FPT University.
+
+6. EVALUATION METHOD
+✔ In accordance with regulations on examination and assessment in the training regulations of FPT University.
+
+1. MỤC TIÊU ĐÀO TẠO
+
+1.1 Mục tiêu chung:
+
+Đào tạo kỹ sư ngành Công nghệ thông tin (CNTT), chuyên ngành Internet vạn vật (IoT) có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn và thực hành, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến các chuyên ngành được đào tạo.
+Chương trình đào tạo nhằm:
+a) Trang bị cho sinh viên kiến thức cơ bản của ngành CNTT cùng các phương pháp luận, công nghệ nền tảng và chuyên sâu của chuyên ngành;
+b) Rèn luyện cho sinh viên những đức tính, kỹ năng cần thiết qua môi trường làm việc chuyên nghiệp, biết vận dụng các kiến thức ngành CNTT và các kiến thức chuyên ngành vào công việc thực tế;
+c) Cung cấp cho sinh viên một nền tảng vững chắc về ngoại ngữ, khoa học, văn hóa, xã hội, phát huy tính chủ động, sáng tạo trong học tập, công việc và cuộc sống.
+
+1.2 Mục tiêu cụ thể:
+Sinh viên tốt nghiệp chương trình đào tạo CNTT phải thể hiện được những điều sau đây:
+
+PO1. Có kiến thức cơ bản về khoa học xã hội, chính trị pháp luật, an ninh quốc phòng, kiến thức nền tảng của ngành CNTT & kiến thức chuyên sâu của chuyên ngành được đào tạo: kỹ thuật, phương pháp, công nghệ, các lĩnh vực ứng dụng chuyên sâu; xu hướng phát triển trên thế giới; đồng thời hiểu biết tổng thể thị trường, bối cảnh, chức năng, nhiệm vụ của các ngành nghề thuộc chuyên ngành được đào tạo.
+
+PO2. Có thể làm việc được như một thành viên chính thức trong nhóm chuyên môn thuộc chuyên ngành được đào tạo: tham gia thiết kế, lựa chọn kỹ thuật và công nghệ phù hợp với xu hướng phát triển, giải quyết các vấn đề kỹ thuật; nắm được xu hướng công nghệ và yêu cầu người dùng; có thể làm kế hoạch phát triển hoàn thiện giải pháp; quản lý thực hiện và quản lý thay đổi trong phần công việc của mình; hiểu được các chính sách nhà nước về lĩnh vực chuyên ngành.
+
+PO3. Thành thạo được các kỹ năng nghề nghiệp và các kỹ năng mềm của công dân thế kỷ 21 (kỹ năng tư duy, kỹ năng làm việc, kỹ năng sử dụng các công cụ làm việc, kỹ năng sống trong xã hội toàn cầu).
+
+PO4. Sử dụng được tốt tiếng Anh trong học tập và công việc và một ngoại ngữ thứ hai trong giao tiếp thông thường.
+
+PO5. Trung thực, kỷ luật cao trong học tập và công việc, biết làm việc nhóm một cách hiệu quả; biết ứng xử văn hóa trong công việc và xã hội; năng động, sáng tạo và có ý chí học tập không ngừng. Thể hiện thái độ và hành vi chuyên nghiệp với năng lực hình thành ý tưởng, thiết kế, thực hiện và vận hành hệ thống trong bối cảnh doanh nghiệp và xã hội.
+
+- Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành IoT có cơ hội việc làm đa dạng với một số vị trí điển hình như:
+✔ Chuyên viên phát triển ứng dụng IoT
+✔ Chuyên viên phát triển phần mềm, hệ thống nhúng
+✔ Chuyên gia tích hợp hệ thống thông minh từ đơn giản đến phức tạp.
+
+2. CHUẨN ĐẦU RA
+
+3. KHỐI LƯỢNG KIẾN THỨC TOÀN KHOÁ: 145 tín chỉ, chưa kể Tiếng Anh chuẩn bị, Giáo dục Quốc phòng, các hoạt động rèn luyện bắt buộc và tự chọn.
+
+4. ĐỐI TƯỢNG TUYỂN SINH
+✔ Theo quy chế tuyển sinh đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế tuyển sinh của trường Đại học FPT.
+
+5. QUY TRÌNH ĐÀO TẠO, ĐIỀU KIỆN TỐT NGHIỆP
+✔ Thực hiện theo quy chế đào tạo đại học, cao đẳng hệ chính quy của Bộ Giáo dục và Đào tạo.
+✔ Theo quy chế đào tạo của trường Đại học FPT.
+
+6. CÁCH THỨC ĐÁNH GIÁ
+✔ Theo quy định về kiểm tra và đánh giá học phần trong quy chế đào tạo của trường Đại học FPT.','201/QĐ-ĐHFPT'),
+('BBA_TM_K15A',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_TM_K15B',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_TM_K15C',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_TM_K15D,K16A',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K15A',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K15A',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_IB_K15A',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K15B',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K15B',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K15C',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_IB_K15B',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_IB_K15C',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K15D, K16A',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K15C',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K15D, K16A',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_IB_K15D K16A',12,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – International Business program of FPT University is to train students into specialists in international business, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of international business, international supply chains, international finance and payment, and cultural aspects in international business. Equip students with skills including negotiation, business strategy analyses, processes and techniques in international business, and independent research in international business field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: International business and Logistics and Supply chain management.
+
+Upon graduation, students can build their career in the fields of international financial analyses and investment, export and import, transportation and logistics, supply chain management, international marketing, business and procurement, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Kinh doanh quốc tế củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về kinh doanh quốc tế, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực kinh doanh quốc tế và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về kinh doanh quốc tế, chuỗi cung ứng quốc tế, các kiến thức về tài chính và thanh toán quốc tế, và các yếu tố văn hóa trong kinh doanh quốc tế. Trang bị cho người học các kỹ năng đàm phán, phân tích các chiến lược kinh doanh, các thủ tục và nghiệp vụ kinh doanh quốc tế, và nghiên cứu độc lập trong lĩnh vực kinh doanh quốc tế.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Kinh doanh quốc tế và Logistics và quản trị chuỗi cung ứng.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính và đầu tư quốc tế, xuất nhập khẩu, vận tải và logistics, quản trị chuỗi cung ứng, marketing quốc tế, kinh doanh, mua hàng, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_TM_K16D,K17A',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_TM_K17B',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT '),
+('BBA_TM_K17C',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K16D,K17A',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K17B',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K17C',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K16D,K17A',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K17B',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_FIN_K17C',6,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Finance program of FPT University is to train students into specialists in financial management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of financial markets and investment behavior, and in-depth knowledge of financial models, asset pricing, and financial risk management. Equip students with skills and tools for financial analyses, financial decision making, and independent research in finance field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Investment finance and Corporate finance.
+
+Upon graduation, students can build their career in the fields of financial analyses, financial advisory, financial brokerage, accounting, auditing, financial management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Tài chính củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về quản trị tài chính, nhà quản lý, doanh nhân tiềm năng. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực tài chinh và trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về thị trường tài chính và hành vi đầu tư, các kiến thức chuyên sâu về mô hình tài chính, định giá tài chính và quản trị rủi ro tài chính. Trang bị cho người học các kỹ năng và công cụ để phân tích tài chính, ra quyết định đầu tư, và nghiên cứu độc lập trong lĩnh vực tài chính.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Tài chính đầu tư và tài chính doanh nghiệp.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về phân tích tài chính, tư vấn tài chính, môi giới tài chính, kế toán, kiểm toán, các vị trí quản trị về tài chính, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K18B',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_TM_K17D 18A',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K17D 18A',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_MKT_K18C',2,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Marketing program of FPT University is to train students into specialists in marketing management, managers, and entrepreneurs. Students will be equipped with all essential knowledge and skills to work in the field of marketing and in an international working environment, or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general knowledge of marketing, including behavior, services, integrated marketing, branding, and marketing in the internet era. Equip students with all the tools for marketing, selling, brand developing activities, and independent research in marketing field.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Digital marketing tools and Brand and event management.
+
+Upon graduation, students can build their career in the fields of digital marketing, market research, advertising and public relations, event organizing, sales, marketing management, and start-up.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) Trường Đại học FPT nhằm đào tạo người học thành các nhà chuyên môn trong các lĩnh vực quản trị kinh doanh, nhà quản lý, doanh nhân tiềm năng năng động và sáng tạo làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung về các lĩnh vực marketing gồm hành vi, dịch vụ, marketing tích hợp, thương hiệu và marketing thời đại internet. Trang bị cho người học các công cụ phục vụ hoạt động marketing, bán hàng, phát triển thương hiệu, và nghiên cứu độc lập trong lĩnh vực marketing.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Công cụ marketing số và quản trị thương hiệu và sự kiện.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các lĩnh vực về marketing số, nghiên cứu thị trường, quảng cáo và quan hệ công chúng, tổ chức sự kiện, bán hàng, các vị trí quản trị về marketing, và khởi nghiệp.','200/QĐ-ĐHFPT'),
+('BBA_TM_K18B',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_TM_K18C',4,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','The objective of the Bachelor of Business Administration – Tourism and Travel Management program of FPT University is to train students into specialists in tourism and travel management, tour guides, tour managers and operators. Students will be equipped with all essential knowledge and skills to work in the field of tourism and travel management and in an international working environment or to continue into the next higher level of education.
+
+The program consists of four main modules:
+• General knowledge and skills (12 subjects – 32 credits): Provide the general knowledge of political, cultural and social issues, and all essential skills to study and work in an active and changing environment.
+• Major knowledge and skills (16 subjects – 55 credits): Provide the basic knowledge of the business administration major; and all essential skills and attitudes to become specialists in the business administration field.
+• Specialized knowledge and skills (10 subjects – 37 credits): Provide the general and in-depth knowledge of tourism and travel management and operation, psychology and behavior of tourists, Vietnamese and and culture, Vietnamese tourism geography. Equip students with skills including entrepreneurship, applied statistics, tour and event organization, and independent research in tourism and travel management.
+• Elective combo (5 subjects – 15 credits for each combo): Provide in-depth knowledge and skills in two minors: Tour operation and Tour guide.
+
+Upon graduation, students can build their career in tourism businesses, tour consultancy and organization, event and teambuilding organization, tourism promotion, international relation, tourism education, and start-ups in tourism and travel management.
+
+Mục tiêu tổng thể của chương trình cử nhân Quản trị Kinh doanh (QTKD) – Chuyên ngành Quản trị Dịch vụ Du lịch và Lữ hành củaTrường Đại học FPT là đào tạo người học thành các nhà chuyên môn trong các lĩnh vực về du lịch và lữ hành, các hướng dẫn viên, các nhà quản lý và điều hành dịch vụ du lịch và lữ hành. Có đủ các kiến thức và kỹ năng cần thiết để có làm việc trong lĩnh vực du lịch và lữ hành và trong môi trường quốc tế hoặc tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn.
+
+Chương trình bao gồm bốn khối kiến thức lớn:
+• Kiến thức kỹ năng chung (12 môn – 32 tín chỉ): Cung cấp cho người học các kiến thức chung về chính trị, văn hóa, xã hội; và các kỹ năng cần thiết để học tập và làm việc trong môi trường năng động luôn thay đổi.
+• Kiến thức kỹ năng ngành (16 môn – 55 tín chỉ): Cung cấp các kiến thức cơ sở ngành quản trị kinh doanh; các kỹ năng và thái độ cần thiết để trở thành các nhà chuyên môn trong lĩnh vực quản trị kinh doanh.
+• Kiến thức kỹ năng chuyên ngành (10 môn – 37 tín chỉ): Cung cấp các kiến thức chung và chuyên sâu về vận hành và quản trị kinh doanh du lịch và lữ hành, kiến thức về tâm lý và hành vi tiêu dung của khách du lịch, kiến thức lịch sử và văn hóa Việt Nam, địa lý du lịch Viêt Nam. Trang bị cho người học kỹ năng về tư duy kinh doanh, các công cụ thống kê ứng dụng, các nghiệp vụ du lịch và tổ chức sự kiện, và kỹ năng nghiên cứu độc lập trong lĩnh vực du lịch và lữ hành.
+• Lựa chọn (5 môn – 15 tín chỉ cho mỗi lựa chọn): Cung cấp các kiến thức và kỹ năng chuyên sâu về hai lĩnh vực: Điều hành tour và Hướng dẫn du lịch.
+
+Sau khi tốt nghiệp, sinh viên có thể làm việc trong các cơ sở kinh doanh du lịch, tư vấn và tổ chức tour, sự kiện và teambuilding, xúc tiến quảng bá du lịch và hợp tác quốc tế, tham gia giảng dạy và bồi dưỡng nghiệp vụ du lịch, và khởi nghiệp trong lĩnh vực du lịch lữ hành.','200/QĐ-ĐHFPT'),
+('BBA_MC_K15D,K16A',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','199/QĐ-ĐHFPT'),
+('BBA_MC_K15C',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','199/QĐ-ĐHFPT'),
+('BBA_MC_K15B',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','199/QĐ-ĐHFPT'),
+('BBA_MC_K15A',3,'Bachelor Program of Business Administration','Chương trình cử nhân ngành QTKD','1. Training Objectives
+General objectives:
+The program of Bachelor of Business Administration, Multimedia communication specialty aims to train bachelors with personality and capacity to meet the needs of society, mastering professional knowledge and practice, being able to organize, implement and promote the creativity in jobs related to the trained specialty, being able to work in the international environment, and laying the foundation to pursue further study and research in multimedia communication.
+Specific objectives:
+PO1: Help students develop physically, mentally, intellectually, morally and deepen national pride by equipping them with general knowledge of politics, law, economy, society, physical education, music and national defense education.
+PO2: Provide students with foundational knowledge of business administration and in-depth knowledge of multimedia communication.
+PO3: Helps students combine knowledge of communication and multimedia art, and be able to apply knowledge of information technology in producing communication products.
+PO4: Provide knowledge of the entire process of strategic and communication planning for businesses, etc.
+PO5: Help learners practice essential skills such as proficiently using words, images, sounds, and content creation skills in the process of producing communication products.
+PO6: Orientate students towards the right attitudes and work ethics, abilities to think creatively, work well in groups and independently and abilities to solve problems related to multimedia communication effectively, and be capable of lifelong learning for personal and professional development.
+PO7: Help students use English fluently and a second language at a basic level.
+Job positions after graduation:
+Graduates of the Multimedia communication specialty have diverse job opportunities such as:
+• Content creation specialist/director;
+• Communication specialist/director;
+• Advertising and public relations specialist;
+• Reporters, editors for television, radio, print newspapers, magazines;
+• Multimedia research analyst;
+• Take charge of media startups/agency, media product production;
+• Startup CEO in the field of multimedia communication.
+• Researchers / Lecturers / Postgraduates: can carry out research activities in centers that conduct research in the field of Multimedia communication.
+Upon graduation, bachelors can pursue further study to obtain a master''s degree in Business Administration and Communication, Multimedia Content Creation.
+
+1. Mục tiêu của chương trình
+Mục tiêu chung:
+Mục tiêu của chương trình cử nhân Quản trị Kinh doanh (QTKD), chuyên ngành Quản trị Truyền thông đa phương tiện nhằm đào tạo người học có nhân cách và năng lực đáp ứng nhu cầu thực tế của xã hội, nắm vững kiến thức chuyên môn, có khả năng tổ chức, thực hiện và phát huy sáng tạo trong các công việc liên quan đến chuyên ngành được đào tạo, làm việc được trong môi trường quốc tế, tạo tiền đề cho việc học tập, nghiên cứu ở bậc học cao hơn về chuyên ngành QTTTĐPT.
+Mục tiêu cụ thể:
+PO1: Phát triển về thể chất, tinh thần, trí tuệ, nhân sinh quan, lòng tự hào dân tộc thông qua việc trang bị cho người học những kiến thức tổng quát về lý luận chính trị, pháp luật, kinh tế, xã hội, giáo dục thể chất, âm nhạc, giáo dục quốc phòng.
+PO2: Cung cấp cho người học những kiến thức cơ bản trong quản trị kinh doanh và kiến thức chuyên sâu về Quản trị truyền thông đa phương tiện.
+PO3: Giúp người học kết hợp các kiến thức về truyền thông và mỹ thuật đa phương tiện, đồng thời ứng dụng được các kiến thức về công nghệ thông tin trong quá trình sản xuất các sản phẩm truyền thông.
+PO4: Người học sẽ được bao quát toàn bộ quá trình xây dựng chiến lược, hoạch định truyền thông cho doanh nghiệp...
+PO5: Giúp người học rèn luyện những kỹ năng thiết yếu như sử dụng thành thạo ngôn từ, hình ảnh, âm thanh và kỹ năng tạo lập nội dung trong quá trình sản xuất các sản phẩm truyền thông.
+PO6: Hướng người học có thái độ và đạo đức nghề nghiệp đúng đắn, có khả năng tư duy sáng tạo, làm việc nhóm, làm việc độc lập và có năng lực giải quyết các vấn đề liên quan tới quản trị truyền thông đa phương tiện một cách hiệu quả, có khả năng tự học tập suốt đời để phát triển bản thân và công việc.
+PO7: Giúp người học sử dụng thành thạo tiếng Anh và một ngoại ngữ hai ở mức cơ bản.
+Vị trí việc làm sau khi tốt nghiệp:
+Sinh viên tốt nghiệp chuyên ngành Quản trị Truyền thông Đa phương tiện sẽ có nhiều cơ hội làm việc đa dạng như:
+• Chuyên viên/giám đốc sáng tạo nội dung;
+• Chuyên viên/giám đốc truyền thông;
+• Chuyên viên quảng cáo và quan hệ công chúng;
+• Phóng viên, biên tập viên truyền hình, phát thanh, báo in, tạp chí;
+• Chuyên gia nghiên cứu truyền thông đa phương tiện;
+• Phụ trách các start up/agency về truyền thông, sản xuất sản phẩm truyền thông;
+• CEO của các start up về lĩnh vực truyền thông đa phương tiện do mình sáng lập.
+• Nghiên cứu viên/ Giảng viên/ học sau đại học: Có thể thực hiện nhiệm vụ nghiên cứu tại các trung tâm, đơn vị có nghiên cứu về lĩnh vực QTTTĐPT.
+Sau khi tốt nghiệp, các cử nhân có thể học tiếp để lấy bằng cao học về Quản trị Kinh doanh và Truyền thông, Sản xuất nội dung Đa phương tiện.','199/QĐ-ĐHFPT');
+INSERT INTO `swp391`.`curriculumsubject`
+(`CurID`,
+`SubjectID`)
 VALUES
-('Default',''),
-('PHE_COM1: Vovinam BBA_MC_K16B',''),
-('PHE_COM2: Cờ Vua BBA_MC_K16B',''),
-('MC_COM1: Creative Content Production_Sản xuất nội dung truyền thông BBA_MC_K16B',''),
-('MC_COM2: Public Relations_Quan hệ công chúng BBA_MC_K16B',''),
-('MC_COM3: Digital marketing_Marketing số BBA_MC_K16B','');
+(1,1),
+(1,11),
+(1,15),
+(1,16),
+(1,6),
+(1,18),
+(1,17),
+(1,8),
+(1,3),
+(1,5),
+(1,9),
+(1,13),
+(2,1),
+(2,11),
+(2,15),
+(2,16),
+(2,6),
+(2,18),
+(2,17),
+(2,8),
+(2,3),
+(2,5),
+(2,9),
+(2,13),
+(3,1),
+(3,11),
+(3,15),
+(3,16),
+(3,6),
+(3,18),
+(3,17),
+(3,8),
+(3,3),
+(3,5),
+(3,9),
+(3,13),
+(4,1),
+(4,11),
+(4,15),
+(4,16),
+(4,6),
+(4,18),
+(4,17),
+(4,8),
+(4,3),
+(4,5),
+(4,9),
+(4,13),
+(5,1),
+(5,11),
+(5,15),
+(5,16),
+(5,6),
+(5,18),
+(5,17),
+(5,8),
+(5,3),
+(5,5),
+(5,9),
+(6,1),
+(6,11),
+(6,15),
+(6,16),
+(6,6),
+(6,18),
+(6,17),
+(6,8),
+(6,3),
+(6,5),
+(6,9),
+(7,1),
+(7,11),
+(7,15),
+(7,16),
+(7,6),
+(7,18),
+(7,17),
+(7,8),
+(7,3),
+(7,5),
+(7,9),
+(8,1),
+(8,11),
+(8,15),
+(8,16),
+(8,6),
+(8,18),
+(8,17),
+(8,8),
+(8,3),
+(8,5),
+(8,9),
+(9,1),
+(9,11),
+(9,15),
+(9,16),
+(9,6),
+(9,18),
+(9,17),
+(9,8),
+(9,3),
+(9,5),
+(9,9),
+(10,1),
+(10,11),
+(10,15),
+(10,16),
+(10,6),
+(10,18),
+(10,17),
+(10,8),
+(10,3),
+(10,5),
+(10,9),
+(11,1),
+(11,11),
+(11,15),
+(11,16),
+(11,6),
+(11,18),
+(11,17),
+(11,8),
+(11,3),
+(11,5),
+(11,9);
+
 INSERT INTO `swp391`.`combocurriculum`
 (`ComboID`,
-`CurriculumCode`)
+`CurID`)
 VALUES
-(1,'BBA_MC_K16B'),
-(1,'BBA_MKT_K16B'),
-(1,'BBA_MKT_K16C'),
-(1,'BIT_SE_K16C'),
-(1,'BBA_MC_K16C'),
-(1,'BBA_TM_K16B'),
-(1,'BBA_TM_K16C'),
-(1,'BIT_GD_K16B'),
-(1,'BIT_IA_K16B'),
-(1,'BBA_FIN_K16B'),
-(1,'BBA_FIN_K16C'),
-(1,'BIT_AI_K16B'),
-(1,'BIT_IoT_K16B'),
-(1,'BIT_AI_K16C'),
-(1,'BBA_HM_K16B'),
-(1,'BBA_HM_K16C'),
-(1,'BIT_IS_K16B'),
-(1,'BIT_IS_K16C'),
-(1,'BIT_IoT_K16C'),
-(1,'BBA_IB_K16B'),
-(1,'BBA_IB_K16C'),
-(2,'BBA_MC_K16B'),
-(2,'BBA_MKT_K16B'),
-(2,'BBA_MKT_K16C'),
-(2,'BIT_SE_K16C'),
-(2,'BBA_MC_K16C'),
-(2,'BBA_TM_K16B'),
-(2,'BBA_TM_K16C'),
-(2,'BIT_GD_K16B'),
-(2,'BIT_IA_K16B'),
-(2,'BBA_FIN_K16B'),
-(2,'BBA_FIN_K16C'),
-(2,'BIT_AI_K16B'),
-(2,'BIT_IoT_K16B'),
-(2,'BIT_AI_K16C'),
-(2,'BBA_HM_K16B'),
-(2,'BBA_HM_K16C'),
-(2,'BIT_IS_K16B'),
-(2,'BIT_IS_K16C'),
-(2,'BIT_IoT_K16C'),
-(2,'BBA_IB_K16B'),
-(2,'BBA_IB_K16C'),
-(3,'BBA_MC_K16B'),
-(3,'BBA_MKT_K16B'),
-(3,'BBA_MKT_K16C'),
-(3,'BIT_SE_K16C'),
-(3,'BBA_MC_K16C'),
-(3,'BBA_TM_K16B'),
-(3,'BBA_TM_K16C'),
-(3,'BIT_GD_K16B'),
-(3,'BIT_IA_K16B'),
-(3,'BBA_FIN_K16B'),
-(3,'BBA_FIN_K16C'),
-(3,'BIT_AI_K16B'),
-(3,'BIT_IoT_K16B'),
-(3,'BIT_AI_K16C'),
-(3,'BBA_HM_K16B'),
-(3,'BBA_HM_K16C'),
-(3,'BIT_IS_K16B'),
-(3,'BIT_IS_K16C'),
-(3,'BIT_IoT_K16C'),
-(3,'BBA_IB_K16B'),
-(3,'BBA_IB_K16C');
+(1,1),
+(1,2),
+(1,3),
+(1,4),
+(1,5),
+(1,6),
+(1,7),
+(1,8),
+(1,9),
+(1,10),
+(1,11),
+(1,12),
+(1,13),
+(1,14),
+(1,15),
+(1,16),
+(1,17),
+(1,18),
+(1,19),
+(1,20),
+(1,21),
+(2,1),
+(2,2),
+(2,3),
+(2,4),
+(2,5),
+(2,6),
+(2,7),
+(2,8),
+(2,9),
+(2,10),
+(2,11),
+(2,12),
+(2,13),
+(2,14),
+(2,15),
+(2,16),
+(2,17),
+(2,18),
+(2,19),
+(2,20),
+(2,21),
+(3,1),
+(3,2),
+(3,3),
+(3,4),
+(3,5),
+(3,6),
+(3,7),
+(3,8),
+(3,9),
+(3,10),
+(3,11),
+(3,12),
+(3,13),
+(3,14),
+(3,15),
+(3,16),
+(3,17),
+(3,18),
+(3,19),
+(3,20),
+(3,21);
+INSERT INTO `swp391`.`elective`
+(`ElectiveNameEN`,
+`ElectiveNameVN`,
+`note`,
+`isActive`)
+VALUES
+(N'BBA_MC_K16B TMI_ELE',N'TMI_ELE -- Traditional musical instrument_Nhạc cụ truyền thống',N'',1),
+(N'Entrepreneurship Group 1_ Nhóm môn Khởi nghiệp 1',N'EXE_ELE -- Entrepreneurship Group 1_ Nhóm học phần Khởi nghiệp 1',N'',1),
+(N'MC_Entrepreneurship 2 and Combos_ Nhóm học phần Khởi nghiệp 2 và Combos',N'MC_EXE_ELE -- MC_Entrepreneurship 2 and Combos_ Nhóm học phần Khởi nghiệp 2 và Combos',N'',1),
+(N'BBA_MKT_K15A TMI_ELE',N'TMI_ELE -- Traditional musical instrument_Nhạc cụ truyền thống',N'',1),
+(N'BBA_MKT_K15A MKT_ELE',N'	MKT_ELE -- Graduation Elective - Marketing',N'',1),
+(N'BIT_GD_K16D,K17A TMI_ELE',N'	TMI_ELE -- Traditional musical instrument_Nhạc cụ truyền thống',N'',1),
+(N'SE_Entrepreneurship 2 and Combos',N'	SE_EXE_ELE -- SE_Entrepreneurship 2 and Combos_ Nhóm môn Khởi nghiệp 2 và Combos',N'',1),
+(N'Entrepreneurship Group 1_ Nhóm môn Khởi nghiệp 1',N'EXE_ELE -- Entrepreneurship Group 1_ Nhóm học phần Khởi nghiệp 1',N'',1);
+INSERT INTO `swp391`.`curriculumelective`
+(`ElectiveID`,
+`CurID`)
+VALUES
+(1,1),
+(2,1),
+(3,1);
+INSERT INTO `swp391`.`electivesubject`
+(`ElectiveID`,
+`SubjectID`)
+VALUES
+(1,25),
+(1,26),
+(1,27),
+(1,28),
+(1,29),
+(1,30),
+(1,31),
+(1,8),
+(1,5),
+(1,13),
+(2,1),
+(2,18),
+(2,11),
+(2,15),
+(2,3),
+(2,17),
+(2,6),
+(2,8),
+(2,5),
+(2,13),
+(3,1),
+(3,18),
+(3,11),
+(3,15),
+(3,3),
+(3,17),
+(3,6),
+(3,8),
+(3,5),	
+(3,13);
