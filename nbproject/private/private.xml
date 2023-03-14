@@ -3,8 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/kì%205/Updateiter/g5/src/java/module/Material.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/AccountDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/web/view/admin/elective/electivelist.jsp</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/DecisionDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/controller/admin/elective/EditElective.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/module/Elective.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/web/view/admin/curriculum/detail.jsp</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/ComboDAO.java</file>
             <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/MaterialDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/MajorDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/web/view/admin/curriculum/add.jsp</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/CurriculumDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/src/java/dal/ElectiveDAO.java</file>
+            <file>file:/D:/kì%205/Updateiter/g5/web/view/admin/elective/updateelective.jsp</file>
         </group>
     </open-files>
 </project-private>

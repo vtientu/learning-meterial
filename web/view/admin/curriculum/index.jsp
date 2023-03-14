@@ -31,6 +31,9 @@
                         <li>Curriculum List</li>
                     </ul>
                 </div>
+                <div class="col-lg-12 m-b-20">
+                    <a href="addelective?addtype=3"><input type="submit" class="btn" name="name" value="Add curriculum"></a>
+                </div>
                 <style>
                     .overflow{
                         max-width: 200px;
@@ -57,10 +60,10 @@
                                 <th class="col-lg-1">#</th>
                                 <th class="col-lg-1">CurriculumCode</th>
                                 <th class="col-lg-3">Name</th>
-                                <th class="col-lg-5">Description</th>
                                 <th class="col-lg-1">DecisionNo MM/dd/yyyy</th>
                                 <th class="col-lg-1">Total Credit</th>
                                 <th class="col-lg-1">Status</th>
+                                <th class="col-lg-1">Edit</th>
                                 </thead>
                                 <tbody id="content">
                                     <c:forEach items="${listcurriculum1}" var="list">
@@ -68,10 +71,11 @@
                                             <td>${list.curID}</td>
                                             <td>${list.getCurriculumCode()}</td>
                                             <td><a href="curriculumdetail?curID=${list.getCurID()}">${list.getCurriculumNameEN()}, ${list.major.majorNameEN}</a></td>
-                                            <td class="overflow">${list.description}</td>
+                                            
                                             <td><a>${list.decision.decisionNo != null ? list.decision.decisionNo:'None'}${list.decision.approvedDate != null ? ' dated ':''}${list.decision.approvedDate != null ? list.decision.approvedDate:''}
                                                 </a></td>
                                             <td>145</td>
+                                            <td>${list.approve==1?"Active":"Disactive"}</td>
                                             <td>
                                                 <a href="editelective?type=3&curID=${list.curID}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                                                 <a href="deletecurriculum?curID=${list.curID}"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
@@ -85,9 +89,7 @@
 
 
                 </div>
-                <div class="col-lg-12 m-b-20">
-                    <a href="addelective?addtype=3"><input type="submit" class="btn" name="name" value="Add curriculum"></a>
-                </div>
+                
                 <div class="col-lg-12 m-b20">
                     <div class="pagination-bx rounded-sm gray clearfix">
                         <ul class="pagination">

@@ -233,7 +233,7 @@
                                                             <th style="font-weight: bold; background: orange" class=" text-light">SubjectName</th>
                                                             <th style="font-weight: bold; background: orange" class=" text-light">Semester</th>
                                                             <th style="font-weight: bold; background: orange" class=" text-light">NoCredit</th>
-                                                            <th style="font-weight: bold; background: orange" class=" text-light">PreRequisite</th>
+                                                            <!--<th style="font-weight: bold; background: orange" class=" text-light">PreRequisite</th>-->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -243,7 +243,7 @@
                                                                 <td><a href="syllabus-details?syID=${s.subjectCode}">${s.subjectName}</a></td>
                                                                 <td>${s.semester}</td>
                                                                 <td>${s.noCredit}</td>
-                                                                <td>${s.prerequisite}</td>
+                                                                
 
                                                             </tr>
                                                         </c:forEach>

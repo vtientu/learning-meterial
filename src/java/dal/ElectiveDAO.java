@@ -228,12 +228,12 @@ public class ElectiveDAO extends DBContext {
             st.setString(1, id);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Elective elective = new Elective(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5));
+                Elective elective = new Elective(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(5), rs.getString(4));
                 list.add(elective);
             }
             return list;
         } catch (SQLException e) {
-            System.out.println(e + "11223344");
+            System.out.println(e + "1122334455");
         }
         return null;
     }

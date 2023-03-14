@@ -174,7 +174,7 @@ public class EditElective extends HttpServlet {
                     try {
                         subjectIDint[i] = Integer.parseInt(subjectID[i]);
                     } catch (NumberFormatException e) {
-                        System.out.println(e + "11223344");
+                        System.out.println(e + "1122334455");
                         subjectIDint[i] = 0;
                     }
                     Subject s = new Subject(subjectIDint[i], 0, 0, "", "", null, true, 0, 0);
@@ -240,7 +240,7 @@ public class EditElective extends HttpServlet {
                     try {
                         subjectIDint[i] = Integer.parseInt(subjectID[i]);
                     } catch (NumberFormatException e) {
-                        System.out.println(e + "11223344");
+                        System.out.println(e + "112233445566");
                         subjectIDint[i] = 0;
                     }
                     Subject s = new Subject(subjectIDint[i], 0, 0, "", "", null, true, 0, 0);
@@ -267,7 +267,7 @@ public class EditElective extends HttpServlet {
                     try {
                         eid[i] = Integer.parseInt(subjectid[i]);
                     } catch (NumberFormatException e) {
-                        System.out.println(e + "11223344");
+                        System.out.println(e + "1122334456");
                         eid[i] = 0;
                     }
                     Elective elective = new Elective(eid[i], nameen, namevn, i, code);

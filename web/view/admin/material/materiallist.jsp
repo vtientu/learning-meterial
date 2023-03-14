@@ -43,6 +43,9 @@
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
+                            <div class="col-lg-12 m-b-20">
+                                <a href="addelective?addtype=4"><input type="submit" class="btn" name="name" value="Add material"></a>
+                            </div>
                             <form action="materiallist" method="get">
                                 <div class="wc-title d-flex">
                                     <h4 style="line-height: 32px">Material List</h4>
@@ -52,6 +55,7 @@
                                     </button>
                                 </div>
                             </form>
+
                             <table class="table table-hover table-bordered">
                                 <thead style="background: orange" class="thead-orange">
                                 <th style="font-weight: bold" class=" text-light col-lg-1">#</th>
@@ -97,9 +101,7 @@
 
 
                 </div>
-                <div class="col-lg-12 m-b-20">
-                    <a href="addelective?addtype=4"><input type="submit" class="btn" name="name" value="Add material"></a>
-                </div>
+
                 <div class="col-lg-12 m-b20">
                     <div class="pagination-bx rounded-sm gray clearfix">
                         <ul class="pagination">
