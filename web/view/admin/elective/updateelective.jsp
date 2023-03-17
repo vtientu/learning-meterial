@@ -215,6 +215,7 @@
                             <div class="widget-box">
                                 <div class="wc-title">
                                     <h4>Edit curriculum</h4>
+
                                 </div>
                                 <div class="widget-inner">
                                     <form class="edit-profile m-b30" action="editelective" method="post">
@@ -224,113 +225,147 @@
                                                     <h3>1. Basic info</h3>
                                                 </div>
                                             </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Major</label>
-                                                <select class="form-control" name="major">
-                                                    <c:forEach items="${major}" var="m">
-                                                        <option value="${m.majorID}">${m.majorNameEN}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Decision</label>
-                                                <select class="form-control" id="sel1" name="decision">
-                                                    <c:forEach items="${decision}" var="de">
-                                                        <option value="${de.decisionNo}">${de.decisionNo}</option>
-                                                    </c:forEach>
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Active</label>
-                                                <div>
-                                                    <div class="form-check-inline">
-                                                        <label class="form-check-label" for="radio1" style="color: red">
-                                                            <input type="radio" class="form-check-input" name="approve" value="1" ${curriculum.approve==1?"checked":""}>Active
-                                                        </label>
+                                            <div class="container">
+                                                <!-- Nav tabs -->
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" data-toggle="tab" href="#home">Edit curriculum</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" data-toggle="tab" href="#menu1">Add subject</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" data-toggle="tab" href="#menu2">Add elective</a>
+                                                    </li>
+                                                </ul>
+
+                                                <!-- Tab panes -->
+                                                <div class="tab-content">
+                                                    <div id="home" class="container tab-pane active"><br>
+                                                        <div class="row">
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Major</label>
+                                                                <select class="form-control" name="major">
+                                                                    <c:forEach items="${major}" var="m">
+                                                                        <option value="${m.majorID}">${m.majorNameEN}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Decision</label>
+                                                                <select class="form-control" id="sel1" name="decision">
+                                                                    <c:forEach items="${decision}" var="de">
+                                                                        <option value="${de.decisionNo}">${de.decisionNo}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Active</label>
+                                                                <div>
+                                                                    <div class="form-check-inline">
+                                                                        <label class="form-check-label" for="radio1" style="color: red">
+                                                                            <input type="radio" class="form-check-input" name="approve" value="1" ${curriculum.approve==1?"checked":""}>Active
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check-inline">
+                                                                        <label class="form-check-label" for="radio2" style="color: red">
+                                                                            <input type="radio" class="form-check-input" name="approve" value="0" ${curriculum.approve==0?"checked":""}>unactive
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Curriculum code</label>
+                                                                <div>
+                                                                    <input type="text" name="type" value="3" hidden="">
+                                                                    <input class="form-control" type="text" name="curID" hidden="" value="${curriculum.curID}">
+                                                                    <input class="form-control" type="text" name="code" value="${curriculum.curriculumCode}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Curriculum name EN</label>
+                                                                <div>
+                                                                    <input class="form-control" type="text" name="nameen" value="${curriculum.curriculumNameEN}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-4">
+                                                                <label class="col-form-label">Curriculum name VN</label>
+                                                                <div>
+                                                                    <input class="form-control" type="text" name="namevn" value="${curriculum.curriculumNameVN}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12 m-t20">
+                                                                <div class="ml-auto m-b5">
+                                                                    <h3>2. Description</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-12">
+                                                                <label class="col-form-label">Description</label>
+                                                                <div>
+                                                                    <input class="form-control" type="text" name="description" value="${curriculum.description}">
+                                                                </div>
+                                                            </div >
+                                                        </div>
                                                     </div>
-                                                    <div class="form-check-inline">
-                                                        <label class="form-check-label" for="radio2" style="color: red">
-                                                            <input type="radio" class="form-check-input" name="approve" value="0" ${curriculum.approve==0?"checked":""}>unactive
-                                                        </label>
+                                                    <div id="menu1" class="container tab-pane fade"><br>
+                                                        <div class="col-12">
+                                                            <table class="table text-center">
+                                                                <thead class="thead-orange">
+                                                                <th>#</th>
+                                                                <th>Subject Code</th>
+                                                                <th>Subject Name</th>
+                                                                <th>Semester</th>
+                                                                <th>NoCredit</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <c:forEach items="${sulist}" var="list">
+                                                                        <tr>
+                                                                            <td><input type="checkbox" name="sucode" value="${list.subjectID}"></td>
+                                                                            <td>${list.subjectCode}</td>
+                                                                            <td>${list.subjectName}</td>
+                                                                            <td>${list.semester}</td>
+                                                                            <td>${list.noCredit}</td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div id="menu2" class="container tab-pane fade"><br>
+                                                        <div class="col-12">
+                                                            <table class="table text-center">
+                                                                <thead class="thead-orange">
+                                                                <th>ElectiveID</th>
+                                                                <th>ElectiveNameEN</th>
+                                                                <th>ElectiveNameVN</th>
+                                                                <th>isActive</th>
+                                                                <th>Note</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <c:forEach items="${elist}" var="l">
+                                                                        <tr>
+                                                                            <td><input type="checkbox" name="subjectid" value="${l.electiveID}"></td>
+                                                                            <td>${l.electiveNameEN}</td>
+                                                                            <td>${l.electiveNameVN}</td>
+                                                                            <td>${l.isActive}</td>
+                                                                            <td>${l.note}</td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Curriculum code</label>
-                                                <div>
-                                                    <input type="text" name="type" value="3" hidden="">
-                                                    <input class="form-control" type="text" name="curID" hidden="" value="${curriculum.curID}">
-                                                    <input class="form-control" type="text" name="code" value="${curriculum.curriculumCode}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Curriculum name EN</label>
-                                                <div>
-                                                    <input class="form-control" type="text" name="nameen" value="${curriculum.curriculumNameEN}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-4">
-                                                <label class="col-form-label">Curriculum name VN</label>
-                                                <div>
-                                                    <input class="form-control" type="text" name="namevn" value="${curriculum.curriculumNameVN}">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 m-t20">
-                                                <div class="ml-auto m-b5">
-                                                    <h3>2. Description</h3>
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-12">
-                                                <label class="col-form-label">Description</label>
-                                                <div>
-                                                    <input class="form-control" type="text" name="description" value="${curriculum.description}">
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <table class="table text-center">
-                                                    <thead class="thead-orange">
-                                                    <th>#</th>
-                                                    <th>Subject Code</th>
-                                                    <th>Subject Name</th>
-                                                    <th>Semester</th>
-                                                    <th>NoCredit</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <c:forEach items="${sulist}" var="list">
-                                                            <tr>
-                                                                <td><input type="checkbox" name="sucode" value="${list.subjectID}"></td>
-                                                                <td>${list.subjectCode}</td>
-                                                                <td>${list.subjectName}</td>
-                                                                <td>${list.semester}</td>
-                                                                <td>${list.noCredit}</td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
                                             </div>
 
-                                            <div class="col-12">
-                                                <table class="table text-center">
-                                                    <thead class="thead-orange">
-                                                    <th>ElectiveID</th>
-                                                    <th>ElectiveNameEN</th>
-                                                    <th>ElectiveNameVN</th>
-                                                    <th>isActive</th>
-                                                    <th>Note</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <c:forEach items="${elist}" var="l">
-                                                            <tr>
-                                                                <td><input type="checkbox" name="subjectid" value="${l.electiveID}"></td>
-                                                                <td>${l.electiveNameEN}</td>
-                                                                <td>${l.electiveNameVN}</td>
-                                                                <td>${l.isActive}</td>
-                                                                <td>${l.note}</td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+
+
+
+
+
+
+
+
                                             <div class="col-12">
                                                 <button type="submit" class="btn-secondry add-item m-r5"><i class="fa fa-fw fa-plus-circle"></i>Update</button>
                                             </div>

@@ -132,7 +132,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="ttr-material-button" href="addelective?addtype=1"><span class="ttr-label">Add Combo</span></a>
+                            <a class="ttr-material-button" href="addelective?addtype=1"><span class="ttr-label">Add Elective</span></a>
                         </li>
                     </ul>
                 </li>

@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import module.Curriculum;
 import module.Decision;
 import module.Major;
 
@@ -74,6 +75,9 @@ public class AddElective extends HttpServlet {
             addtypeint = 0;
         }
         if (addtypeint == 1) {
+            CurriculumDAO dao = new CurriculumDAO();
+            ArrayList<Curriculum> list = dao.getListForCurriculum();
+            request.setAttribute("currilist", list);
             request.setAttribute("addtype", 1);
         } else if (addtypeint == 2) {
             request.setAttribute("addtype", 2);
@@ -114,8 +118,21 @@ public class AddElective extends HttpServlet {
             String nameen = request.getParameter("nameen");
             String namevn = request.getParameter("namevn");
             String note = request.getParameter("note");
+            String active = request.getParameter("active");
+            String curriid = request.getParameter("curriid");
+            int intactive;
+            int intcurriid;
+            try {
+                intactive = Integer.parseInt(active);
+                intcurriid = Integer.parseInt(curriid);
+            } catch (NumberFormatException e) {
+                System.out.println(e);
+                intactive = 0;
+                intcurriid = 0;
+            }
             ElectiveDAO dao = new ElectiveDAO();
-            dao.addElective(nameen, namevn, note);
+            dao.addElective(nameen, namevn, note, intactive);
+            dao.addElective2(intcurriid);
             response.sendRedirect("electivelist");
         } else if (addtype == 2) {
             String name = request.getParameter("name");
@@ -177,7 +194,7 @@ public class AddElective extends HttpServlet {
             dao.getInsertMaterial(des, author, publisher, pudate, edit, isbn, intmain, intcopy, intonline, note, isactiveint);
             response.sendRedirect("materiallist");
         }
-
+        
     }
 
     /**
