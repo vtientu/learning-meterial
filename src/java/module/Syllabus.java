@@ -31,7 +31,9 @@ public class Syllabus {
     private String preRequisite;
     private Subject subject;
     private Decision decision;
-
+    private Account account;
+    
+    
     public Syllabus() {
     }
 
@@ -57,7 +59,13 @@ public class Syllabus {
         this.decision = decision;
     }
 
-    
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public Decision getDecision() {
         return decision;

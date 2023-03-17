@@ -48,7 +48,7 @@ public class AccountDAO extends DBContext {
                     + "     `roles`.`rolename`\n"
                     + "FROM `account` inner join `roles`\n"
                     + "ON `account`.`roleID` = `roles`.`roleID`\n"
-                    + "ORDER BY `accountID` DESC";
+                    + "ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -179,7 +179,97 @@ public class AccountDAO extends DBContext {
             throw new RuntimeException(e);
         }
     }
+    
+    public ArrayList<Account> getListAccountByRole(int roleID) {
+        ArrayList<Account> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `account`.`accountID`,\n"
+                    + "                    	`account`.`username`,\n"
+                    + "                        `account`.`roleID`,\n"
+                    + "                        `account`.`password`,\n"
+                    + "                        `account`.`avatar`,\n"
+                    + "                        `account`.`fullname`,\n"
+                    + "                        `account`.`email`,\n"
+                    + "                        `account`.`phone`,\n"
+                    + "                        `account`.`address`,\n"
+                    + "                        `account`.`typeAccount`,\n"
+                    + "                        `account`.`isActive`,\n"
+                    + "                         `roles`.`rolename`\n"
+                    + "                    FROM `account` inner join `roles`\n"
+                    + "                    ON `account`.`roleID` = `roles`.`roleID`\n"
+                    + "                    WHERE `account`.`roleID` = ?\n"
+                    + "                     ORDER BY `accountID` ASC";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, roleID);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role role = new Role(rs.getInt("roleID"), rs.getString("rolename"));
+                Account a = new Account();
+                a.setAccountID(rs.getInt(1));
+                a.setUserName(rs.getString(2));
+                a.setRoleID(rs.getInt(3));
+                a.setPassword(rs.getString(4));
+                a.setAvatar(rs.getString(5));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
+                a.setRole(role);
+                list.add(a);
+            }
+        } catch (SQLException e) {
+            System.out.println(e + "getListAccountByKey");
+        }
+        return list;
+    }
 
+    public ArrayList<Account> getListAccountByActive(boolean isActive) {
+        ArrayList<Account> list = new ArrayList<>();
+        try {
+            String sql = "SELECT `account`.`accountID`,\n"
+                    + "                    	`account`.`username`,\n"
+                    + "                        `account`.`roleID`,\n"
+                    + "                        `account`.`password`,\n"
+                    + "                        `account`.`avatar`,\n"
+                    + "                        `account`.`fullname`,\n"
+                    + "                        `account`.`email`,\n"
+                    + "                        `account`.`phone`,\n"
+                    + "                        `account`.`address`,\n"
+                    + "                        `account`.`typeAccount`,\n"
+                    + "                        `account`.`isActive`,\n"
+                    + "                         `roles`.`rolename`\n"
+                    + "                    FROM `account` inner join `roles`\n"
+                    + "                    ON `account`.`roleID` = `roles`.`roleID`\n"
+                    + "                    WHERE `account`.`isActive` = ?\n"
+                    + "                     ORDER BY `accountID` ASC";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setBoolean(1, isActive);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Role role = new Role(rs.getInt("roleID"), rs.getString("rolename"));
+                Account a = new Account();
+                a.setAccountID(rs.getInt(1));
+                a.setUserName(rs.getString(2));
+                a.setRoleID(rs.getInt(3));
+                a.setPassword(rs.getString(4));
+                a.setAvatar(rs.getString(5));
+                a.setFullName(rs.getString(6));
+                a.setEmail(rs.getString(7));
+                a.setPhone(rs.getString(8));
+                a.setAddress(rs.getString(9));
+                a.setTypeAccount(rs.getInt(10));
+                a.setIsActive(rs.getBoolean(11));
+                a.setRole(role);
+                list.add(a);
+            }
+        } catch (SQLException e) {
+            System.out.println(e + "getListAccountByKey");
+        }
+        return list;
+    }
+    
     public ArrayList<Account> getListAccountByKey(String key) {
         ArrayList<Account> list = new ArrayList<>();
         try {
@@ -188,8 +278,7 @@ public class AccountDAO extends DBContext {
                     + "                        `account`.`roleID`,\n"
                     + "                        `account`.`password`,\n"
                     + "                        `account`.`avatar`,\n"
-                    + "                        `account`.`firstname`,\n"
-                    + "                        `account`.`lastname`,\n"
+                    + "                        `account`.`fullname`,\n"
                     + "                        `account`.`email`,\n"
                     + "                        `account`.`phone`,\n"
                     + "                        `account`.`address`,\n"
@@ -202,13 +291,12 @@ public class AccountDAO extends DBContext {
                     + "                    OR `account`.`fullname` LIKE ?\n"
                     + "                    OR `account`.`email` LIKE ?\n"
                     + "                    OR `roles`.`rolename` LIKE ?"
-                    + "                     ORDER BY `accountID` DESC";
+                    + "                     ORDER BY `accountID` ASC";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, "%" + key + "%");
             st.setString(2, "%" + key + "%");
             st.setString(3, "%" + key + "%");
             st.setString(4, "%" + key + "%");
-            st.setString(5, "%" + key + "%");
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Role role = new Role(rs.getInt("roleID"), rs.getString("rolename"));
@@ -436,7 +524,7 @@ public class AccountDAO extends DBContext {
         }
     }
 
-    public boolean registerAccount(String user, String password, String email, String firstName, String lastName) {
+    public boolean registerAccount(String user, String password, String email, String fullname) {
         try {
             String sql = "SELECT username\n"
                     + "                      FROM Account\n"
@@ -453,18 +541,17 @@ public class AccountDAO extends DBContext {
                         + "                                 ,email\n"
                         + "                                 ,`roleID`)\n"
                         + "                           VALUES\n"
-                        + "                                 (?, ?, ?, ?, ?, ?);";
+                        + "                                 (?, ?, ?, ?, ?);";
                 PreparedStatement st1 = connection.prepareStatement(sql1);
                 st1.setString(1, user);
                 if (email.endsWith("@fpt.edu.vn")) {
-                    st1.setInt(6, 2);
+                    st1.setInt(5, 2);
                 } else {
-                    st1.setInt(6, 1);
+                    st1.setInt(5, 1);
                 }
                 st1.setString(2, password);
-                st1.setString(3, firstName);
-                st1.setString(4, lastName);
-                st1.setString(5, email);
+                st1.setString(3, fullname);
+                st1.setString(4, email);
                 st1.executeUpdate();
                 return true;
             }
@@ -509,7 +596,7 @@ public class AccountDAO extends DBContext {
                 }
                 st1.setString(3, null);
                 st1.setString(4, user.getPicture());
-                st1.setString(5, user.getGiven_name());
+                st1.setString(5, user.getFamily_name() + user.getGiven_name());
                 st1.setString(6, user.getEmail());
                 st1.setInt(7, 1);
                 st1.executeUpdate();
@@ -578,8 +665,7 @@ public class AccountDAO extends DBContext {
                     + "    `account`.`roleID`,\n"
                     + "    `account`.`password`,\n"
                     + "    `account`.`avatar`,\n"
-                    + "    `account`.`firstname`,\n"
-                    + "    `account`.`lastname`,\n"
+                    + "    `account`.`fullname`,\n"
                     + "    `account`.`email`,\n"
                     + "    `account`.`phone`,\n"
                     + "    `account`.`address`,\n"

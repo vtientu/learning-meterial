@@ -3,7 +3,7 @@
     Created on : Feb 22, 2023, 1:55:55 PM
     Author     : tient
 --%>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
@@ -15,24 +15,25 @@
                         <span class="ttr-label">Home</span>
                     </a>
                 </li>
-                <li>
-                    <a class="ttr-material-button" href="#">
-                        <span class="ttr-icon"><i class="ti-user"></i></span>
-                        <span class="ttr-label">User Management</span>
-                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="admin-list?adminpage=user" class="ttr-material-button">
-                                <span class="ttr-label">User List</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="add-details?action=user" class="ttr-material-button"><span class="ttr-label">Add User</span></a>
-                        </li>
-                    </ul>
-                </li>
-
+                <c:if test="${account.roleID == 8}">
+                    <li>
+                        <a class="ttr-material-button" href="#">
+                            <span class="ttr-icon"><i class="ti-user"></i></span>
+                            <span class="ttr-label">User Management</span>
+                            <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="admin-list?adminpage=user" class="ttr-material-button">
+                                    <span class="ttr-label">User List</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="add-details?action=user" class="ttr-material-button"><span class="ttr-label">Add User</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
                 <li>
                     <a class="ttr-material-button" href="#">
                         <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>

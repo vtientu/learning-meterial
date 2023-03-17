@@ -67,15 +67,15 @@ public class UpdateDetailServletController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("account");
-        if (acc.getRoleID() < 7) {
-            response.sendRedirect("home");
-        }
         String action = request.getParameter("action");
         AccountDAO adao = new AccountDAO();
         SyllabusDAO sdao = new SyllabusDAO();
         DecisionDAO ddao = new DecisionDAO();
         switch (action) {
             case "user":
+                if (acc.getRoleID() != 8) {
+                    response.sendRedirect("admin-list?adminpage=user");
+                }
                 int aid = Integer.parseInt(request.getParameter("aid"));
                 Account a = adao.getAccount(aid);
                 ArrayList<Role> listRole = adao.getRoleList();
@@ -86,13 +86,19 @@ public class UpdateDetailServletController extends HttpServlet {
             case "subject":
                 int sid = Integer.parseInt(request.getParameter("sid"));
                 Subject s = sdao.getSubject(sid);
+                if (acc.getAccountID() != s.getAccount().getAccountID() && acc.getRoleID() < 7) {
+                    response.sendRedirect("admin-list?adminpage=subject");
+                }
                 request.setAttribute("subject", s);
                 request.getRequestDispatcher("../view/admin/subject/update-subject.jsp").forward(request, response);
                 break;
             case "syllabus":
                 int syllabusID = Integer.parseInt(request.getParameter("sid"));
                 Syllabus syllabus = sdao.getSyllabusByID(syllabusID);
-                ArrayList<Subject> listSubject = sdao.getListSubject();
+                if (acc.getAccountID() != syllabus.getAccount().getAccountID() && acc.getRoleID() < 7) {
+                    response.sendRedirect("admin-list?adminpage=syllabus");
+                }
+                ArrayList<Subject> listSubject = sdao.getListSubjectAll();
                 ArrayList<Decision> listDecision = (ArrayList<Decision>) ddao.getAllDecision();
                 request.setAttribute("listSubject", listSubject);
                 request.setAttribute("listDecision", listDecision);

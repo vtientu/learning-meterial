@@ -51,13 +51,15 @@
                                                 <input class="form-control" type="text" value="" required="" name="subjectName">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12 my-3">
-                                            <label class="col-form-label">Approved</label>
-                                            <div class="ml-3">
-                                                <input type="radio" name="isActive" checked="" value="true"/>Approved &nbsp;
-                                                <input type="radio" name="isActive" value="false"/>Disable
+                                        <c:if test="${account.roleID >= 7}">
+                                            <div class="form-group col-12 my-3">
+                                                <label class="col-form-label">Approved</label>
+                                                <div class="ml-3">
+                                                    <input type="radio" name="isActive" checked="" value="true"/>Approved &nbsp;
+                                                    <input type="radio" name="isActive" value="false"/>Disable
+                                                </div>
                                             </div>
-                                        </div>
+                                        </c:if>
                                         <div class="form-group col-6 my-3">
                                             <label class="col-form-label">Semester <i class="text-red">*</i></label>
                                             <div>
@@ -70,7 +72,7 @@
                                                 <input type="number" name="noCredit" required="" class="form-control">
                                             </div>
                                         </div>
-                                        
+
                                         <label class="text-red">${message}</label>
                                         <div class="col-12 mt-5">
                                             <button type="submit" class="btn float-right">Create Subject</button>

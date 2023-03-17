@@ -63,8 +63,6 @@ public class Account {
         this.role = role;
     }
 
-    
-
     public String getUserName() {
         return userName;
     }
@@ -143,6 +141,11 @@ public class Account {
 
     public void setTypeAccount(int typeAccount) {
         this.typeAccount = typeAccount;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" + "accountID=" + accountID + ", userName=" + userName + ", roleID=" + roleID + ", password=" + password + ", avatar=" + avatar + ", fullName=" + fullName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", role=" + role + ", typeAccount=" + typeAccount + ", isActive=" + isActive + '}';
     }
     
     

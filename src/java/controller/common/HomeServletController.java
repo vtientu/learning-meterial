@@ -210,7 +210,7 @@ public class HomeServletController extends HttpServlet {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         AccountDAO ad = new AccountDAO();
-        if (ad.registerAccount(userRegister, passwordRegister, email, firstName, lastName)) {
+        if (ad.registerAccount(userRegister, passwordRegister, email, firstName)) {
             request.setAttribute("messageLogin", "Register Success !");
             request.getRequestDispatcher("view/common/account/login.jsp").forward(request, response);
         } else {

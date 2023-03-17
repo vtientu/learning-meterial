@@ -60,35 +60,6 @@ public class LearningPartServletController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SyllabusDAO ld = new SyllabusDAO();
-        ArrayList<Syllabus> list = ld.getAllSyllabus(1);
-        HttpSession session = request.getSession();
-        Account a = (Account) session.getAttribute("account");
-        if (a != null && a.getRoleID() != 1) {
-            list = ld.getAllSyllabus(a.getRoleID());
-        }
-        int page, numberPerPage = 10;
-        String xpage = request.getParameter("page");
-        int size;
-        if (list.isEmpty()) {
-            size = 0;
-        } else {
-            size = list.size();
-        }
-
-        int numberOfPage = ((size % numberPerPage == 0) ? (size / numberPerPage) : (size / numberPerPage + 1));
-        if (xpage == null) {
-            page = 1;
-        } else {
-            page = Integer.parseInt(xpage);
-        }
-        int start, end;
-        start = (page - 1) * numberPerPage;
-        end = Math.min(page * numberPerPage, size);
-        ArrayList<Syllabus> listByPage = ld.getListByPage(list, start, end);
-        request.setAttribute("totalPage", numberOfPage);
-        request.setAttribute("page", page);
-        request.setAttribute("listLearning", listByPage);
         request.getRequestDispatcher("view/common/learning-path.jsp").forward(request, response);
     }
 
@@ -108,10 +79,12 @@ public class LearningPartServletController extends HttpServlet {
         SyllabusDAO sd = new SyllabusDAO();
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("account");
-        ArrayList<Syllabus> list = sd.getListSyllabusByKey(key, 1);
+        ArrayList<Syllabus> list = sd.getAllSyllabusPreRequisiteByCode(key, 1);
+        
         if (acc != null && acc.getRoleID() != 1) {
-            list = sd.getListSyllabusByKey(key, acc.getRoleID());
+            list = sd.getAllSyllabusPreRequisiteByCode(key, acc.getRoleID());
         }
+        
         int page, numberPerPage = 10;
         String xpage = request.getParameter("page");
         int size;
@@ -131,68 +104,11 @@ public class LearningPartServletController extends HttpServlet {
         start = (page - 1) * numberPerPage;
         end = Math.min(page * numberPerPage, size);
         ArrayList<Syllabus> listByPage = sd.getListByPage(list, start, end);
-        processLearning(request, response, listByPage, page, numberOfPage, key);
-    }
-
-    public void processLearning(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key)
-            throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
-        out.println("<table class=\"table text-center\">\n"
-                + "                                <thead class=\"thead-orange\">\n"
-                + "                                <th>Syllabus ID</th>\n"
-                + "                                <th>Subject Name</th>\n"
-                + "                                <th>Syllabus Name</th>\n"
-                + "                                <th>DecisionNo MM/dd/yyyy</th>\n"
-                + "                                <th>All subject need to learn before</th>\n"
-                + "                                </thead>\n"
-                + "                                <tbody>");
-        for (Syllabus o : listByPage) {
-            out.println("<tr>\n"
-                    + "                                            <td>" + o.getSyllabusID() + "</td>\n"
-                    + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
-                    + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubject().getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
-                    + "                                            <td>" + o.getDecisionNo() + "</td>\n"
-                    + "                                            <td>\n");
-            if (o.getSubject().getPrerequisite().isEmpty()) {
-                out.println(o.getSubject().getSubjectCode() + ": (No pre-requisite)");
-            } else {
-                for (int i = 0; i < o.getSubject().getPrerequisite().size(); i++) {
-                    out.print(o.getSubject().getPrerequisite().get(i).getSubject().getSubjectCode() + ": ");
-                    if (o.getSubject().getPrerequisite().get(i).getSubjectPre() == null || o.getSubject().getPrerequisite().get(i).getSubjectPre().trim().length() == 0) {
-                        out.println("(No pre-requisite)");
-                    } else {
-                        out.println(o.getSubject().getPrerequisite().get(i).getSubjectPre());
-                    }
-                }
-            }
-            out.print("                                            </td>\n"
-                    + "                                        </tr>");
-
-        }
-        String str = "</tbody>\n"
-                + "                            </table>\n"
-                + "\n"
-                + "\n"
-                + "                            <div class=\"col-lg-12 m-b20\">\n"
-                + "                                <div class=\"pagination-bx rounded-sm gray clearfix\">\n"
-                + "                                    <ul class=\"pagination\">\n";
-        if (page == 1) {
-            str += "<li class=\"previous\"><a style=\"pointer-events: none\"><i class=\"ti-arrow-left\"></i> Prev</a></li>\n";
-        } else {
-            str += "<li class=\"previous\"><a onclick=\"searchLearningPath(" + (page - 1) + ")\"><i class=\"ti-arrow-left\"></i> Prev</a></li>\n";
-        }
-
-        str += "<li class=\"active\"><a id=\"page\">" + page + "</a></li>\n";
-        if (page == numberOfPage) {
-            str += "<li class=\"next\"><a style=\"pointer-events: none\">Next<i class=\"ti-arrow-right\"></i></a></li>\n";
-        } else if (page < numberOfPage) {
-            str += "<li class=\"next\"><a onclick=\"searchLearningPath(" + (page + 1) + ")\">Next<i class=\"ti-arrow-right\"></i></a></li>\n";
-        }
-        str += "                                    </ul>\n"
-                + "                                </div>\n"
-                + "                            </div>\n"
-                + "                        </div>";
-        out.println(str);
+        request.setAttribute("listLearning", listByPage);
+        
+        request.setAttribute("totalPage", numberOfPage);
+        request.setAttribute("page", page);
+        request.getRequestDispatcher("view/common/learning-path.jsp").forward(request, response);
     }
 
     /**

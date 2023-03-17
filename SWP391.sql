@@ -68,7 +68,9 @@ CREATE TABLE Subjects(
 	Semester int,
 	NoCredit int,
     isActive bit DEFAULT 1,
-    ComboID int
+    ComboID int,
+    createBy int,
+    FOREIGN KEY(createBy) REFERENCES Account(accountID)
 );
 
 
@@ -92,6 +94,8 @@ CREATE TABLE Syllabus(
 	MinAvgMarkToPass int,
 	ApprovedDate date,
     PreRequisite text,
+    createBy int,
+    FOREIGN KEY(createBy) REFERENCES Account(accountID),
     Primary KEY (syllabusID)
 );
 
@@ -366,39 +370,40 @@ INSERT INTO `swp391`.`subjects`
 `subjectName`,
 `Semester`,
 `NoCredit`,
-`ComboID`)
+`ComboID`,
+`createBy`)
 VALUES
-('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','6','0',1),
-('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3',1),
-('VDP201','Video Production_Sản xuất Video','4','3',1),
-('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3',1),
-('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3',1),
-('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3',1),
-('MGT103','Introduction to Management_Nhập môn quản lý','1','3',1),
-('MKT101','Marketing Principles_Nguyên lý Marketing','1','3',1),
-('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3',1),
-('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3',1),
-('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3',1),
-('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3',1),
-('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3',1),
-('MMP201','Media Psychology_Tâm lý học truyền thông','2','3',1),
-('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3',1),
-('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3',1),
-('MKT208c','Social media marketing_Marketing mạng xã hội','3','3',1),
-('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3',1),
-('VOV114','Vovinam 1','0','3',2),
-('VOV124','Vovinam 2','1','3',2),
-('VOV134','Vovinam 3','2','3',2),
-('COV111','Cờ Vua 1','0','3',3),
-('COV121','Cờ Vua 2','1','3',3),
-('COV131','Cờ Vua 3','2','3',3),
-('ĐTR102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tranh','0','3',4),
-('ĐTB102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tỳ bà','0','3',4),
-('ĐNH102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nhị','0','3',4),
-('ĐNG102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nguyệt','0','3',4),
-('ĐBA102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Bầu','0','3',4),
-('ĐSA102','Traditional musical instrument_Nhạc cụ truyền thống-Sáo trúc','0','3',4),
-('TRG102','Traditional musical instrument_Nhạc cụ truyền thống-Trống dân tộc','0','3',4);
+('OTP101','Orientation and General Training Program_Định hướng và Rèn luyện tập trung','6','0',1, 7),
+('EAW211','English Academic Writing 1_Tiếng Anh Viết học thuật 1','1','3',1, 7),
+('VDP201','Video Production_Sản xuất Video','4','3',1, 7),
+('SSG103','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','1','3',1, 8),
+('DTG111','Visual Design Tools 1_Công cụ thiết kế trực quan 1','1','3',1, 8),
+('MED201','New Media Technology_Các loại hình Truyền thông đương đại','1','3',1, 8),
+('MGT103','Introduction to Management_Nhập môn quản lý','1','3',1, 7),
+('MKT101','Marketing Principles_Nguyên lý Marketing','1','3',1, 8),
+('WDU203c','UI/UX Design_Thiết kế trải nghiệm người dùng','8','3',1, 8),
+('SSL101c','Academic Skills for University Success_Kỹ năng học tập đại học','1','3',1, 8),
+('ACC101','Principles of Accounting_Nguyên lý kế toán','2','3',1, 8),
+('CMC201c','Creative Writing_Sản xuất nội dung sáng tạo','2','3',1, 8),
+('DTG121','Visual Design Tools 2_Công cụ thiết kế trực quan 2','2','3',1, 8),
+('MMP201','Media Psychology_Tâm lý học truyền thông','2','3',1, 8),
+('SSG104','Communication and In-Group Working Skills_Kỹ năng giao tiếp và cộng tác','2','3',1, 8),
+('CCO201','Corporate Communication_Truyền thông doanh nghiệp','3','3',1, 8),
+('MKT208c','Social media marketing_Marketing mạng xã hội','3','3',1, 8),
+('MKT304','Integrated Marketing Communications_Truyền thông marketing tích hợp','3','3',1, 8),
+('VOV114','Vovinam 1','0','3',2, 8),
+('VOV124','Vovinam 2','1','3',2, 8),
+('VOV134','Vovinam 3','2','3',2, 8),
+('COV111','Cờ Vua 1','0','3',3, 8),
+('COV121','Cờ Vua 2','1','3',3, 8),
+('COV131','Cờ Vua 3','2','3',3, 8),
+('ĐTR102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tranh','0','3',4, 8),
+('ĐTB102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Tỳ bà','0','3',4, 8),
+('ĐNH102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nhị','0','3',4, 8),
+('ĐNG102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Nguyệt','0','3',4, 8),
+('ĐBA102','Traditional musical instrument_Nhạc cụ truyền thống-Đàn Bầu','0','3',4, 8),
+('ĐSA102','Traditional musical instrument_Nhạc cụ truyền thống-Sáo trúc','0','3',4, 8),
+('TRG102','Traditional musical instrument_Nhạc cụ truyền thống-Trống dân tộc','0','3',4, 8);
 
 INSERT INTO `swp391`.`syllabus`
 (`SubjectID`,
@@ -416,7 +421,8 @@ INSERT INTO `swp391`.`syllabus`
 `ScoringScale`,
 `Note`,
 `MinAvgMarkToPass`,
-`ApprovedDate`)
+`ApprovedDate`,
+`createBy`)
 VALUES
 (1,'Orientaiton and General Training Program','Định hướng và Rèn luyện tập trung',1,1,'670/QĐ-ĐHFPT',0,'	Bachelor',':5 weeks (fulltime) = 280h<br/>
 * Module 1: Orientation-Định hướng<br/>
@@ -452,7 +458,7 @@ Objectives of orientation and training program are:<br/>
 5) Train the willpower and improve physical strengths, fitness and sense of responsibilities through physical education lessons and combat practice in the field.<br/>
 6) Train team spirit, disciplines, shape good attitude and behaviors towards friends, teachers and educational environment.<br/>
 7) Enhance student experiences with extra-curricular activities. Strengthen the sense of community through community and volunteering activities and the ones towards the sustainable development.',
-'Attend enough activities of the university.','',10,'Min to pass: Students must pass the examination and achieve the Military training certificate',0,'2022-12-22'),
+'Attend enough activities of the university.','',10,'Min to pass: Students must pass the examination and achieve the Military training certificate',0,'2022-12-22', 7),
 (4,'Communication and In-group working skills','',1,1,'378/QĐ-ĐHFPT',3,'','30 sessions, 1 session = 90 minutes','This course will cover both working in groups and communication skills.
 Assessment structure:<br/>
 * On-going Assessment:<br/>
@@ -467,7 +473,7 @@ Assessment structure:<br/>
 - Use their own laptop in class only for learning purpose<br/>
 - Read the textbook in advance<br/>
 - Access the course website (www.cms.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','- Internet
-- PDF reader',10,'',5,'2021-2-4'),
+- PDF reader',10,'',5,'2021-2-4', 7),
 (2,'English Academic Writing 1','Viết học thuật tiếng Anh 1',1,1,'1189/QĐ-ĐHFPT',3,'Advanced','Study hour (150h) = 45 contact hours (60 sessions) + 1 hour final exam + 104 hours self-study','Advance in Academic Writing helps students write assignments in academic English. Advance integrates active and critical reading, critical thinking, academic vocabulary building, academic writing style, and effective sentence structure and grammar around authentic academic texts. As students respond to these texts, they are taken through the research and writing processes they will need to master to succeed in their respective fields of study.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
 - Actively participate in class activities<br/>
 - Fulfil tasks given by instructor after class<br/>
@@ -478,9 +484,9 @@ Internet access',10,'1) On-going assessment<br/>
 2) Final Examination (FE) 40%<br/>
 3) Final Result 100%<br/>
 4) Completion Criteria:<br/>
-On-going assessment >0, Final Exam Score >=4/10 & Final Result >=5/10',5,'2022-12-22'),
+On-going assessment >0, Final Exam Score >=4/10 & Final Result >=5/10',5,'2022-12-22', 7),
 (3,'Video Production','Sản xuất video',1,1,'295/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h)
-= 45h contact hours + 105h self-study','This practicum course is designed to give students the opportunity to apply theoretical knowledge learned before to actual multimedia production situations. This course incorporates in its approach a combination of applied media aesthetics theory and hands-on production experience in Video production. Students will gain a foundation for understanding media production theory, facilitating video production processes as well as creating and evaluating media products relating to a particular issue set by the course lecturer. A component of the course will permit the introduction of current topics such as media issues, professional video production techniques, changing media technology, and job market information.','-Attend more than 80% of contact hours in order to be accepted to the final examination','',10,'',5,'2022-12-22'),
+= 45h contact hours + 105h self-study','This practicum course is designed to give students the opportunity to apply theoretical knowledge learned before to actual multimedia production situations. This course incorporates in its approach a combination of applied media aesthetics theory and hands-on production experience in Video production. Students will gain a foundation for understanding media production theory, facilitating video production processes as well as creating and evaluating media products relating to a particular issue set by the course lecturer. A component of the course will permit the introduction of current topics such as media issues, professional video production techniques, changing media technology, and job market information.','-Attend more than 80% of contact hours in order to be accepted to the final examination','',10,'',5,'2022-12-22', 8),
 (5,'Visual Design Tools 2D','Công cụ thiết kế trực quan 1',1,1,'703/QĐ-ĐH-FPT',3,'Bachelor','Study hour (150h)
 = 45h contact hours + 105h self-study','The course empowerC14ommon Adobe 2D tools for Multimedia designers, which are Illustrator, Photoshop, InDesign and Xd, so that they can finalize their 2D designs better and able to deliver completed professional product to customers
 Through practical assignments, students have chances to apply knowledge on colors, typography etc. in other courses along with computers and other tools to creaate graphic applications.','- Read textbook and install software before coming to class<br/>
@@ -495,27 +501,27 @@ Through practical assignments, students have chances to apply knowledge on color
 
 2. Student prepare:<br/>
 - Note/Sketchbooks, pens and pencils<br/>
-- Laptop for graphic design with Adobe Photoshop, Illustrator, Indesign and Xd installed',10,'',5,'2022-8-17'),
+- Laptop for graphic design with Adobe Photoshop, Illustrator, Indesign and Xd installed',10,'',5,'2022-8-17', 8),
 (6,'New Media Technology','Các loại hình Truyền thông đương đại',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor','	Study hour (150h)
 = 45h contact hours + 1h final exam + 104h self-study','Description: This course will give you a thorough explanation of how media technologies develop, operate, converge, and affect society in order to think critically about the media and its effects on culture. It provides a comprehensive introduction to today''s global media environment and the ongoing developments in technology, culture, and critical theory that continue to transform this rapidly evolving industry and affect your everyday life. Our emphasis is on the social relations of power and connectivity that are shaped by new media as practices of communication. Specific topics that will be explored include: the latest developments and trends in social media, e-publishing, policy changes for Internet governance, online privacy protection, online ad exchanges, the changing video game industry, and much more. By studying this course, students will develop knowledge and skills in creative thinking, communication, collaboration, planning, critical analysis, and digital and ethical citizenship.<br/>
 Teaching methods: Direct Instruction, Inquiry-based Learning, Cooperative Learning, Case Study Analysis','- Students must attend more than 80% of contact slots in order to be accepted to the final examination.<br/>
 - Student is responsible to do all exercises, assignments and labs given by instructor in class or at home and submit on time<br/>
 - Use laptop in class only for learning purpose','- Textbook<br/>
-- Computer',10,'',5,'2022-12-22'),
+- Computer',10,'',5,'2022-12-22', 8),
 (7,'Introduction to Management','Nhập môn quản lý',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','The course explores and focuses around the managerial functions of management, including planning, organizing, leading and controlling. The course is designed to provide basic knowledge and skills required in management and give students a comprehensive insight into human relations componnents that characterise any managerial roles, regardless of industry or functions. Various aspects of management theories will be examined and linked to current management practice in the world and Vietnam. Learning in the class will be facilitated through the use of interactive tools such as group exercise, case study discussion, role-play/activities, and projects.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
 - Actively participate in class activities- Fulfill tasks given by instructor after class<br/>
 - Use their own laptop in class only for learning purpose<br/>
-- Read the textbook in advance','',10,'',5,'2022-12-22'),
+- Read the textbook in advance','',10,'',5,'2022-12-22', 8),
 (8,'Marketing Principles','Nguyên lý Marketing',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','	The course is designed to provide students with a strong foundation in marketing based on five key activities: (1) identifying customer needs, (2) providing customers with the right products or service to meet their needs, (3) assuring availability to customers through the right distribution channels, (4) using promotional activities in ways that motivate purchase as effectively as possible, (5) setting an appropriate price that maximizes firm profitability while maintaining customer satisfaction.','- Attend more than 80% of contact hours in order to be accepted to the final examination<br/>
 - Actively participate in class activities<br/>
 - Fulfill tasks given by instructor after class<br/>
 - Use their own laptop in class only for learning purpose<br/>
 - Read the textbook in advance<br/>
-- Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-12-22'),
+- Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-12-22', 7),
 (9,'UI/UX Design','Thiết kế trải nghiệm người dùng',1,1,'1341/QĐ-ĐHFPT',3,'Bachelor','Online: 84 hours+6 slot offline','	Integrate UX Research and UX Design to create great products through understanding user needs, rapidly generating prototypes, and evaluating design concepts. Students will gain hands-on experience with taking a product from initial concept, through user research, ideation and refinement, formal analysis, prototyping, and user testing, applying perspectives and methods to ensure a great user experience at every step. This course concludes with a capstone project, in which learners will incorporate UX Research and Design principles to design a complete product, taking it from an initial concept to an interactive prototype.','1. Complete the online courses and get all specialization certifications to be allowed to take Final Exam<br/>
 2. Final Exam included Final Theory Exam (TE): 100%<br/>
 3. Student gets 0.165 bonus points for each course completed on time.<br/>
-4. Completion Criteria: Final TE Score >=4 & (Final TE Score + bonus) >= 5','- Internet',10,'',5,'2021-11-22'),
+4. Completion Criteria: Final TE Score >=4 & (Final TE Score + bonus) >= 5','- Internet',10,'',5,'2021-11-22', 8),
 (10,'Academic Skills for University Success','Kỹ năng học tập ở Đại học',1,1,'1077/QĐ-ĐHFPT',3,'Bachelor','42 hours online + 9hrs offline (6 slots) + 1hr exam','Upon finishing the course, students can:<br/>
 1) Knowledge: Understand<br/>
 - Method to develop your Information & Digital Literacy Skills<br/>
@@ -547,7 +553,7 @@ Teaching methods: Direct Instruction, Inquiry-based Learning, Cooperative Learni
 Student gets 0.2 bonus points for each course completed on time. The total bonus point is not greater than 1.<br/>
 2) Theoretical Exam (TE)<br/>
 3) Final Result (FR) =min (10, TE + Bonus)<br/>
-4) Completion Criteria: TE>=4 and FR>=5',5,'2022-11-24'),
+4) Completion Criteria: TE>=4 and FR>=5',5,'2022-11-24', 8),
 (11,'Principles of Accounting','Nguyên lý kế toán',1,1,'703/QĐ-ĐH-FPT',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','Main objectives:
 <br>Upon completion of this course, students should:
 <br>1. Have clear understanding of ideas, principles, and techniques of accounting
@@ -567,7 +573,7 @@ Student gets 0.2 bonus points for each course completed on time. The total bonus
 <br>- Fulfill tasks given by instructor after class
 <br>- Use their own laptop in class only for learning purpose
 <br>- Read the textbook in advance
-<br>- Access the course website (http://flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17'),
+<br>- Access the course website (http://flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17', 8),
 (12,'Creative Writing','Sản xuất nội dung sáng tạo',1,1,'889/QĐ-ĐHFPT',3,'Bachelor','55 hours online + 9 hrs offline + 1hr exam','Upon finishing the course, students can:
 <br>1) Knowledge: Understand
 <br>- Method to develop the craft of plot
@@ -590,7 +596,7 @@ Student gets 0.2 bonus points for each course completed on time. The total bonus
 Student gets 0.2 bonus points for each course completed on time. The total bonus point is not greater than 1.
 <br>2) Theoretical Exam (TE)
 <br>3) 3) Final Result (FR) =min (10, TE + Bonus)
-4) Completion Criteria: TE>=4 and FR>=5',5,'2020-3-9'),
+4) Completion Criteria: TE>=4 and FR>=5',5,'2020-3-9', 7),
 (13,'Visual Design Tools 2','Công cụ thiết kế trực quan 2',1,1,'703/QĐ-ĐH-FPT',3,'Bachelor','Study hour (150h)
 = 45h contact hours + 105h self-study','Description: The course empowers students to master 2 advance tools for graphic and multimedia designers, which are InDesign and Figma, so that they can finalize their layout and interactive design better.
 Through practical assignments, students have chances to apply knowledge on layout, colors, typography etc. in other courses along with computers and tools to create and finalize graphic applications.
@@ -609,14 +615,14 @@ Through practical assignments, students have chances to apply knowledge on layou
 
 2. Student prepare:
 <br>- Note/Sketchbooks, pens and pencils
-<br>- Laptop for graphic design with Adobe Creative apps installed',10,'',5,'2022-8-17'),
+<br>- Laptop for graphic design with Adobe Creative apps installed',10,'',5,'2022-8-17', 8),
 (14,'MEDIA PSYCHOLOGY','Tâm lý học truyền thông',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor','Study hour (150h)
 = 45h contact hours + 1h final exam + 104h self-study','-Objective: Understand and can be applied the cognitive psychology theories of mass comunication.
 <br>-Description: This course will focus on a range of psychological theories, processes, and principles in the context of mass communication. Students will explore the application of these theories and principles to several prominent issues will be discussed. Such issues may include politics, sex, and violence, to lesser-studied topics, such as sports, music, emotion, and technology of various media. In addition, this course examines how our experiences with media affect the way we acquire knowledge about the world, and how this knowledge influences our attitudes and behavior.
 <br>-Teaching method: Presentation, Disscussion, teamwork, critical thinking.','- Students must attend more than 80% of contact slots in order to be accepted to the final examination.
 <br>- Student is responsible to do all exercises, assignments and labs given by instructor in class or at home and submit on time
 <br>- Use laptop in class only for learning purpose
-<br>- Promptly access to the FU CMS at http://cms.fpt.edu.vn for up-to-date course information','',10,'',5,'2022-12-22'),
+<br>- Promptly access to the FU CMS at http://cms.fpt.edu.vn for up-to-date course information','',10,'',5,'2022-12-22', 8),
 (15,'Communication and In-Group Working Skills','Kỹ năng giao tiếp và cộng tác',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor','Study hour (150h) = 45 contact hours (60 sessions) + 0.5 hour final exam + 104.5 hours self-study','This course covers both working in groups and communication skills. The course covers theories of communication, working in group, and activities for students to practice applying the theories in academic and working contexts.','- Students must attend more than 80% of contact slots in order to be accepted to the final examination.
 <br>- Student is responsible to do all exercises, assignments and labs given by instructor in class or at home and submit on time
 <br>- Use laptop in class only for learning purpose
@@ -628,7 +634,7 @@ Through practical assignments, students have chances to apply knowledge on layou
 <br>- 01 Group Project: 30% (part 1: proposal, part 2: product, part 3: presentation/report; 10% each)
 <br>- 01 Final exam: 20%
 <br>Conditions to pass: Final exam >= 4
-<br>Grade Average >= 5/10',5,'2022-12-22'),
+<br>Grade Average >= 5/10',5,'2022-12-22', 8),
 (16,'Corporate Communication','Truyền thông doanh nghiệp',1,1,'1189/QĐ-ĐHFPT',3,'Bachelor level','Study hour (150h)
 = 45h contact hours + 0,6667 h final exam + 104,3333 h self-study','This course provides a comprehensive introduction to corporate communications and public relations: it is for anyone with an interest in corporate communication, or anyone seeking to understand the growing importance of communication for corporations. Corporations increasingly need communication to survive, as they need to entertain relations with a variety of stakeholders to prosper. This includes not only external factors to the organization – customers, governments and civil ociety organizations, but also stakeholders within corporations themselves, such as employees, managers and investors.
 
@@ -648,15 +654,15 @@ communicate in times of crisis.','- Attend more than 80% of contact hours in ord
 - Actively participate in class activities
 - Fulfill tasks given by instructor
 - Use their own laptop in class only for learning purpose
-- Read the textbook in advance','',10,'',5,'2022-12-22'),
+- Read the textbook in advance','',10,'',5,'2022-12-22', 8),
 (17,'Social Media Marketing','Marketing mạng xã hội',1,1,'378/QĐ-ĐHFPT',3,'Bachelor','Online: 52 hours+ 6 slots offline (optional)','The Social Media Marketing Specialization is designed to achieve two objectives. It gives students the social analytics tools, and training to help them become an influencer on social media. The course also gives the knowledge and resources to build a complete social media marketing strategy – from consumer insights to final justification metrics.
-Note: Student gets 0.165 bonus points for each course completed on time.','Access the specialization on Coursera and complete all courses'' requirements to earn a certificate of completion for the specialization, in order to be qualified for the Final Exam.','Internet access',10,'',5,'2021-4-2'),
+Note: Student gets 0.165 bonus points for each course completed on time.','Access the specialization on Coursera and complete all courses'' requirements to earn a certificate of completion for the specialization, in order to be qualified for the Final Exam.','Internet access',10,'',5,'2021-4-2', 8),
 (18,'Intergrated Marketing Communications','Truyền thông Marketing tích hợp',1,1,'703/QĐ-ĐH-FPT',3,'Bachelor in Business Administration','Study hour (150h) = 45h (60 sessions) contact hours + 1h final exam + 104h self-study','The course aims to provide students a solid foundation on different aspects of advertising and other major integrated marketing communications tools, and the role of these tools in the marketing process. In particular, attention will be given to discussions on (1) understanding the communication processes of consumers and marketers, (2) conducting situation analyses of business and social environments, (3) devising effective creative strategies for achieving marketing objectives, and (4) implementing and evaluating the creative strategy.','- Attend more than 80% of contact hours in order to be accepted to the final examination
 - Actively participate in class activities
 - Fulfil tasks given by intructor after class
 - Use their own laptop in class only for learning purpose
 - Read the textbook in advance
-- Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17');
+- Access the course website (www.flm.fpt.edu.vn) for up-to-date information and material of the course, for online supports from teachers and other students and for practicing and assessment.','',10,'',5,'2022-8-17', 8);
 
 
 INSERT INTO `swp391`.`clo`

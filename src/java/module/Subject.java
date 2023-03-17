@@ -20,6 +20,7 @@ public class Subject {
     private boolean isActive;
     private int electiveID;
     private int comboID;
+    private Account account;
 
     public Subject() {
     }
@@ -35,8 +36,14 @@ public class Subject {
         this.electiveID = electiveID;
         this.comboID = comboID;
     }
-    
-    
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public Subject(int noCredit, int semester, String subjectCode, String subjectName, ArrayList<PreRequisite> prerequisite, boolean isActive) {
         this.noCredit = noCredit;

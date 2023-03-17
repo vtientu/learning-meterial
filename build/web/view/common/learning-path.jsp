@@ -18,18 +18,18 @@
                     <div class="container" style="min-height: 500px">
                         <div class="input-group input-group-sm align-items-center mb-4">
                             <h3 style="border-bottom:10px solid #f7b205">Learning Path</h3>
-                            <div class="input-group" style="flex-wrap: nowrap;">
+                            <form class="input-group" action="learningpath" method="post">
                                 <input type="text" class="form-control" id="search-input" name="keysearch" placeholder="Enter Subject Code">
                                 <div class="input-group-append">
                                     <button type="submit" name="submit" class="btn btn-secondary btn-number">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <c:if test="${listLearning != null}">
                             <div  id="list-items">
-                                <table class="table text-center" style="min-height: 300px">
+                                <table class="table  table-bordered" style="min-height: 300px">
                                     <thead class="thead-orange">
                                     <th>Syllabus ID</th>
                                     <th>Subject Code</th>
@@ -38,7 +38,23 @@
                                     <th>All subject need to learn before</th>
                                     </thead>
                                     <tbody>
-
+                                        <c:forEach items="${listLearning}" var="listl">
+                                            <tr>
+                                                <td>${listl.subject.subjectID}</td>
+                                                <td>${listl.subject.subjectCode}</td>
+                                                <td><a style="color: blue;" href="syllabus-details?syID=${listl.subject.subjectCode}">${listl.syllabusNameEN}</a></td>
+                                                <td>${listl.decisionNo}</td>
+                                                <td>
+                                                    <c:if test="${listl.subject.prerequisite.isEmpty()}"><br/>(None)
+                                                    </c:if>
+                                                    <c:if test="${!listl.subject.prerequisite.isEmpty()}">
+                                                        <c:forEach items="${listl.subject.prerequisite}" var="c">
+                                                            ${c.subject.subjectCode == null || listl.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subject.subjectCode}
+                                                        </c:forEach>
+                                                    </c:if>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                     </tbody>
                                 </table>
 
@@ -76,8 +92,7 @@
 
             let request;
             function searchLearningPath(page) {
-                let key = document.getElementById("keyseach").value;
-                let url = './learningpath?page=' + page + '&keysearch=' + key;
+                let url = './learningpath?page=' + page;
 
 
                 if (window.XMLHttpRequest) {

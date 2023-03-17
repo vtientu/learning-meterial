@@ -77,7 +77,7 @@ public class AddDetailServletController extends HttpServlet {
                 request.getRequestDispatcher("../view/admin/subject/create-subject.jsp").forward(request, response);
                 break;
             case "syllabus":
-                ArrayList<Subject> listSubject = sdao.getListSubject();
+                ArrayList<Subject> listSubject = sdao.getListSubjectAll();
                 ArrayList<Decision> listDecision = (ArrayList<Decision>) ddao.getAllDecision();
                 request.setAttribute("listSubject", listSubject);
                 request.setAttribute("listDecision", listDecision);
@@ -114,6 +114,8 @@ public class AddDetailServletController extends HttpServlet {
     public void addSyllabus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
+            Account a = (Account) session.getAttribute("account");
             String subjectID_raw = request.getParameter("subjectCode");
             String nameEN = request.getParameter("nameEN");
             String nameVN = request.getParameter("nameVN");
@@ -129,46 +131,88 @@ public class AddDetailServletController extends HttpServlet {
             String note = request.getParameter("note");
             String[] prerequisite = request.getParameterValues("preRequisite");
             int subjectID = Integer.parseInt(subjectID_raw);
-            boolean active = Boolean.parseBoolean(active_raw);
-            boolean approve = Boolean.parseBoolean(approve_raw);
-            int scoringScale = Integer.parseInt(scoringScale_raw);
-            int MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
+            boolean active = false;
+            boolean approve = false;
 
-            HttpSession session = request.getSession();
+            if (active_raw == null || approve_raw == null || nameEN == null) {
+                session.setAttribute("message", "The information has not been filled in completely!");
+                session.setAttribute("color", "red");
+                response.sendRedirect("admin-list?adminpage=syllabus");
+            }
+
+            if (a.getRoleID() >= 7) {
+                active = Boolean.parseBoolean(active_raw);
+                approve = Boolean.parseBoolean(approve_raw);
+            }
+            
+            int scoringScale = 0;
+            
+            if (scoringScale_raw != null && scoringScale_raw.length() > 0) {
+                scoringScale = Integer.parseInt(scoringScale_raw);
+            }
+
+            int MinAvgMarkToPass = 0;
+            if (MinAvgMarkToPass_raw != null && MinAvgMarkToPass_raw.length() > 0) {
+                MinAvgMarkToPass = Integer.parseInt(MinAvgMarkToPass_raw);
+            }
+
             SyllabusDAO sdao = new SyllabusDAO();
 
             Syllabus s = new Syllabus();
             Subject subject = new Subject();
             subject.setSubjectID(subjectID);
 
+            s.setAccount(a);
             s.setSubject(subject);
 
             if (nameEN != null) {
                 s.setSyllabusNameEN(nameEN);
             }
 
-            s.setSyllabusNameVN(nameVN);
+            if (nameVN != null) {
+                s.setSyllabusNameVN(nameVN);
+            }
 
             if (degreeLevel != null) {
                 s.setDegreeLevel(degreeLevel);
             }
 
-            s.setTools(tool);
+            if (tool != null) {
+                s.setTools(tool);
+            }
 
-            s.setScoringScale(scoringScale);
+            if (scoringScale_raw != null && scoringScale_raw.length() > 0) {
+                s.setScoringScale(scoringScale);
+            }
 
-            s.setMinAvgMarkToPass(MinAvgMarkToPass);
+            if (MinAvgMarkToPass_raw != null && MinAvgMarkToPass_raw.length() > 0) {
+                s.setMinAvgMarkToPass(MinAvgMarkToPass);
+            }
 
-            s.setTimeAllocation(timeAllocation);
+            if (timeAllocation != null) {
+                s.setTimeAllocation(timeAllocation);
+            }
 
-            s.setDescription(description);
+            if (description != null) {
+                s.setDescription(description);
+            }
 
-            s.setStudentTasks(studentTask);
-            
-            s.setIsActive(active);
-            s.setIsApproved(approve);
-            
-            s.setNote(note);
+            if (studentTask != null) {
+                s.setStudentTasks(studentTask);
+            }
+
+            if (active_raw != null) {
+                s.setIsActive(active);
+            }
+
+            if (approve_raw != null) {
+                s.setIsApproved(approve);
+            }
+
+            if (note != null) {
+                s.setNote(note);
+            }
+
 //            PrintWriter out = response.getWriter();
             if (sdao.createSyllabus(s, prerequisite)) {
                 session.setAttribute("message", "Create syllabus successful!");
@@ -192,6 +236,7 @@ public class AddDetailServletController extends HttpServlet {
         int semester = Integer.parseInt(request.getParameter("semester"));
         int noCredit = Integer.parseInt(request.getParameter("noCredit"));
         HttpSession session = request.getSession();
+        Account a = (Account) session.getAttribute("account");
         SyllabusDAO sdao = new SyllabusDAO();
         if (sdao.checkSubjectCode(subjectCode) || sdao.checkSubjectName(subjectName)) {
             if (sdao.checkSubjectCode(subjectCode)) {
@@ -203,6 +248,7 @@ public class AddDetailServletController extends HttpServlet {
             }
         } else {
             Subject s = new Subject();
+            s.setAccount(a);
             s.setSubjectCode(subjectCode);
             s.setSubjectName(subjectName);
             s.setSemester(semester);

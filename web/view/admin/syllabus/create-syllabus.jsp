@@ -66,20 +66,22 @@
                                                 <input class="form-control" type="text" value="" name="nameVN">
                                             </div>
                                         </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Active<i class="text-red">*</i></label>
-                                            <div>
-                                                <input type="radio" value="true" ${syllabus.isActive == true?'checked':''} name="active"> Active
-                                                <input class="ml-4" type="radio" value="false" ${syllabus.isActive == false?'checked':''} name="active"> Inactive
+                                        <c:if test="${account.roleID >= 7}">
+                                            <div class="form-group col-6">
+                                                <label class="col-form-label">Active<i class="text-red">*</i></label>
+                                                <div>
+                                                    <input type="radio" value="true" ${syllabus.isActive == true?'checked':''} name="active"> Active
+                                                    <input class="ml-4" checked="" type="radio" value="false" ${syllabus.isActive == false?'checked':''} name="active"> Inactive
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="col-form-label">Approve<i class="text-red">*</i></label>
-                                            <div>
-                                                <input type="radio" value="true" ${syllabus.isApproved == true?'checked':''} name="approve"> Approve
-                                                <input class="ml-4" type="radio" value="false" ${syllabus.isApproved == false?'checked':''} name="approve"> Disable
+                                            <div class="form-group col-6">
+                                                <label class="col-form-label">Approve<i class="text-red">*</i></label>
+                                                <div>
+                                                    <input type="radio" value="true" ${syllabus.isApproved == true?'checked':''} name="approve"> Approve
+                                                    <input class="ml-4" checked="" type="radio" value="false" ${syllabus.isApproved == false?'checked':''} name="approve"> Disable
+                                                </div>
                                             </div>
-                                        </div>
+                                        </c:if>
                                         <div class="form-group col-6">
 
                                             <label class="col-form-label">Pre-Requisite</label>

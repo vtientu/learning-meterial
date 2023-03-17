@@ -36,9 +36,27 @@
                         <div class="widget-box">
                             <div class="row justify-content-between">
                                 <div class="wc-title">
-                                    <c:if test="${account.roleID >= 7}">
+                                    <c:if test="${account.roleID >= 6}">
                                         <a class="btn" href="add-details?action=subject">Add Subject</a>
                                     </c:if>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="widget courses-search-bx placeani m-0">
+                                        <div class="form-group m-0">
+                                            <div class="input-"></div>
+                                            <label>Active: </label>
+                                            <div>
+                                                <form action="admin-list" method="get">
+                                                    <input type="text" name="adminpage" value="subject" hidden="">
+                                                    <select class="form-control" name="active" onchange="this.form.submit()">
+                                                        <option ${active == 'default'?'selected':''} value="default">Select</option>
+                                                        <option ${active == 'true'?'selected':''} value="true">Active</option>
+                                                        <option ${active == 'false'?'selected':''} value="false">Inactive</option>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">
@@ -55,11 +73,11 @@
                                 <div  id="list-items">
                                     <table class="table">
                                         <thead class="thead-orange">
-                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'id_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
-                                        <th width="15%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'scode_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
-                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'name_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
-                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'semester_up' ? 'semester_up' : 'semester_down' : 'semester_down'}', false)">Semester<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'semester_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
-                                        <th width="10%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'credit_up' ? 'credit_up' : 'credit_down' : 'credit_down'}', false)">No Credit<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'credit_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID${sort == 'id_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'id_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th width="15%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name${sort == 'name_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'name_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'semester_up' ? 'semester_up' : 'semester_down' : 'semester_down'}', false)">Semester${sort == 'semester_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'semester_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th width="10%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'credit_up' ? 'credit_up' : 'credit_down' : 'credit_down'}', false)">No Credit${sort == 'credit_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'credit_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         </thead>
@@ -72,16 +90,11 @@
                                                     <td class="text-center">${list.semester}</td>
                                                     <td class="text-center">${list.noCredit}</td>
                                                     <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
-                                                    <c:if test="${account.roleID >= 7}">
-                                                        <td>
-                                                            <button class="btn bg-white">
-                                                                <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
-                                                            </button>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${account.roleID != 7}">
-                                                        <td></td>
-                                                    </c:if>
+                                                    <td>
+                                                        <button class="btn bg-white">
+                                                            <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
@@ -115,11 +128,11 @@
         </main>
         <script>
 
-        
+
             let request;
             function processSubjectList(page, sort, pageType) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=subject&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' +sort;
+                let url = './admin-list?adminpage=subject&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' + sort;
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

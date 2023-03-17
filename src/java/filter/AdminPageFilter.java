@@ -104,7 +104,7 @@ public class AdminPageFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession();
         Account a = (Account) session.getAttribute("account");
-        if (a == null || a.getRoleID() <= 3) {
+        if (a == null || a.getRoleID() <= 5) {
             res.sendRedirect("../home");
         }
 	if (debug) log("AdminPageFilter:doFilter()");

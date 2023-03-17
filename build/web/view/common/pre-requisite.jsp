@@ -15,21 +15,21 @@
             <div class="content-block">
                 <!-- About Us -->
                 <div class="section-area section-sp1">
-                    <div class="container">
+                    <div class="container" style="min-height: 500px">
                         <div class="input-group input-group-sm align-items-center mb-4">
                             <h3 style="border-bottom:10px solid #f7b205">Pre-Requisite</h3>
-                            <div class="input-group" style="flex-wrap: nowrap;">
+                            <form class="input-group" action="prequisite" method="post">
                                 <input type="text" class="form-control" id="search-input" name="keysearch" placeholder="Enter Subject Code">
                                 <div class="input-group-append">
                                     <button type="submit" name="submit" class="btn btn-secondary btn-number">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <c:if test="${listprerequisite != null}">
                             <div  id="list-items">
-                                <table class="table text-center">
+                                <table class="table table-bordered" style="min-height: 300px">
                                     <thead class="thead-orange">
                                     <th>Syllabus ID</th>
                                     <th>Subject Name</th>
@@ -38,11 +38,11 @@
                                     <th>All subject need to learn before</th>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${listPreRequisite}" var="list">
+                                        <c:forEach items="${listprerequisite}" var="list">
                                             <tr>
                                                 <td>${list.syllabusID}</td>
                                                 <td>${list.subject.subjectName}</td>
-                                                <td><a style="color: blue;" href="syllabus-details?syID=${list.subjectCode}">${list.syllabusNameEN}</a></td>
+                                                <td><a style="color: blue;" href="syllabus-details?syID=${list.subject.subjectCode}">${list.syllabusNameEN}</a></td>
                                                 <td>${list.decisionNo}</td>
                                                 <td>
                                                     <c:if test="${list.subject.prerequisite.isEmpty()}">
@@ -50,7 +50,7 @@
                                                     </c:if>
                                                     <c:if test="${!list.subject.prerequisite.isEmpty()}">
                                                         <c:forEach items="${list.subject.prerequisite}" var="c">
-                                                            ${c.subjectCode}: ${c.subjectPre == null || list.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subjectPre}
+                                                            ${c.subjectPre == null || list.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subjectPre}
                                                         </c:forEach>
                                                     </c:if>
                                                 </td>

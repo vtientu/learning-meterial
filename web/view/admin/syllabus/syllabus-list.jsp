@@ -27,7 +27,7 @@
         <!--Main container start -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                
+
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title" style="border-right: none">Syllabus List</h4>
                 </div>
@@ -37,9 +37,45 @@
                         <div class="widget-box">
                             <div class="row justify-content-between">
                                 <div class="wc-title">
-                                    <c:if test="${account.roleID >= 7}">
+                                    <c:if test="${account.roleID >= 6}">
                                         <a class="btn" href="add-details?action=syllabus">Add Syllabus</a>
                                     </c:if>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="widget courses-search-bx placeani m-0">
+                                        <div class="form-group m-0">
+                                            <div class="input-"></div>
+                                            <label>Active: </label>
+                                            <div>
+                                                <form action="admin-list" method="get">
+                                                    <input type="text" name="adminpage" value="syllabus" hidden="">
+                                                    <select class="form-control" name="active" onchange="this.form.submit()">
+                                                        <option ${active == 'default'?'selected':''} value="default">Select</option>
+                                                        <option ${active == 'true'?'selected':''} value="true">Active</option>
+                                                        <option ${active == 'false'?'selected':''} value="false">Inactive</option>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="widget courses-search-bx placeani m-0">
+                                        <div class="form-group m-0">
+                                            <div class="input-"></div>
+                                            <label>Approve: </label>
+                                            <div>
+                                                <form action="admin-list" method="get">
+                                                    <input type="text" name="adminpage" value="syllabus" hidden="">
+                                                    <select class="form-control" name="approve" onchange="this.form.submit()">
+                                                        <option ${approve == 'default'?'selected':''} value="default">Select</option>
+                                                        <option ${approve == 'true'?'selected':''} value="true">Approve</option>
+                                                        <option ${approve == 'false'?'selected':''} value="false">Disable</option>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4 mt-3" style="float: right;">
                                     <div class="widget courses-search-bx placeani m-0">
@@ -56,13 +92,14 @@
                                 <div  id="list-items">
                                     <table class="table">
                                         <thead class="thead-orange">
-                                        <th width="5%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'id_up' ? 'ti-arrow-down' : 'ti-arrow-up' }"></i></th>
-                                        <th width="15%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'scode_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
-                                        <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'name_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
-                                        <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'syname_up' ? 'syname_up' : 'syname_down' : 'syname_down'}', false)">Syllabus Name<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'syname_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
-                                        <th>IsActive</th>
-                                        <th>IsApproved</th>
-                                        <th width="10%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'decision_up' ? 'decision_up' : 'decision_down' : 'decision_down'}', false)">DecisionNo<br/>MM/dd/yyyy<i style="font-weight: bold" class="ti ${sort == "" ? 'ti-arrow-up' :  sort eq 'decision_up' ? 'ti-arrow-down' : 'ti-arrow-up'}"></i></th>
+
+                                        <th width="5%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID${sort == 'id_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'id_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th width="15%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'syname_up' ? 'syname_up' : 'syname_down' : 'syname_down'}', false)">Syllabus Name${sort == 'syname_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'syname_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th class="text-center">IsActive</th>
+                                        <th class="text-center">IsApproved</th>
+                                        <th width="10%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'decision_up' ? 'decision_up' : 'decision_down' : 'decision_down'}', false)">DecisionNo<br/>MM/dd/yyyy${sort == 'decision_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'decision_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
@@ -70,21 +107,15 @@
                                                 <tr>
                                                     <td>${list.syllabusID}</td>
                                                     <td>${list.subject.subjectCode}</td>
-                                                    <td>${list.subject.subjectName}</td>
                                                     <td>${list.syllabusNameEN}</td>
                                                     <td class="text-center"><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
                                                     <td class="text-center"><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
                                                     <td>${list.decisionNo == null?'':list.decisionNo}</td>
-                                                    <c:if test="${account.roleID >= 7}">
-                                                        <td>
-                                                            <button class="btn bg-white">
-                                                                <a href="update-details?action=syllabus&sid=${list.syllabusID}"><i class="ti ti-pencil-alt" style="color: black"></i></a>
-                                                            </button>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${account.roleID < 7}">
-                                                        <td></td>
-                                                    </c:if>
+                                                    <td>
+                                                        <button class="btn bg-white">
+                                                            <a href="update-details?action=syllabus&sid=${list.syllabusID}"><i class="ti ti-pencil-alt" style="color: black"></i></a>
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
@@ -118,7 +149,7 @@
             let request;
             function processSyllabusList(page, sort, pageType) {
                 let key = document.getElementById("keyseach").value;
-                let url = './admin-list?adminpage=syllabus&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' +sort;
+                let url = './admin-list?adminpage=syllabus&pageType=' + pageType + '&page=' + page + '&keysearch=' + key + '&sort=' + sort;
                 if (window.XMLHttpRequest) {
                     request = new XMLHttpRequest();
                 } else if (window.ActiveXObject) {

@@ -139,11 +139,11 @@ public class SyllabusListServletController extends HttpServlet {
         start = (page - 1) * numberPerPage;
         end = Math.min(page * numberPerPage, size);
         ArrayList<Syllabus> listByPage = sd.getListByPage(list, start, end);
-        processSyllabus(request, response, listByPage, page, numberOfPage, key);
+        processSyllabus(request, response, listByPage, page, numberOfPage);
     }
 
 
-    public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key)
+    public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table text-center\">\n"
