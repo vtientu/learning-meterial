@@ -58,7 +58,29 @@
                                                     <input class="form-control" type="text" name="namevn">
                                                 </div>
                                             </div>
-
+                                            <div class="form-group col-6">
+                                                <label class="col-form-label">Curriculum</label>
+                                                <select class="form-control" name="curriid">
+                                                    <c:forEach items="${currilist}" var="clist">
+                                                        <option value="${clist.curID}">${clist.curriculumCode}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label class="col-form-label">Active</label>
+                                                <div>
+                                                    <div class="form-check-inline">
+                                                        <label class="form-check-label" for="radio1" style="color: red">
+                                                            <input type="radio" class="form-check-input" name="active" value="1" checked>Active
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check-inline">
+                                                        <label class="form-check-label" for="radio2" style="color: red">
+                                                            <input type="radio" class="form-check-input" name="active" value="0">unactive
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="seperator"></div>
 
                                             <div class="col-12 m-t20">
@@ -288,7 +310,7 @@
 
                                 <div class="widget-inner">
                                     <form class="edit-profile m-b30" action="addelective" method="post">
-                                    <input type="text" name="addtype" value="4" hidden="">
+                                        <input type="text" name="addtype" value="4" hidden="">
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="ml-auto">

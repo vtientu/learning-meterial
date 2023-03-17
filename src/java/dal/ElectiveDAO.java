@@ -108,18 +108,39 @@ public class ElectiveDAO extends DBContext {
         }
     }
 
-    public void addElective(String nameen, String namevn, String note) {
+    public void addElective(String nameen, String namevn, String note, int isActive) {
         try {
             String sql = "INSERT INTO `swp391`.`elective`\n"
-                    + "(`ElectiveNameEN`,\n"
-                    + "`ElectiveNameVN`,\n"
-                    + "`note`)\n"
+                    + "(`ElectiveNameVN`,\n"
+                    + "`ElectiveNameEN`,\n"
+                    + "`note`,\n"
+                    + "`isActive`)\n"
                     + "VALUES\n"
-                    + "(?,?,?);\n";
+                    + "(?,?,?,?);";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, nameen);
             st.setString(2, namevn);
             st.setString(3, note);
+            st.setInt(4, isActive); 
+            st.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void addElective2(int curid) {
+        try {
+            String sql = "INSERT INTO `swp391`.`curriculumelective`\n"
+                    + "(`ElectiveID`,\n"
+                    + "`CurID`)\n"
+                    + "VALUES\n"
+                    + "((select ElectiveID\n"
+                    + "from swp391.elective\n"
+                    + "order by elective.ElectiveID desc\n"
+                    + "Limit 1),\n"
+                    + "?);";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, curid);
             st.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);

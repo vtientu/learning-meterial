@@ -57,7 +57,7 @@
                             </form>
                             <table class="table">
                                 <thead class="thead-orange">
-                                <th class="col-lg-1">#</th>
+                                <th class="col-lg-1" class="" onClick="sort('${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down' }')">ID<span class="fa ${sort == "" ? 'fa-arrow-up' :  sort eq 'id_up' ? 'fa-arrow-down' : 'fa-arrow-up' }" style="font-size: 10px"></span></th>
                                 <th class="col-lg-1">CurriculumCode</th>
                                 <th class="col-lg-3">Name</th>
                                 <th class="col-lg-1">DecisionNo MM/dd/yyyy</th>
@@ -71,7 +71,7 @@
                                             <td>${list.curID}</td>
                                             <td>${list.getCurriculumCode()}</td>
                                             <td><a href="curriculumdetail?curID=${list.getCurID()}">${list.getCurriculumNameEN()}, ${list.major.majorNameEN}</a></td>
-                                            
+
                                             <td><a>${list.decision.decisionNo != null ? list.decision.decisionNo:'None'}${list.decision.approvedDate != null ? ' dated ':''}${list.decision.approvedDate != null ? list.decision.approvedDate:''}
                                                 </a></td>
                                             <td>145</td>
@@ -89,7 +89,7 @@
 
 
                 </div>
-                
+
                 <div class="col-lg-12 m-b20">
                     <div class="pagination-bx rounded-sm gray clearfix">
                         <ul class="pagination">
@@ -126,23 +126,44 @@
         <script src='../assets/assets-admin/vendors/switcher/switcher.js'></script>
 
         <script>
-            // Pricing add
-            function newMenuItem() {
-                var newElem = $('tr.list-item').first().clone();
-                newElem.find('input').val('');
-                newElem.appendTo('table#item-add');
-            }
-            if ($("table#item-add").is('*')) {
+                                    // Pricing add
+                                    function newMenuItem() {
+                                        var newElem = $('tr.list-item').first().clone();
+                                        newElem.find('input').val('');
+                                        newElem.appendTo('table#item-add');
+                                    }
+                                    if ($("table#item-add").is('*')) {
 
-                $('.add-item').on('click', function (e) {
-                    e.preventDefault();
-                    newMenuItem();
-                });
-                $(document).on("click", "#item-add .delete", function (e) {
-                    e.preventDefault();
-                    $(this).parent().parent().parent().parent().remove();
-                });
-            }
+                                        $('.add-item').on('click', function (e) {
+                                            e.preventDefault();
+                                            newMenuItem();
+                                        });
+                                        $(document).on("click", "#item-add .delete", function (e) {
+                                            e.preventDefault();
+                                            $(this).parent().parent().parent().parent().remove();
+                                        });
+                                    }
+                                    function sort(type) {
+
+
+//                                        let page = document.getElementById('currentPage').value;
+//
+//                                        let search = document.getElementById('search').value;
+
+
+                                        let url = 'http://localhost:9999/Project-SWP391tuiter/admin/curriAdmin?sort=' + type;
+
+//                                        if (page !== '') {
+//                                            url += '&page=' + page;
+//                                        }
+//
+//                                        if (search !== '') {
+//                                            url += '&search=' + search;
+//                                        }
+
+
+                                        window.location.assign(url);
+                                    }
         </script>
     </body>
 </html>
