@@ -74,11 +74,12 @@
                                     <table class="table">
                                         <thead class="thead-orange">
                                         <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID${sort == 'id_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'id_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
-                                        <th width="15%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th width="10%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'name_up' ? 'name_up' : 'name_down' : 'name_down'}', false)">Subject Name${sort == 'name_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'name_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th onclick="processSubjectList(${page}, '${sort != null ? sort eq 'semester_up' ? 'semester_up' : 'semester_down' : 'semester_down'}', false)">Semester${sort == 'semester_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'semester_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th width="10%" onclick="processSubjectList(${page}, '${sort != null ? sort eq 'credit_up' ? 'credit_up' : 'credit_down' : 'credit_down'}', false)">No Credit${sort == 'credit_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'credit_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th>Status</th>
+                                        <th>Author</th>
                                         <th>Action</th>
                                         </thead>
                                         <tbody>
@@ -90,6 +91,7 @@
                                                     <td class="text-center">${list.semester}</td>
                                                     <td class="text-center">${list.noCredit}</td>
                                                     <td style="color: ${list.isActive != false?'green':'red'}">${list.isActive != false?'Active':'Inactive'}</td>
+                                                    <td>${list.account.fullName}</td>
                                                     <td>
                                                         <button class="btn bg-white">
                                                             <a href="update-details?action=subject&sid=${list.subjectID}"><i class="ti ti ti-pencil-alt font-weight-bold" style="color: black; background-color: gainsboro"></i></a>

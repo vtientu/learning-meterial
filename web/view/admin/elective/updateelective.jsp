@@ -302,7 +302,7 @@
                                                             <div class="form-group col-12">
                                                                 <label class="col-form-label">Description</label>
                                                                 <div>
-                                                                    <input class="form-control" type="text" name="description" value="${curriculum.description}">
+                                                                    <textarea class="form-control" name="description" rows="5" cols="10">${curriculum.description}</textarea>
                                                                 </div>
                                                             </div >
                                                         </div>

@@ -260,14 +260,13 @@ public class AdminListServletController extends HttpServlet {
 
     public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage, String key, String sort)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Account a = (Account) session.getAttribute("account");
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table\">\n");
         out.print("<thead class=\"thead-orange\">");
         out.print("<th width=\"5%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("id_up") ? "id_up" : "id_down" : "id_down") + "', false)\">ID" + (sort.equals("id_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : (sort.equals("id_down") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>" : "")) + "</th>");
         out.print("<th width=\"15%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("scode_up") ? "scode_up" : "scode_down" : "scode_down") + "', false)\">Subject Code" + (sort.equals("scode_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : (sort.equals("scode_down") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>" : "")) + "</th>");
         out.print("<th onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("syname_up") ? "syname_up" : "syname_down" : "syname_down") + "', false)\">Syllabus Name" + (sort.equals("syname_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : (sort.equals("syname_down") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>" : "")) + "</th>");
+        out.print("<th class=\"text-center\">Author</th>");
         out.print("<th class=\"text-center\">IsActive</th>");
         out.print("<th class=\"text-center\">IsApproved</th>");
         out.print("<th width=\"10%\" onclick=\"processSyllabusList(" + page + ", '" + (sort != null ? sort.equals("decision_up") ? "decision_up" : "decision_down" : "decision_down") + "', false)\">DecisionNo<br/>MM/dd/yyyy" + (sort.equals("decision_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : (sort.equals("decision_down") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>" : "")) + "</th>");
@@ -279,6 +278,7 @@ public class AdminListServletController extends HttpServlet {
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectCode() + "</td>\n"
                     + "                                            <td>" + o.getSyllabusNameEN() + "</td>\n"
+                    + "                                            <td class=\"text-center\">" + o.getAccount().getFullName() + "</td>\n"
                     + "                                            <td class=\"text-center\"><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"
                     + "                                            <td class=\"text-center\"><i  style=\"color: " + (o.isIsApproved() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsApproved() == true ? "fa-check" : "fa-close") + "\"/></td>\n");
             if (o.getDecisionNo() == null) {
@@ -636,9 +636,6 @@ public class AdminListServletController extends HttpServlet {
     public void showSubjectList(HttpServletRequest request, HttpServletResponse response, ArrayList<Subject> listSubject, int page, int totalPage, String sort)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-
-        HttpSession session = request.getSession();
-        Account account = (Account) session.getAttribute("account");
         out.println("<table class=\"table\">\n");
         out.print("<thead class=\"thead-orange\">");
         out.print("<th onclick=\"processSubjectList(" + page + ", '" + (sort != null && sort.equals("id_up") ? "id_up" : "id_down") + "', false)\">ID" + (sort != null && sort.startsWith("id") ? (sort.equals("id_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>") : "") + "</th>");
@@ -647,6 +644,7 @@ public class AdminListServletController extends HttpServlet {
         out.print("<th onclick=\"processSubjectList(" + page + ", '" + (sort != null && sort.equals("semester_up") ? "semester_up" : "semester_down") + "', false)\">Semester" + (sort != null && sort.startsWith("semester") ? (sort.equals("semester_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>") : "") + "</th>");
         out.print("<th width=\"10%\" onclick=\"processSubjectList(" + page + ", '" + (sort != null && sort.equals("credit_up") ? "credit_up" : "credit_down") + "', false)\">No Credit" + (sort != null && sort.startsWith("semester") ? (sort.equals("credit_up") ? "<i style=\"font-weight: bold\" class=\"ti ti-arrow-down\"></i>" : "<i style=\"font-weight: bold\" class=\"ti ti-arrow-up\"></i>") : "") + "</th>");
         out.print("<th>Status</th>");
+        out.print("<th>Author</th>");
         out.print("<th>Action</th>");
         out.print("</thead>");
         out.print("                                    <tbody>");
@@ -662,6 +660,7 @@ public class AdminListServletController extends HttpServlet {
             } else {
                 out.print("<td style=\"color: red\">Inactive</td>\n");
             }
+            out.print("<td>"+s.getAccount().getFullName()+"</td>");
             out.print("<td>"
                     + "<button class=\"btn bg-white\">\n"
                     + "                                                                <a href=\"update-details?action=subject&sid=" + s.getSubjectID() + "\"><i class=\"ti ti ti-pencil-alt font-weight-bold\" style=\"color: black; background-color: gainsboro\"></i></a>\n"

@@ -140,6 +140,14 @@ public class SyllabusDAO extends DBContext {
         }
         return list;
     }
+    
+    public static void main(String[] args) {
+        SyllabusDAO sdao = new SyllabusDAO();
+        ArrayList<Syllabus> list = sdao.getAllSyllabus(0);
+        for(Syllabus s : list) {
+            System.out.println(s.getSyllabusNameEN());
+        }
+    }
 
     public ArrayList<Syllabus> getAllSyllabusAdmin(Account a) {
         ArrayList<Syllabus> list = new ArrayList<>();
@@ -1056,9 +1064,9 @@ public class SyllabusDAO extends DBContext {
                     + "FROM `syllabus` INNER JOIN `subjects`\n"
                     + "ON `syllabus`.`SubjectID` = `subjects`.`SubjectID` LEFT JOIN `decision`\n"
                     + "ON `decision`.`DecisionNo` = `syllabus`.`DecisionNo`"
-                    + "WHERE `subjects`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`DecisionNo` LIKE ? ";
+                    + "WHERE (`subjects`.`SubjectCode` LIKE ? OR `syllabus`.`SubjectNameEN` LIKE ? OR `syllabus`.`DecisionNo` LIKE ? ) ";
             if (role == 1) {
-                sql += " AND `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1";
+                sql += " AND `syllabus`.`IsActive` = 1 AND `syllabus`.`IsApproved` = 1 ";
             }
             sql += "  ORDER BY `SyllabusID` ASC ";
             PreparedStatement st = connection.prepareStatement(sql);
@@ -1140,17 +1148,6 @@ public class SyllabusDAO extends DBContext {
             System.out.println(e);
         }
         return list;
-    }
-
-    public static void main(String[] args) {
-        SyllabusDAO sdao = new SyllabusDAO();
-        Account a = new Account();
-        a.setRoleID(6);
-        a.setAccountID(7);
-        ArrayList<Syllabus> list = sdao.getListSyllabusAdminByKey("c", a);
-        for (Syllabus c : list) {
-            System.out.println(c.getSyllabusID());
-        }
     }
 
     public ArrayList<Syllabus> getListSyllabusAdminByKey(String key, Account a) {

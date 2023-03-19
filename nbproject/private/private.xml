@@ -3,11 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/WorkSpace/SWP391-Q5/web/view/admin/curriculum/index.jsp</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/src/java/dal/DBContext.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/src/java/controller/curriculum/CurriculumListServletController.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/src/java/controller/admin/curriculum/CurriculumAdminController.java</file>
-            <file>file:/D:/WorkSpace/SWP391-Q5/src/java/controller/curriculum/CurriculumDetailsServletController.java</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/web/view/admin/subject/subject-list.jsp</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/src/java/controller/admin/admin_list/AdminListServletController.java</file>
+            <file>file:/D:/WorkSpace/SWP391-Q5/web/view/admin/syllabus/syllabus-list.jsp</file>
         </group>
     </open-files>
 </project-private>

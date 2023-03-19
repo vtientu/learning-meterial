@@ -88,63 +88,46 @@ public class CurriculumAdminController extends HttpServlet {
                     sortType = (status ? sort : "id_down");
 
                     break;
-//                case "category_down":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getCategory().compareTo(o2.getCategory()) > 0) {
-//                            return -1;
-//                        }
-//                        return 1;
-//                    });
-//                    sortType = (status ? sort : "category_up");
-//                    break;
-//                case "category_up":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getCategory().compareTo(o2.getCategory()) > 0) {
-//                            return 1;
-//                        }
-//                        return -1;
-//                    });
-//                    sortType = (status ? sort : "category_down");
-//
-//                    break;
-//                case "type_down":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getType().compareTo(o2.getType()) > 0) {
-//                            return -1;
-//                        }
-//                        return 1;
-//                    });
-//                    sortType = (status ? sort : "type_up");
-//                    break;
-//                case "type_up":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getType().compareTo(o2.getType()) > 0) {
-//                            return 1;
-//                        }
-//                        return -1;
-//                    });
-//                    sortType = (status ? sort : "type_down");
-//
-//                    break;
-//                case "weight_down":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getWeight().compareTo(o2.getWeight()) > 0) {
-//                            return -1;
-//                        }
-//                        return 1;
-//                    });
-//                    sortType = (status ? sort : "weight_up");
-//                    break;
-//                case "weight_up":
-//                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
-//                        if (o1.getWeight().compareTo(o2.getWeight()) > 0) {
-//                            return 1;
-//                        }
-//                        return -1;
-//                    });
-//                    sortType = (status ? sort : "weight_down");
-//
-//                    break;
+                case "curcode_up":
+                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
+                        if (o1.getCurriculumCode().compareTo(o2.getCurriculumCode()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (status ? sort : "curcode_down");
+
+                    break;
+                case "curcode_down":
+                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
+                        if (o1.getCurriculumCode().compareTo(o2.getCurriculumCode()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (status ? sort : "curcode_up");
+
+                    break;
+                case "cname_up":
+                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
+                        if (o1.getCurriculumNameEN().compareTo(o2.getCurriculumNameEN()) < 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (status ? sort : "cname_down");
+
+                    break;
+                case "cname_down":
+                    Collections.sort(list, (Curriculum o1, Curriculum o2) -> {
+                        if (o1.getCurriculumNameEN().compareTo(o2.getCurriculumNameEN()) > 0) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+                    sortType = (status ? sort : "cname_up");
+
+                    break;
             }
 
             request.setAttribute("sort", sortType);

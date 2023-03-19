@@ -253,30 +253,8 @@
                                             <div class="form-group col-12">
                                                 <label class="col-form-label">Description</label>
                                                 <div>
-                                                    <input class="form-control" type="text" name="description">
+                                                    <textarea class="form-control" name="description" rows="5" cols="10"></textarea>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <table class="table text-center">
-                                                    <thead class="thead-orange">
-                                                    <th>#</th>
-                                                    <th>Subject Code</th>
-                                                    <th>Subject Name</th>
-                                                    <th>Semester</th>
-                                                    <th>NoCredit</th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <c:forEach items="${sulist}" var="list">
-                                                            <tr>
-                                                                <td><input type="checkbox" name="sucode" value="${list.subjectCode}"></td>
-                                                                <td>${list.subjectCode}</td>
-                                                                <td>${list.subjectName}</td>
-                                                                <td>${list.semester}</td>
-                                                                <td>${list.noCredit}</td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
                                             </div>
                                             <div class="col-12">
                                                 <button type="submit" class="btn-secondry add-item m-r5"><i class="fa fa-fw fa-plus-circle"></i>Update</button>

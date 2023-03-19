@@ -87,7 +87,7 @@
                                             <div class="form-group col-12">
                                                 <label class="col-form-label">Description</label>
                                                 <div>
-                                                    <input class="form-control" type="text" name="description">
+                                                    <textarea class="form-control" name="description" rows="8" cols="10"></textarea>
                                                 </div>
                                             </div>
                                             
@@ -123,7 +123,6 @@
         <script src="../assets/assets-admin/js/functions.js"></script>
         <script src="../assets/assets-admin/vendors/chart/chart.min.js"></script>
         <script src="../assets/assets-admin/js/admin.js"></script>
-        <script src='../assets/assets-admin/vendors/switcher/switcher.js'></script>
         <script>
             // Pricing add
             function newMenuItem() {

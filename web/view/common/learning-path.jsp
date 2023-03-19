@@ -49,7 +49,7 @@
                                                     </c:if>
                                                     <c:if test="${!listl.subject.prerequisite.isEmpty()}">
                                                         <c:forEach items="${listl.subject.prerequisite}" var="c">
-                                                            ${c.subject.subjectCode == null || listl.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subject.subjectCode}
+                                                            ${c.subjectPre == null || list.subject.prerequisite.isEmpty() ?'(No pre-requisite)':c.subjectPre}
                                                         </c:forEach>
                                                     </c:if>
                                                 </td>

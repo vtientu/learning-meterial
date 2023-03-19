@@ -58,8 +58,8 @@
                             <table class="table">
                                 <thead class="thead-orange">
                                 <th class="col-lg-1" class="" onClick="sort('${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down' }')">ID<span class="fa ${sort == "" ? 'fa-arrow-up' :  sort eq 'id_up' ? 'fa-arrow-down' : 'fa-arrow-up' }" style="font-size: 10px"></span></th>
-                                <th class="col-lg-1">CurriculumCode</th>
-                                <th class="col-lg-3">Name</th>
+                                <th class="col-lg-1" onClick="sort('${sort != null ? sort eq 'curcode_up' ? 'curcode_up' : 'curcode_down' : 'curcode_down' }')">CurriculumCode<span class="fa ${sort == "" ? 'fa-arrow-up' :  sort eq 'curcode_up' ? 'fa-arrow-down' : 'fa-arrow-up' }" style="font-size: 10px"></span></th>
+                                <th class="col-lg-3" onClick="sort('${sort != null ? sort eq 'cname_up' ? 'cname_up' : 'cname_down' : 'cname_down' }')">Name<span class="fa ${sort == "" ? 'fa-arrow-up' :  sort eq 'cname_up' ? 'fa-arrow-down' : 'fa-arrow-up' }" style="font-size: 10px"></span></th>
                                 <th class="col-lg-1">DecisionNo MM/dd/yyyy</th>
                                 <th class="col-lg-1">Total Credit</th>
                                 <th class="col-lg-1">Status</th>

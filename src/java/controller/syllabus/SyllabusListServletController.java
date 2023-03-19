@@ -64,11 +64,6 @@ public class SyllabusListServletController extends HttpServlet {
             throws ServletException, IOException {
         SyllabusDAO ld = new SyllabusDAO();
         ArrayList<Syllabus> list = ld.getAllSyllabus(1);
-        HttpSession session = request.getSession();
-        Account a = (Account) session.getAttribute("account");
-        if (a != null && a.getRoleID() != 1) {
-            list = ld.getAllSyllabus(a.getRoleID());
-        }
         int page, numberPerPage = 10;
         String xpage = request.getParameter("page");
         int size;
@@ -105,43 +100,47 @@ public class SyllabusListServletController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String key = request.getParameter("keysearch");
-        SyllabusDAO sd = new SyllabusDAO();
-        HttpSession session = request.getSession();
-        Account acc = (Account) session.getAttribute("account");
-        ArrayList<Syllabus> list = sd.getAllSyllabus(1);
-        if (key != null) {
-            list = sd.getListSyllabusByKey(key, 1);
-        }
-        if (acc != null && acc.getRoleID() != 1) {
-            list = sd.getAllSyllabus(acc.getRoleID());
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            String key = request.getParameter("keysearch");
+            SyllabusDAO sd = new SyllabusDAO();
+            HttpSession session = request.getSession();
+            Account acc = (Account) session.getAttribute("account");
+            ArrayList<Syllabus> list = sd.getAllSyllabus(1);
             if (key != null) {
-                list = sd.getListSyllabusByKey(key, acc.getRoleID());
+                list = sd.getListSyllabusByKey(key, 1);
             }
-        }
-        int page, numberPerPage = 10;
-        String xpage = request.getParameter("page");
-        int size;
-        if (list.isEmpty()) {
-            size = 0;
-        } else {
-            size = list.size();
-        }
+            if (acc != null && acc.getRoleID() != 1) {
+                list = sd.getAllSyllabus(1);
+                if (key != null) {
+                    list = sd.getListSyllabusByKey(key, 1);
+                }
+            }
+            int page, numberPerPage = 10;
+            String xpage = request.getParameter("page");
+            int size;
+            if (list.isEmpty()) {
+                size = 0;
+            } else {
+                size = list.size();
+            }
 
-        int numberOfPage = ((size % numberPerPage == 0) ? (size / numberPerPage) : (size / numberPerPage + 1));
-        if (xpage == null) {
-            page = 1;
-        } else {
-            page = Integer.parseInt(xpage);
+            int numberOfPage = ((size % numberPerPage == 0) ? (size / numberPerPage) : (size / numberPerPage + 1));
+            if (xpage == null) {
+                page = 1;
+            } else {
+                page = Integer.parseInt(xpage);
+            }
+            int start, end;
+            start = (page - 1) * numberPerPage;
+            end = Math.min(page * numberPerPage, size);
+            ArrayList<Syllabus> listByPage = sd.getListByPage(list, start, end);
+            PrintWriter out = response.getWriter();
+            processSyllabus(request, response, listByPage, page, numberOfPage);
+        } catch (ServletException | IOException | NumberFormatException e) {
+            System.out.println(e);
         }
-        int start, end;
-        start = (page - 1) * numberPerPage;
-        end = Math.min(page * numberPerPage, size);
-        ArrayList<Syllabus> listByPage = sd.getListByPage(list, start, end);
-        processSyllabus(request, response, listByPage, page, numberOfPage);
     }
-
 
     public void processSyllabus(HttpServletRequest request, HttpServletResponse response, ArrayList<Syllabus> listByPage, int page, int numberOfPage)
             throws ServletException, IOException {
@@ -160,7 +159,7 @@ public class SyllabusListServletController extends HttpServlet {
         for (Syllabus o : listByPage) {
             out.println("               <tr>\n"
                     + "                                            <td>" + o.getSyllabusID() + "</td>\n"
-                    + "                                            <td>" + o.getSubject().getSubjectCode()+ "</td>\n"
+                    + "                                            <td>" + o.getSubject().getSubjectCode() + "</td>\n"
                     + "                                            <td>" + o.getSubject().getSubjectName() + "</td>\n"
                     + "                                            <td><a style=\"color: blue;\" href=\"syllabus-details?syID=" + o.getSubject().getSubjectCode() + "\">" + o.getSyllabusNameEN() + "</a></td>\n"
                     + "                                            <td><i  style=\"color: " + (o.isIsActive() == true ? "green" : "red") + "\" class=\"fa " + (o.isIsActive() == true ? "fa-check" : "fa-close") + "\"/></td>\n"

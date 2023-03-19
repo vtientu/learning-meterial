@@ -94,10 +94,12 @@
                                         <thead class="thead-orange">
 
                                         <th width="5%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'id_up' ? 'id_up' : 'id_down' : 'id_down'}', false)">ID${sort == 'id_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'id_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
-                                        <th width="15%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th width="10%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'scode_up' ? 'scode_up' : 'scode_down' : 'scode_down'}', false)">Subject Code${sort == 'scode_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'scode_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
                                         <th onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'syname_up' ? 'syname_up' : 'syname_down' : 'syname_down'}', false)">Syllabus Name${sort == 'syname_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'syname_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
+                                        <th class="text-center">Author</th>
                                         <th class="text-center">IsActive</th>
                                         <th class="text-center">IsApproved</th>
+                                        
                                         <th width="10%" onclick="processSyllabusList(${page}, '${sort != null ? sort eq 'decision_up' ? 'decision_up' : 'decision_down' : 'decision_down'}', false)">DecisionNo<br/>MM/dd/yyyy${sort == 'decision_up' ?'<i style="font-weight: bold" class="ti ti-arrow-down"></i>':(sort == 'decision_down' ?'<i style="font-weight: bold" class="ti ti-arrow-up"></i>':'')}</th>
 
                                         <th>Action</th>
@@ -108,8 +110,10 @@
                                                     <td>${list.syllabusID}</td>
                                                     <td>${list.subject.subjectCode}</td>
                                                     <td>${list.syllabusNameEN}</td>
+                                                    <td class="text-center">${list.account.fullName}</td>
                                                     <td class="text-center"><i  style="color: ${list.isActive == true ? 'green':'red'}" class="fa ${list.isActive == true ? 'fa-check':'fa-close'}"/></td>
                                                     <td class="text-center"><i  style="color: ${list.isApproved == true ? 'green':'red'}" class="fa ${list.isApproved == true ? 'fa-check':'fa-close'}"/></td>
+                                                    
                                                     <td>${list.decisionNo == null?'':list.decisionNo}</td>
                                                     <td>
                                                         <button class="btn bg-white">
